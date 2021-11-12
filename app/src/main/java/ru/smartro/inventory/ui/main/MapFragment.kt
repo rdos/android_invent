@@ -28,7 +28,7 @@ class MapFragment : AbstractFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view = inflater.inflate(R.layout.main_fragment, container, false)
+        val view = inflater.inflate(R.layout.map_fragment, container, false)
         mapView = view.findViewById<View>(R.id.mapview) as MapView
 
         // And to show what can be done with it, we move the camera to the center of Saint Petersburg.

@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/baseview"
+    android:id="@+id/cl_login_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -17,7 +17,7 @@
             android:id="@+id/image_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_logo"
+            android:src="@drawable/ic_login_fragment__logo"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -25,19 +25,19 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_def"
             android:gravity="center_horizontal"
-            android:text="@string/enter_system"
+            android:text="@string/login_fragment__welcome_to_system"
             android:textColor="@color/black"
             android:textSize="18sp" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/login_login_out"
+            android:id="@+id/til_login_fragment__login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin_def"
             android:layout_marginTop="24dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/auth_login"
+                android:id="@+id/tiet_login_fragment__login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/login"
@@ -47,7 +47,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/auth_password_out"
+            android:id="@+id/til_login_fragment__password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/margin_def"
@@ -55,7 +55,7 @@
             app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_login_fragment__password"
+                android:id="@+id/tiet_login_fragment__password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/et_login_fragment__password"
@@ -72,8 +72,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_def"
-        android:text="@string/enter_system"
+        android:text="@string/login_fragment__welcome_to_system"
         android:textColor="@color/white"
+        android:background="@color/purple_200"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <TextView

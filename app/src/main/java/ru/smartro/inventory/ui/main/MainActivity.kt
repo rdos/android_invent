@@ -1,55 +1,74 @@
-package ru.smartro.inventory.base
+package ru.smartro.inventory.ui.main
 
 import android.os.Bundle
+import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.location.*
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import ru.smartro.inventory.AppPreferences
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import ru.smartro.inventory.R
-import ru.smartro.inventory.ui.main.LoginFragment
+import ru.smartro.inventory.base.AbstractAct
+import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.inventory.database.RealmRepository
 
 class MainActivity : AbstractAct() , LocationListener {
     private lateinit var mLocationManager: LocationManager
-    private val MAPKIT_API_KEY = "948e55bc-da44-452d-9629-00898d438ca9"
+    private lateinit var mMapKit: MapKit
+
+    val realmDB: RealmRepository by lazy {
+        initRealm()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity)
 
         /**
-         * Set the api key before calling initialize on MapKitFactory.
-         * It is recommended to set api key in the Application.onCreate method,
-         * but here we do it in each activity to make examples isolated.
-         */
-        MapKitFactory.setApiKey(MAPKIT_API_KEY)
-        /**
          * Initialize the library to load required native libraries.
          * It is recommended to initialize the MapKit library in the Activity.onCreate method
          * Initializing in the Application.onCreate method may lead to extra calls and increased battery use.
          */
         MapKitFactory.initialize(this)
-        AppPreferences.init(this)
+//        AppPreferences.init(this)
 
         // And to show what can be done with it, we move the camera to the center of Saint Petersburg.
 
-        val mMapKit = MapKitFactory.getInstance()
+        mMapKit = MapKitFactory.getInstance()
         mLocationManager = mMapKit.createLocationManager()
 
         mLocationManager.subscribeForLocationUpdates(0.0, 0, 0.0, true, FilteringMode.OFF, this)
 
         val location: Location? = LocationManagerUtils.getLastKnownLocation()
-        log.warn(location?.position.toString())
+        log.info("onCreate", location?.position.toString())
 
         if (savedInstanceState == null) {
+            actionBar?.title = "Вход в систему"
             showFragment(LoginFragment.newInstance())
         }
+        // TODO: 12.11.2021 место!))
+        initRealm()
+
+    }
+
+    private fun initRealm(): RealmRepository {
+        Realm.init(applicationContext)
+//        if (!AppPreferences.isHasTask) {
+//            Realm.deleteRealm(Realm.getDefaultConfiguration()!!)
+//        }
+        val realmConfigBuilder = RealmConfiguration.Builder()
+//        config.allowWritesOnUiThread(true)
+        realmConfigBuilder.name("inventory.realm")
+        realmConfigBuilder.deleteRealmIfMigrationNeeded()
+        Realm.setDefaultConfiguration(realmConfigBuilder.build())
+        return RealmRepository(Realm.getDefaultInstance())
     }
 
     fun showFragment(fragment: AbstractFragment) {
+        log.info("AaA")
         supportFragmentManager.beginTransaction()
             .replace(R.id.container, fragment)
             .commitNow()
+//TOdo            .commitNow()
     }
 
     override fun onDestroy() {
@@ -69,13 +88,13 @@ class MainActivity : AbstractAct() , LocationListener {
     }
 
     override fun onLocationUpdated(p0: Location) {
-        log.debug("latitude=${p0.position.latitude},latitude=${p0.position.longitude}")
+//        log.debug("latitude=${p0.position.latitude},latitude=${p0.position.longitude}")
 //        log.debug("heading=${p0.heading}")
     }
 
     override fun onLocationStatusUpdated(p0: LocationStatus) {
 //        TODO("Not yet implemented")
-        val log: Logger = LoggerFactory.getLogger(MainActivity::class.java)
-        log.warn("p0=$p0")
+//        val log: Logger = LoggerFactory.getLogger(MainActivity::class.java)
+//        log.warn("p0=$p0")
     }
 }

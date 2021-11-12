@@ -3,14 +3,20 @@ package ru.smartro.inventory.base
 import androidx.fragment.app.Fragment
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import ru.smartro.inventory.database.RealmRepository
+import ru.smartro.inventory.ui.main.MainActivity
 
 abstract class AbstractFragment : Fragment() {
 
-    private val mainActivity: MainActivity  by lazy {
+    private val mainActivity: MainActivity by lazy {
         activity as MainActivity
     }
     protected fun showFragment(fragment: AbstractFragment) {
         mainActivity.showFragment(fragment)
+    }
+
+    protected fun db(): RealmRepository {
+        return mainActivity.realmDB
     }
 
     protected val log: Logger = LoggerFactory.getLogger("${this::class.simpleName}")

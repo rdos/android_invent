@@ -1,4 +1,4 @@
-package ru.smartro.inventory
+package ru.smartro.inventory.database
 
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName

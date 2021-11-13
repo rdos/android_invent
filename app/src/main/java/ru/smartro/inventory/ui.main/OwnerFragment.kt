@@ -44,8 +44,8 @@ class OwnerFragment : AbstractFragment(), View.OnClickListener {
         val col = ownerRequest.callAsyncOwner()
         col.observe(
             viewLifecycleOwner,
-            { ownerEntityList ->
-                for (ownerEntity in ownerEntityList) {
+            { ownerResponse ->
+                for (ownerEntity in ownerResponse.data.organisationEntityRealms) {
                     log.info("AAA", ownerEntity.name)
                 }
 //                recyclerView.adapter = OwnerAdapter(ownerEntityList)

@@ -1,7 +1,8 @@
-package ru.smartro.inventory.database
+package ru.smartro.inventory
 
-import android.util.Log
 import io.realm.Realm
+import ru.smartro.inventory.database.ConfigEntityRealm
+import ru.smartro.inventory.database.OwnerResponse
 
 // find!
 // 4) save load ; get set ; add update;
@@ -20,9 +21,9 @@ class RealmRepository(private val realm: Realm) {
         }
     }
 
-    fun saveOwner(ownerEntityList: List<OwnerEntityRealm>) {
+    fun saveOwner(ownerEntityList: OwnerResponse) {
         realm.executeTransaction { realm ->
-            realm.insertOrUpdate(ownerEntityList)
+            realm.insertOrUpdate(ownerEntityList.data.organisationEntityRealms)
         }
     }
 

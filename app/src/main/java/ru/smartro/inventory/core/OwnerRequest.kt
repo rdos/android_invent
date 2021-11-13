@@ -6,13 +6,12 @@ import okhttp3.Callback
 import okhttp3.Response
 import ru.smartro.inventory.base.AbstractO
 import ru.smartro.inventory.base.RestClient
-import ru.smartro.inventory.database.OwnerEntityList
-import ru.smartro.inventory.database.OwnerEntityRealm
+import ru.smartro.inventory.database.OwnerResponse
 import java.io.IOException
 
 class OwnerRequest(val p_RestClient: RestClient): AbstractO(), Callback {
-    private val result = MutableLiveData<OwnerEntityList>()
-    fun callAsyncOwner(): MutableLiveData<OwnerEntityList> {
+    private val result = MutableLiveData<OwnerResponse>()
+    fun callAsyncOwner(): MutableLiveData<OwnerResponse> {
         log.info("callAsyncOwner", "before")
         val url = "https://auth.stage.smartro.ru/api/owner"
         val request = p_RestClient.newRequest(url).get().build()
@@ -31,12 +30,9 @@ class OwnerRequest(val p_RestClient: RestClient): AbstractO(), Callback {
             log.warn(response.headers.toString())
             throw IOException("Error response $response")
         }
-        val ownerEntityList = OwnerEntityRealm.from(response)
-        for (owner in ownerEntityList) {
-            log.info("onResponse.entity=${owner.id}")
-        }
+        val ownerResponse = OwnerResponse.from(response)
 //        AppPreferences.accessToken = loginResponse.data.token
-        db.saveOwner(ownerEntityList)
+        db.saveOwner(ownerResponse)
 
 //        val config = ConfigEntity(name="token", value=loginResponse.data.token)
 //        p_RealmRepository.insertWayTask(config)

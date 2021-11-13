@@ -3,7 +3,7 @@ package ru.smartro.inventory.base
 import androidx.fragment.app.Fragment
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import ru.smartro.inventory.database.RealmRepository
+import ru.smartro.inventory.RealmRepository
 import ru.smartro.inventory.ui.main.MainActivity
 
 abstract class AbstractFragment : Fragment() {

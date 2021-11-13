@@ -9,7 +9,7 @@ import io.realm.RealmConfiguration
 import ru.smartro.inventory.R
 import ru.smartro.inventory.base.AbstractAct
 import ru.smartro.inventory.base.AbstractFragment
-import ru.smartro.inventory.database.RealmRepository
+import ru.smartro.inventory.RealmRepository
 
 class MainActivity : AbstractAct() , LocationListener {
     private lateinit var mLocationManager: LocationManager
@@ -57,7 +57,7 @@ class MainActivity : AbstractAct() , LocationListener {
 //        }
         val realmConfigBuilder = RealmConfiguration.Builder()
 //        config.allowWritesOnUiThread(true)
-        realmConfigBuilder.name("inventory.realm")
+        realmConfigBuilder.name("INVENTORY.realm")
         realmConfigBuilder.deleteRealmIfMigrationNeeded()
         Realm.setDefaultConfiguration(realmConfigBuilder.build())
         return RealmRepository(Realm.getDefaultInstance())

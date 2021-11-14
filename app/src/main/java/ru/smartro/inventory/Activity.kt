@@ -1,22 +1,45 @@
-package ru.smartro.inventory.ui.main
+package ru.smartro.inventory
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
+import androidx.core.app.ActivityCompat
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.location.*
 import io.realm.Realm
 import io.realm.RealmConfiguration
-import ru.smartro.inventory.R
 import ru.smartro.inventory.base.AbstractAct
 import ru.smartro.inventory.base.AbstractFragment
-import ru.smartro.inventory.RealmRepository
+import ru.smartro.inventory.ui.main.LoginFragment
+import ru.smartro.inventory.ui.main.MapFragment
 
-class MainActivity : AbstractAct() , LocationListener {
+class Activity : AbstractAct() , LocationListener {
     private lateinit var mLocationManager: LocationManager
     private lateinit var mMapKit: MapKit
 
-    val realmDB: RealmRepository by lazy {
+    val db: RealmRepository by lazy {
         initRealm()
+    }
+
+    private val PERMISSIONS = arrayOf(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.READ_EXTERNAL_STORAGE,
+        Manifest.permission.READ_PHONE_STATE,
+        Manifest.permission.LOCATION_HARDWARE,
+        Manifest.permission.ACCESS_NETWORK_STATE
+    )
+
+    fun hasPermissions(vararg permissions: Array<String>): Boolean =
+        permissions.all {
+            ActivityCompat.checkSelfPermission(this, it.toString()) == PackageManager.PERMISSION_GRANTED
+        }
+
+    fun checkPermission(vararg permissions: Array<String>) {
+        if (!hasPermissions(PERMISSIONS)) {
+            ActivityCompat.requestPermissions(this, PERMISSIONS, 1)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,13 +64,18 @@ class MainActivity : AbstractAct() , LocationListener {
         val location: Location? = LocationManagerUtils.getLastKnownLocation()
         log.info("onCreate", location?.position.toString())
 
-        if (savedInstanceState == null) {
-            actionBar?.title = "Вход в систему"
-            showFragment(LoginFragment.newInstance())
-        }
         // TODO: 12.11.2021 место!))
         initRealm()
 
+        if (savedInstanceState == null) {
+            actionBar?.title = "Вход в систему"
+            if (Snull == db.loadConfig("token")) {
+                showFragment(LoginFragment.newInstance())
+            } else {
+                showFragment(MapFragment.newInstance())
+            }
+        }
+        checkPermission(PERMISSIONS)
     }
 
     private fun initRealm(): RealmRepository {
@@ -96,5 +124,6 @@ class MainActivity : AbstractAct() , LocationListener {
 //        TODO("Not yet implemented")
 //        val log: Logger = LoggerFactory.getLogger(MainActivity::class.java)
 //        log.warn("p0=$p0")
+
     }
 }

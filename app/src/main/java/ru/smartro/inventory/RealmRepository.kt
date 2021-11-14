@@ -29,7 +29,7 @@ class RealmRepository(private val realm: Realm) {
 
     fun loadConfig(name: String): String {
         realm.refresh()
-        val configEntity = realm.where(ConfigEntityRealm::class.java).findFirst() ?: return "rNull"
+        val configEntity = realm.where(ConfigEntityRealm::class.java).findFirst() ?: return Snull
         return configEntity.value
     }
 

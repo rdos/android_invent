@@ -16,7 +16,7 @@
 
         android:theme="@style/Theme.InventoryFact">
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".Activity"
             android:exported="true"
             android:windowSoftInputMode="stateVisible|adjustResize"
             >

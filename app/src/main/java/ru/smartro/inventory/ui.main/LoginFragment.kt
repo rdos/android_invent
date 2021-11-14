@@ -1,5 +1,8 @@
 package ru.smartro.inventory.ui.main
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,6 +12,8 @@ import ru.smartro.inventory.database.LoginEntity
 import ru.smartro.inventory.R
 
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.ViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import ru.smartro.inventory.base.AbstractFragment
@@ -23,6 +28,7 @@ class LoginFragment : AbstractFragment(){
     }
 
     private lateinit var viewModel: LoginViewModel
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,6 +73,11 @@ class LoginFragment : AbstractFragment(){
                 }
             )
         }
+    }
 
+
+
+    class LoginViewModel : ViewModel() {
+        // TODO: Implement the ViewModel
     }
 }

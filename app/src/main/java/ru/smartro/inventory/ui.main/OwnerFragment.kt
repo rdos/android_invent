@@ -30,6 +30,7 @@ class OwnerFragment : AbstractFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setActionBarTitle(R.string.owner_fragment__choose_owner)
 //        viewModel = ViewModelProvider(
 //            this,
 //            ViewModelProvider.NewInstanceFactory()

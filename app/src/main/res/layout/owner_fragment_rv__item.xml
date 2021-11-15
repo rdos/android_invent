@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:paddingTop="@dimen/margin_max_max"
-        android:paddingBottom="@dimen/margin_max_max"
+        android:paddingTop="@dimen/margin_32"
+        android:paddingBottom="@dimen/margin_32"
         />
 </androidx.appcompat.widget.LinearLayoutCompat>

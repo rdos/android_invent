@@ -1,8 +1,5 @@
 package ru.smartro.inventory.ui.main
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +9,6 @@ import ru.smartro.inventory.database.LoginEntity
 import ru.smartro.inventory.R
 
 import androidx.appcompat.widget.AppCompatButton
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -45,7 +41,7 @@ class LoginFragment : AbstractFragment(){
             ViewModelProvider.NewInstanceFactory()
         ).get(LoginViewModel::class.java)
         // TODO: Use the ViewModel
-
+        showHideActionBar(true)
 //        baseview.setOnClickListener {
 //            MyUtil.hideKeyboard(this)
 //        }
@@ -56,7 +52,7 @@ class LoginFragment : AbstractFragment(){
         val tietPassword = view.findViewById<TextInputEditText>(R.id.tiet_login_fragment__password)
         tietPassword.setText("xot1ieG5ro~hoa,ng4Sh")
 
-        view.findViewById<AppCompatButton>(R.id.btn_login_fragment).setOnClickListener{
+        view.findViewById<AppCompatButton>(R.id.acb_login_fragment).setOnClickListener{
             val loginEntity = LoginEntity(tietLogin.text.toString(), tietPassword.text.toString())
             val restClient = RestClient()
             val loginRequest = LoginRequest(restClient)

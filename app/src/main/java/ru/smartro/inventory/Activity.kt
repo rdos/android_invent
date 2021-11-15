@@ -1,6 +1,8 @@
 package ru.smartro.inventory
 
 import android.Manifest
+import android.content.Context
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
@@ -13,6 +15,7 @@ import ru.smartro.inventory.base.AbstractAct
 import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.ui.main.LoginFragment
 import ru.smartro.inventory.ui.main.MapFragment
+import java.io.File
 
 class Activity : AbstractAct() , LocationListener {
     private lateinit var mLocationManager: LocationManager
@@ -24,21 +27,23 @@ class Activity : AbstractAct() , LocationListener {
 
     private val PERMISSIONS = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.LOCATION_HARDWARE,
+        Manifest.permission.ACCESS_NETWORK_STATE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.READ_PHONE_STATE,
-        Manifest.permission.LOCATION_HARDWARE,
-        Manifest.permission.ACCESS_NETWORK_STATE
+        Manifest.permission.CAMERA
     )
+
 
     fun hasPermissions(vararg permissions: Array<String>): Boolean =
         permissions.all {
             ActivityCompat.checkSelfPermission(this, it.toString()) == PackageManager.PERMISSION_GRANTED
         }
 
-    fun checkPermission(vararg permissions: Array<String>) {
-        if (!hasPermissions(PERMISSIONS)) {
-            ActivityCompat.requestPermissions(this, PERMISSIONS, 1)
+    fun checkPermission(permissions: Array<String>) {
+        if (!hasPermissions(permissions)) {
+            ActivityCompat.requestPermissions(this, permissions, 1)
         }
     }
 
@@ -68,14 +73,42 @@ class Activity : AbstractAct() , LocationListener {
         initRealm()
 
         if (savedInstanceState == null) {
-            actionBar?.title = "Вход в систему"
             if (Snull == db.loadConfig("token")) {
                 showFragment(LoginFragment.newInstance())
+
             } else {
                 showFragment(MapFragment.newInstance())
             }
+            checkPermission(PERMISSIONS)
         }
-        checkPermission(PERMISSIONS)
+    }
+
+    fun showHideActionBar(isHideMode: Boolean) {
+        if (isHideMode) {
+            supportActionBar?.hide()
+        }
+        else {
+            supportActionBar?.show()
+        }
+    }
+
+    fun setActionBarTitle(title: String) {
+        showHideActionBar(false)
+        supportActionBar?.title = title
+    }
+
+    fun setScreenOrientation(isLockOrientationMode: Boolean) {
+        if (isLockOrientationMode) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+        }
+        else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     private fun initRealm(): RealmRepository {
@@ -98,6 +131,22 @@ class Activity : AbstractAct() , LocationListener {
             .commitNow()
 //TOdo            .commitNow()
     }
+
+    fun showNextFragment(fragment: AbstractFragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.container, fragment)
+            .addToBackStack(fragment.javaClass.simpleName)
+            .commit()
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount > 1) {
+            supportFragmentManager.popBackStack();
+        } else {
+            super.onBackPressed()
+        }
+    }
+
 
     override fun onDestroy() {
         mLocationManager.unsubscribe(this)
@@ -126,4 +175,15 @@ class Activity : AbstractAct() , LocationListener {
 //        log.warn("p0=$p0")
 
     }
+
+    /** Use external media if it is available, our app's file directory otherwise */
+    fun getOutputDirectory(context: Context): File {
+        val appContext = context.applicationContext
+        val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
+            File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() } }
+        return if (mediaDir != null && mediaDir.exists())
+            mediaDir else appContext.filesDir
+    }
+
+
 }

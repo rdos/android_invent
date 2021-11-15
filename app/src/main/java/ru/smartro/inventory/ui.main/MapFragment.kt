@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatButton
 import androidx.lifecycle.ViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ru.smartro.inventory.R
@@ -33,6 +34,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
     }
 
     private lateinit var mViewModel: MapViewModel
+    private lateinit var mMapView: MapView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,15 +65,23 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         ).get(MapViewModel::class.java)
 
         mMapView = view.findViewById<View>(R.id.mapview) as MapView
+        showHideActionBar(true)
 
         val mMapKit = MapKitFactory.getInstance()
         val userLocationLayer = mMapKit.createUserLocationLayer(mMapView.mapWindow)
         userLocationLayer.isVisible = true
         userLocationLayer.isHeadingEnabled = true
+        userLocationLayer.isAutoZoomEnabled = true
         userLocationLayer.setObjectListener(this)
+
         val fabGotoMyLocation = view.findViewById<FloatingActionButton>(R.id.fab_map_fragment__goto_my_location)
         fabGotoMyLocation.setOnClickListener {
             gotoMyLocation()
+        }
+
+        val apbAddPlatform = view.findViewById<AppCompatButton>(R.id.apb_map_fragment__add_platform)
+        apbAddPlatform.setOnClickListener{
+            showNextFragment(PlatformCameraFragment.newInstance())
         }
         gotoMyLocation()
 //        debug_fab.setOnClickListener {
@@ -79,7 +89,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
 //        }
     }
 
-    private lateinit var mMapView: MapView
+
 
     override fun onStart() {
         super.onStart()
@@ -93,7 +103,6 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
     }
 
     class MapViewModel : ViewModel() {
-        // TODO: Implement the ViewModel
     }
 
     override fun onObjectAdded(p0: UserLocationView) {

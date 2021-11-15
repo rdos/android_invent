@@ -12,7 +12,7 @@ import ru.smartro.inventory.database.OwnerResponse
 //src;dest
 
 //    LiveRealmData
-class RealmRepository(private val realm: Realm) {
+class RealmRepository(private val realm: Realm)  {
     private val TAG : String = "RealmRepository--AAA"
 
     fun saveConfig(configEntity: ConfigEntityRealm) {

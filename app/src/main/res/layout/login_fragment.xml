@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@id/btn_login_fragment"
+        app:layout_constraintBottom_toTopOf="@id/acb_login_fragment"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
@@ -23,7 +23,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_def"
+            android:layout_marginTop="@dimen/margin_16"
             android:gravity="center_horizontal"
             android:text="@string/login_fragment__welcome_to_system"
             android:textColor="@color/black"
@@ -33,7 +33,7 @@
             android:id="@+id/til_login_fragment__login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin_def"
+            android:layout_marginHorizontal="@dimen/margin_16"
             android:layout_marginTop="24dp">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -50,7 +50,7 @@
             android:id="@+id/til_login_fragment__password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/margin_def"
+            android:layout_marginHorizontal="@dimen/margin_16"
             android:layout_marginTop="24dp"
             app:passwordToggleEnabled="true">
 
@@ -68,10 +68,10 @@
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btn_login_fragment"
+        android:id="@+id/acb_login_fragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_def"
+        android:layout_margin="@dimen/margin_16"
         android:text="@string/login_fragment__welcome_to_system"
         android:textColor="@color/white"
         android:background="@color/purple_200"

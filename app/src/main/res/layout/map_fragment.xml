@@ -5,19 +5,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.yandex.mapkit.mapview.MapView
-        android:id="@+id/mapview"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_map_fragment__goto_my_location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_def"
-        android:layout_marginBottom="72dp"
-        android:backgroundTint="@color/purple_500"
-        android:src="@drawable/ic_map_fragment__goto_my_location"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <com.yandex.mapkit.mapview.MapView
+            android:id="@+id/mapview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_map_fragment__goto_my_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/purple_200"
+            android:src="@drawable/ic_map_fragment__goto_my_location"
+            android:layout_marginEnd="@dimen/margin_16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="@dimen/margin_16"
+            android:layout_marginBottom="@dimen/margin_128"
+            />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/apb_map_fragment__add_platform"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add platform"
+            android:paddingHorizontal="@dimen/margin_16"
+            android:backgroundTint="@color/purple_200"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="@dimen/margin_16"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

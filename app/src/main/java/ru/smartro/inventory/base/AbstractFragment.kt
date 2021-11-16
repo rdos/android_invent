@@ -24,8 +24,8 @@ abstract class AbstractFragment : Fragment() {
         mActivity.showNextFragment(fragment)
     }
 
-    protected fun getOutputDirectory(context: Context): File {
-        return mActivity.getOutputDirectory(context)
+    protected fun getOutputDirectory(p_id: Int): File {
+        return mActivity.getOutputDirectory(p_id)
     }
 
     protected fun showHideActionBar(isHideMode: Boolean) {

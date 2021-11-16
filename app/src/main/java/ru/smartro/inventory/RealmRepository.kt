@@ -1,13 +1,16 @@
 package ru.smartro.inventory
 
 import io.realm.Realm
+import io.realm.RealmList
+import io.realm.RealmObject
 import ru.smartro.inventory.database.ConfigEntityRealm
 import ru.smartro.inventory.database.OwnerResponse
+import ru.smartro.inventory.database.PlatformEntityRealm
 
-// find!
+// find! has
 // 4) save load ; get set ; add update;
 //;new;edit;delete;clear;; Has? extra?
-// TODO: 12.11.2021
+// TODO: 12.11.2021 "block:() -> Unit "=0
 //5) initialYear, initialDay
 //src;dest
 
@@ -31,6 +34,16 @@ class RealmRepository(private val realm: Realm)  {
         realm.refresh()
         val configEntity = realm.where(ConfigEntityRealm::class.java).findFirst() ?: return Snull
         return configEntity.value
+    }
+
+    fun save(block: () -> Unit) {
+        realm.executeTransaction { realm ->
+            block()
+        }
+    }
+//    DynamicRealmObject
+    fun insert(realmObject: RealmObject) {
+        realm.insertOrUpdate(realmObject)
     }
 
 

@@ -4,7 +4,7 @@
       <pattern>%logger{12}</pattern>
     </tagEncoder>
     <encoder>
-      <pattern>RRR[%thread] %d{HH:mm:ss.SSS} %logger{36} - %msg%n</pattern>
+      <pattern>RRR[%-10thread]---%msg%n</pattern>
     </encoder>
   </appender>
 
@@ -12,3 +12,4 @@
     <appender-ref ref="logcat" />
   </root>
 </configuration>
+<!-- %d{HH:mm:ss.SSS} %logger{36} -->

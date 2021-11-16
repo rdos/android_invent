@@ -8,4 +8,6 @@
     <string name="switch_camera_button_alt">switch</string>
     <string name="capture_button_alt">capture</string>
     <string name="owner_fragment__choose_owner">Выберите организацию</string>
+    <string name="delete_dialog">Delete current photo?</string>
+    <string name="delete_title">Confirm</string>
 </resources>

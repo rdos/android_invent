@@ -27,12 +27,12 @@ class PlatformFragment : AbstractFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view = inflater.inflate(R.layout.login_fragment, container, false)
+        val view = inflater.inflate(R.layout.platform_fragment, container, false)
 
 
-        view.findViewById<AppCompatButton>(R.id.acb_login_fragment).setOnClickListener {
-            exitFragment()
-        }
+//        view.findViewById<AppCompatButton>(R.id.acb_login_fragment).setOnClickListener {
+//            exitFragment()
+//        }
         return view
     }
 

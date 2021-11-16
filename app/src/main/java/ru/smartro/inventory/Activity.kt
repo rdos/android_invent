@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Environment
 import androidx.core.app.ActivityCompat
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
@@ -176,14 +177,10 @@ class Activity : AbstractAct() , LocationListener {
 
     }
 
-    /** Use external media if it is available, our app's file directory otherwise */
-    fun getOutputDirectory(context: Context): File {
-        val appContext = context.applicationContext
-        val mediaDir = context.externalMediaDirs.firstOrNull()?.let {
-            File(it, appContext.resources.getString(R.string.app_name)).apply { mkdirs() } }
-        return if (mediaDir != null && mediaDir.exists())
-            mediaDir else appContext.filesDir
+    fun getOutputDirectory(p_id: Int): File {
+        val dirPath = filesDir.absolutePath + File.separator + p_id
+        val file = File(dirPath)
+        if (!file.exists()) file.mkdirs()
+        return file
     }
-
-
 }

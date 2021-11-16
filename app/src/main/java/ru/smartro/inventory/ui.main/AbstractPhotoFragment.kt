@@ -1,15 +1,16 @@
 package ru.smartro.inventory.ui.main
 
 import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.graphics.Matrix
 import android.graphics.drawable.ColorDrawable
-import android.hardware.display.DisplayManager
 import android.media.MediaScannerConnection
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +19,6 @@ import android.webkit.MimeTypeMap
 import android.widget.ImageButton
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.camera.core.*
-import androidx.camera.core.ImageCapture.Metadata
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
@@ -30,14 +30,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.smartro.inventory.R
 import ru.smartro.inventory.base.AbstractFragment
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import kotlin.math.abs
-import kotlin.math.max
-import kotlin.math.min
 
 /** Helper type alias used for analysis use case callbacks */
 typealias LumaListener = (luma: Double) -> Unit
@@ -66,8 +65,21 @@ fun ImageButton.simulateClick(delay: Long = ANIMATION_FAST_MILLIS) {
  * - Photo taking
  * - Image analysis
 :()*/
-abstract class CameraAbstractFragment : AbstractFragment() {
+abstract class CameraAbstractFragment(private val p_id: Int) : AbstractFragment() {
 
+    companion object {
+
+        private const val TAG = "CameraXBasic"
+        private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
+        private const val PHOTO_EXTENSION = ".jpg"
+        private const val RATIO_4_3_VALUE = 4.0 / 3.0
+        private const val RATIO_16_9_VALUE = 16.0 / 9.0
+
+        /** Helper function used to create a timestamped file */
+        private fun createFile(baseFolder: File, format: String, extension: String) =
+            File(baseFolder, SimpleDateFormat(format, Locale.US)
+                .format(System.currentTimeMillis()) + extension)
+    }
     private var mCameraUiFragment: View? = null
     private lateinit var mPreviewView: PreviewView
     private lateinit var outputDirectory: File
@@ -116,7 +128,7 @@ abstract class CameraAbstractFragment : AbstractFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val view = inflater.inflate(R.layout.camera_fragment, container, false)
+        val view = inflater.inflate(R.layout.photo_fragment, container, false)
         return view
     }
 
@@ -153,8 +165,7 @@ abstract class CameraAbstractFragment : AbstractFragment() {
         windowManager = WindowManager(view.context)
 
         // Determine the output directory
-        outputDirectory = getOutputDirectory(requireContext())
-
+        outputDirectory= getOutputDirectory(p_id)
         mPreviewView = view.findViewById(R.id.pv_camera_fragment)
 
         // Wait for the views to be properly laid out
@@ -366,34 +377,16 @@ abstract class CameraAbstractFragment : AbstractFragment() {
             }
         }
 
-        // Setup for button used to switch cameras
-//        cameraUiContainerBinding?.cameraSwitchButton?.let {
-//
-//            // Disable the button until the camera is set up
-//            it.isEnabled = false
-//
-//            // Listener for button used to switch cameras. Only called if the button is enabled
-//            it.setOnClickListener {
-//                lensFacing = if (CameraSelector.LENS_FACING_FRONT == lensFacing) {
-//                    CameraSelector.LENS_FACING_BACK
-//                } else {
-//                    CameraSelector.LENS_FACING_FRONT
-//                }
-//                // Re-bind use cases to update selected camera
-//                bindCameraUseCases()
-//            }
-//        }
 
-        // Listener for button used to view the most recent photo
-//        cameraUiContainerBinding?.photoViewButton?.setOnClickListener {
-//            // Only navigate when the gallery has photos
-//            if (true == outputDirectory.listFiles()?.isNotEmpty()) {
-//                Navigation.findNavController(
-//                        requireActivity(), R.id.fragment_container
-//                ).navigate(CameraFragmentDirections
-//                        .actionCameraToGallery(outputDirectory.absolutePath))
-//            }
-//        }
+        val acibShow = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__show_photo)
+        acibShow?.setOnClickListener {
+            showNextFragment(GalleryFragment.newInstance(p_id))
+        }
+
+        val acibNext = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__next)
+        acibNext?.setOnClickListener {
+            showNextFragment(PlatformFragment.newInstance())
+        }
     }
 
     /** Enabled or disabled a button to switch cameras depending on the available cameras */
@@ -416,22 +409,6 @@ abstract class CameraAbstractFragment : AbstractFragment() {
     }
 
 
-    companion object {
-
-        private const val TAG = "CameraXBasic"
-        private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
-        private const val PHOTO_EXTENSION = ".jpg"
-        private const val RATIO_4_3_VALUE = 4.0 / 3.0
-        private const val RATIO_16_9_VALUE = 16.0 / 9.0
-
-
-
-        /** Helper function used to create a timestamped file */
-        private fun createFile(baseFolder: File, format: String, extension: String) =
-                File(baseFolder, SimpleDateFormat(format, Locale.US)
-                        .format(System.currentTimeMillis()) + extension)
-    }
-
 
     override fun onResume() {
         super.onResume()
@@ -443,4 +420,7 @@ abstract class CameraAbstractFragment : AbstractFragment() {
 //            )
 //        }
     }
+
+
+
 }

@@ -23,6 +23,7 @@ class App : Application(){
 const val AUTH_STAGE = "https://auth.stage.smartro.ru/api"
 const val Snull = "rNull"
 const val Inull = -111
+const val Dnull = -110.1
 //https://ru.wikipedia.org/wiki/TensorFlow
 fun AbstractFragment.toast(text: String? = "") {
     try {

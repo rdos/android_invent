@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ru.smartro.inventory.R
@@ -16,16 +17,21 @@ import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.layers.ObjectEvent
 import com.yandex.mapkit.location.Location
 import com.yandex.mapkit.location.LocationManagerUtils
-import com.yandex.mapkit.map.CameraPosition
+import com.yandex.mapkit.map.*
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
+import com.yandex.runtime.ui_view.ViewProvider
 import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.inventory.base.RestClient
+import ru.smartro.inventory.core.*
+import ru.smartro.inventory.database.ContainerEntity
+import ru.smartro.inventory.database.PlatformEntityRealm
 import ru.smartro.inventory.toast
 
 
-class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCallback {
+class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCallback{
 
     companion object {
 //
@@ -33,6 +39,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         fun newInstance() = MapFragment()
     }
 
+    private lateinit var mMapObjectCollection: MapObjectCollection
     private lateinit var mViewModel: MapViewModel
     private lateinit var mMapView: MapView
 
@@ -47,16 +54,23 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
     private fun gotoMyLocation() {
         log.debug("gotoMyLocation.before")
         try {
-            val location: Location? = LocationManagerUtils.getLastKnownLocation()
-            val position = location?.position?: TARGET_LOCATION
-            log.info("gotoMyLocation", position.toString())
-            val cameraPosition = CameraPosition(position, 15.0f, 0.0f, 0.0f)
+            log.info("gotoMyLocation", getLastPoint().toString())
+            val cameraPosition = CameraPosition(getLastPoint(), 15.0f, 0.0f, 0.0f)
             val cameraAnimation = Animation(Animation.Type.SMOOTH, 1F)
             mMapView.map.move(cameraPosition, cameraAnimation, this)
         } catch (e: Exception) {
             toast("Что-то пошло не так :(")
         }
     }
+
+    fun getLastPoint(): Point {
+        val location: Location? = LocationManagerUtils.getLastKnownLocation()
+        val position = location?.position?: TARGET_LOCATION
+        // TODO: 15.11.2021 !! 
+        return Point(54.881347, 55.44919)
+    }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mViewModel = ViewModelProvider(
@@ -81,15 +95,51 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
 
         val apbAddPlatform = view.findViewById<AppCompatButton>(R.id.apb_map_fragment__add_platform)
         apbAddPlatform.setOnClickListener{
-            showNextFragment(PlatformCameraFragment.newInstance())
+            val containerEntity = ContainerEntity()
+            db().insert(containerEntity)
+            showNextFragment(PlatformPhotoFragment.newInstance(containerEntity.id))
         }
         gotoMyLocation()
+
+        mMapObjectCollection = mMapView.map.mapObjects
+        // TODO: 15.11.2021
+        val rpcEntity = RPCProvider("inventory_mobile_get_platforms", getLastPoint()).getRPCEntity()
+        val restClient = RestClient()
+        val conic = RPCRequest(restClient).callAsyncRPC(rpcEntity)
+        conic.observe(
+            viewLifecycleOwner,
+            { platforms ->
+//                cats?.let {
+//                    Log.d(TAG, "mafka: 0)ne ${it.size}")
+//                    photoRecyclerView.adapter = PhotoAdapter(it, context)
+//                }
+//                showFragment(OwnerFragment.newInstance())
+                addPlatformToMap(platforms)
+            }
+        )
 //        debug_fab.setOnClickListener {
 //            startActivity(Intent(this, DebugActivity::class.java))
 //        }
+        mMapObjectCollection.addTapListener { mapObject, point ->
+            log.info("mMapObjectCollection")
+            true
+        }
     }
 
+    private fun getIconViewProvider(drawableResId: Int): ViewProvider {
+        fun iconMarker(_drawableResId: Int): View {
+            val resultIcon = View(context).apply { background = ContextCompat.getDrawable(context, _drawableResId) }
+            return resultIcon
+        }
+        return ViewProvider(iconMarker(drawableResId))
+    }
 
+    private fun addPlatformToMap(platforms: List<PlatformEntityRealm>) {
+        platforms.forEach {
+            val point = Point(it.coordinates!!.lat, it.coordinates!!.lng)
+            mMapObjectCollection.addPlacemark(point, getIconViewProvider(it.getIconDrawableResId()))
+        }
+    }
 
     override fun onStart() {
         super.onStart()
@@ -124,4 +174,5 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         log.warn("onMoveFinished p0=", p0)
 
     }
+
 }

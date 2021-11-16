@@ -36,7 +36,7 @@
         android:contentDescription="@string/capture_button_alt" />
 
     <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/photo_view_button"
+        android:id="@+id/acib_camera_fragment_ui__show_photo"
         android:layout_width="@dimen/round_button_medium"
         android:layout_height="@dimen/round_button_medium"
         android:layout_marginBottom="@dimen/margin_xlarge"
@@ -45,7 +45,20 @@
         android:scaleType="fitCenter"
         android:background="@drawable/ic_outer_circle"
         app:srcCompat="@drawable/ic_photo"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/acib_camera_fragment_ui__next"
+        android:layout_width="@dimen/round_button_medium"
+        android:layout_height="@dimen/round_button_medium"
+        android:layout_marginBottom="@dimen/margin_xlarge"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:padding="@dimen/spacing_large"
+        android:scaleType="fitCenter"
+        android:background="@drawable/ic_outer_circle"
+        app:srcCompat="@drawable/ic_camera_fragment_ui__next"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

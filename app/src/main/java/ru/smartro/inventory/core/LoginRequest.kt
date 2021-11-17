@@ -8,7 +8,6 @@ import ru.smartro.inventory.AUTH_STAGE
 import ru.smartro.inventory.base.AbstractO
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.database.ConfigEntityRealm
-import ru.smartro.inventory.database.LoginEntity
 import ru.smartro.inventory.database.LoginResponse
 import java.io.IOException
 

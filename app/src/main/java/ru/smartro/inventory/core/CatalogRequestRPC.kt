@@ -2,7 +2,6 @@ package ru.smartro.inventory.core
 
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
-import com.google.gson.JsonSyntaxException
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -10,16 +9,14 @@ import ru.smartro.inventory.base.AbstractO
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.database.PlatformEntityRealm
 import java.io.IOException
-import com.google.gson.reflect.TypeToken
-import java.lang.reflect.Type
 
 
-class RPCRequest(val p_RestClient: RestClient): AbstractO(), Callback {
+class CatalogRequestRPC(val p_RestClient: RestClient): AbstractO(), Callback {
     private val result = MutableLiveData<List<PlatformEntityRealm>>()
 
-    fun callAsyncRPC(rpcEntity: RPCEntity): MutableLiveData<List<PlatformEntityRealm>> {
+    fun callAsyncRPC(catalogEntity: CatalogsRequestEntity): MutableLiveData<List<PlatformEntityRealm>> {
         log.debug("callAsyncRPC.before" )
-        val requestBody = rpcEntity.toRequestBody()
+        val requestBody = catalogEntity.toRequestBody()
         val url = "https://worknote-back.stage.smartro.ru/api/rpc"
         val request = p_RestClient.newRequest(url).post(requestBody).build()
         p_RestClient.newCall(request, this)
@@ -38,19 +35,21 @@ class RPCRequest(val p_RestClient: RestClient): AbstractO(), Callback {
         if (!response.isSuccessful) {
             throw IOException("Error response $response")
         }
-
-//        val typeToken: Type = object : TypeToken<List<PlatformEntityRealm>>() {}.type
-        val responseO = Gson().fromJson(bodyString, ResponseO::class.java)
-//        val json = Gson().toJson(responseO.payload)
-//        val platformEntityRealms = Gson().fromJson<List<PlatformEntityRealm>>(json, typeToken)
-        log.info("onResponse responseO=${responseO}")
+        val responseI = Gson().fromJson(bodyString, ResponseI::class.java)
+        log.info("onResponse responseO=${responseI}")
         db.save {
-            for(payload in responseO.payload) {
-                db.insert(payload)
+            for(container_platform_type in responseI.payload.container_platform_type) {
+                db.insert(container_platform_type)
             }
         }
 
-        result.postValue(responseO.payload)
+        db.save {
+            for(container_type in responseI.payload.container_type) {
+                db.insert(container_type)
+            }
+        }
+
+//        result.postValue(responseO.payload)
     }
 
 

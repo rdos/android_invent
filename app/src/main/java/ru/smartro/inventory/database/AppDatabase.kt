@@ -1,4 +1,4 @@
-package ru.smartro.inventory.core
+package ru.smartro.inventory.database
 
 import android.content.Context
 

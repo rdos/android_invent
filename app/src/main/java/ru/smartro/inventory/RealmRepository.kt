@@ -1,11 +1,12 @@
 package ru.smartro.inventory
 
+import android.util.Log
 import io.realm.Realm
-import io.realm.RealmList
 import io.realm.RealmObject
 import ru.smartro.inventory.database.ConfigEntityRealm
 import ru.smartro.inventory.database.OwnerResponse
 import ru.smartro.inventory.database.PlatformEntityRealm
+import java.util.concurrent.Executors
 
 // find! has
 // 4) save load ; get set ; add update;
@@ -15,36 +16,56 @@ import ru.smartro.inventory.database.PlatformEntityRealm
 //src;dest
 
 //    LiveRealmData
-class RealmRepository(private val realm: Realm)  {
+class RealmRepository(private val mRealm: Realm) /*: Realm.Transaction*/ {
     private val TAG : String = "RealmRepository--AAA"
 
     fun saveConfig(configEntity: ConfigEntityRealm) {
-        realm.executeTransaction { realm ->
+        mRealm.executeTransaction { realm ->
             realm.insertOrUpdate(configEntity)
         }
     }
 
     fun saveOwner(ownerEntityList: OwnerResponse) {
-        realm.executeTransaction { realm ->
+        mRealm.executeTransaction { realm ->
             realm.insertOrUpdate(ownerEntityList.data.organisationEntityRealms)
         }
     }
 
     fun loadConfig(name: String): String {
-        realm.refresh()
-        val configEntity = realm.where(ConfigEntityRealm::class.java).findFirst() ?: return Snull
+        mRealm.refresh()
+        val configEntity = mRealm.where(ConfigEntityRealm::class.java).findFirst() ?: return Snull
         return configEntity.value
     }
 
     fun save(block: () -> Unit) {
-        realm.executeTransaction { realm ->
+        mRealm.executeTransaction { realm ->
             block()
         }
     }
-//    DynamicRealmObject
+
     fun insert(realmObject: RealmObject) {
-        realm.insertOrUpdate(realmObject)
+        mRealm.insertOrUpdate(realmObject)
     }
+
+    fun saveSave(platform_id: Int) {
+        val exe = Executors.newSingleThreadExecutor()
+
+        exe.execute {
+            Log.i("TAG", Thread.currentThread().id.toString())
+            val onSuccess = Realm.Transaction.OnSuccess {
+                Log.e("TAG", "kasta каста ()")
+            }
+            val backgroundRealm = Realm.getDefaultInstance()
+            val realmAsyncTask: Unit = backgroundRealm.executeTransaction {
+                val containerEntity = PlatformEntityRealm(platform_id)
+                backgroundRealm.insertOrUpdate(containerEntity)
+            }
+        }
+    }
+
+//    DynamicRealmObject
+
+
 
 
 //fun findWayTask(): WayTaskEntity {

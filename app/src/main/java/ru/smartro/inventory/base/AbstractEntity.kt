@@ -11,13 +11,17 @@ import org.slf4j.LoggerFactory
 
 //ToD LiveEntity
 abstract class AbstractEntity  {
-    protected val log: Logger = LoggerFactory.getLogger("${this::class.simpleName}")
+//    protected val log: Logger = LoggerFactory.getLogger("${this::class.simpleName}")
+
+    fun log(): Logger {
+        return LoggerFactory.getLogger("${this::class.simpleName}")
+    }
 
     fun toRequestBody(): RequestBody {
-        log.debug("toRequestBody.before")
+        log().debug("toRequestBody.before")
         var json = Gson().toJson(this)
 //        json = "{\"payload\":{\"lat\":54.881347,\"lng\":55.44919, \"organisation_id\":1},\"type\":\"inventory_mobile_get_platforms\"}"
-        log.info("toRequestBody. json=${json}")
+        log().info("toRequestBody. json=${json}")
         return json.toRequestBody()
     }
 

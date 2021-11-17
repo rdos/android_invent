@@ -1,4 +1,4 @@
-package ru.smartro.inventory.database
+package ru.smartro.inventory.core
 
 import io.realm.RealmObject
 import ru.smartro.inventory.base.AbstractEntity

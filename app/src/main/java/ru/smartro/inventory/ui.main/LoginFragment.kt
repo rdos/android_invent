@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import ru.smartro.inventory.database.LoginEntity
+import ru.smartro.inventory.core.LoginEntity
 import ru.smartro.inventory.R
 
 import androidx.appcompat.widget.AppCompatButton

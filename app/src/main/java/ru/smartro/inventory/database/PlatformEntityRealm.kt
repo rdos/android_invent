@@ -21,7 +21,7 @@ import java.io.Serializable
 open class PlatformEntityRealm(
     @SerializedName("id")
     @PrimaryKey
-    var id: Int? = Inull,
+    var id: Int = Inull,
     @SerializedName("length")
     var length: Int? = Inull,
     @SerializedName("width")
@@ -38,11 +38,11 @@ open class PlatformEntityRealm(
     @SerializedName("address")
     var address: String? = null,
     //раскоментируй и посмотри!
-//    @SerializedName("type")
-//    var type: RealmObject? = null,
+    @SerializedName("type")
+    var type: PlatformTypeRealm? = null,
 
     @SerializedName("coordinates")
-    var coordinates: CoordinatesEntityRealm? = null,
+    var coordinates: CoordinatesRealm? = null,
     @SerializedName("datetime")
     var datetime: String? = null,
     @SerializedName("comment")
@@ -52,9 +52,9 @@ open class PlatformEntityRealm(
     @SerializedName("status_name")
     var status_name: String = Snull,
     @SerializedName("containers")
-    var containers: RealmList<ContainerEntity> = RealmList(),
+    var containers: RealmList<ContainerEntityRealm> = RealmList(),
 
-    var imageBase64: RealmList<ImageEntity> = RealmList(),
+    var imageBase64: RealmList<ImageRealm> = RealmList(),
 ) : RealmObject(), Serializable {
 
 
@@ -137,18 +137,18 @@ open class PlatformEntityRealm(
     }
 }
 
-open class ImageEntity(
+open class ImageRealm(
     var imageBase64: String = Snull,
     var date: String = Snull,
-    var coordinates: CoordinatesEntityRealm? = null,
+    var coordinates: CoordinatesRealm? = null,
 ) : Serializable, RealmObject()
 
-open class CoordinatesEntityRealm(
+open class CoordinatesRealm(
     var lat: Double = Dnull,
     var lng: Double = Dnull
 ): RealmObject()
 
-open class ContainerEntity(
+open class ContainerEntityRealm(
     @SerializedName("id")
     @PrimaryKey
     var id: Int = Inull,
@@ -160,8 +160,38 @@ open class ContainerEntity(
     var container_status_name: String = Snull,
     @SerializedName("has_pedal")
     var has_pedal: Int = Inull,
-//    @SerializedName("type")
-//    var type: String? = null,
+    @SerializedName("type")
+    var type: ContainerTypeRealm? = null,
     @SerializedName("comment")
     var comment: String? = null
 ) : RealmObject()
+
+open class ContainerTypeRealm(
+    @SerializedName("id")
+    @PrimaryKey
+    var id: Int = Inull,
+    @SerializedName("name")
+    var name: String = Snull,
+    @SerializedName("organisation_id")
+    var organisation_id: Int = Inull
+) : RealmObject()
+
+open class PlatformTypeRealm(
+    @SerializedName("id")
+    @PrimaryKey
+    var id: Int = Inull,
+    @SerializedName("name")
+    var name: String = Snull,
+    @SerializedName("organisation_id")
+    var organisation_id: Int = Inull
+) : RealmObject()
+
+//open class CardStatusTypeRealm(
+//    @SerializedName("id")
+//    @PrimaryKey
+//    var id: Int = Inull,
+//    @SerializedName("name")
+//    var name: String = Snull,
+//    @SerializedName("organisation_id")
+//    var organisation_id: Int = Inull
+//) : RealmObject()

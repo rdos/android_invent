@@ -26,7 +26,6 @@ import com.yandex.runtime.ui_view.ViewProvider
 import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.*
-import ru.smartro.inventory.database.ContainerEntity
 import ru.smartro.inventory.database.PlatformEntityRealm
 import ru.smartro.inventory.toast
 
@@ -95,9 +94,11 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
 
         val apbAddPlatform = view.findViewById<AppCompatButton>(R.id.apb_map_fragment__add_platform)
         apbAddPlatform.setOnClickListener{
-            val containerEntity = ContainerEntity()
-            db().insert(containerEntity)
-            showNextFragment(PlatformPhotoFragment.newInstance(containerEntity.id))
+            val platformEntity = PlatformEntityRealm()
+            db().save {
+                db().insert(platformEntity)
+            }
+            showNextFragment(PlatformPhotoFragment.newInstance(platformEntity.id))
         }
         gotoMyLocation()
 
@@ -105,7 +106,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         // TODO: 15.11.2021
         val rpcEntity = RPCProvider("inventory_mobile_get_platforms", getLastPoint()).getRPCEntity()
         val restClient = RestClient()
-        val conic = RPCRequest(restClient).callAsyncRPC(rpcEntity)
+        val conic = PlatformRequestRPC(restClient).callAsyncRPC(rpcEntity)
         conic.observe(
             viewLifecycleOwner,
             { platforms ->
@@ -117,6 +118,11 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
                 addPlatformToMap(platforms)
             }
         )
+
+        val rpcGetCatalogs = CatalogsRequestEntity(PayLoadCatalogRequest())
+
+        val con = CatalogRequestRPC(restClient).callAsyncRPC(rpcGetCatalogs)
+
 //        debug_fab.setOnClickListener {
 //            startActivity(Intent(this, DebugActivity::class.java))
 //        }

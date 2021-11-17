@@ -118,7 +118,7 @@ class Activity : AbstractAct() , LocationListener {
 //            Realm.deleteRealm(Realm.getDefaultConfiguration()!!)
 //        }
         val realmConfigBuilder = RealmConfiguration.Builder()
-//        config.allowWritesOnUiThread(true)
+        realmConfigBuilder.allowWritesOnUiThread(true) //!!
         realmConfigBuilder.name("INVENTORY.realm")
         realmConfigBuilder.deleteRealmIfMigrationNeeded()
         Realm.setDefaultConfiguration(realmConfigBuilder.build())

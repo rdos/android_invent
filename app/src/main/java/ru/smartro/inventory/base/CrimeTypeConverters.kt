@@ -1,4 +1,4 @@
-package ru.smartro.inventory.core
+package ru.smartro.inventory.base
 
 //import androidx.room.TypeConverter
 import java.util.*

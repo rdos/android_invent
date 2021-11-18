@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.lifecycle.ViewModel
@@ -48,7 +46,7 @@ class OwnerFragment : AbstractFragment(){
         col.observe(
             viewLifecycleOwner,
             { ownerResponse ->
-                for (ownerEntity in ownerResponse.data.organisationEntityRealms) {
+                for (ownerEntity in ownerResponse.data.organisationRealmEntities) {
                     log.info("AAA", ownerEntity.name)
                 }
                 recyclerView.adapter = OwnerAdapter(ownerResponse)
@@ -81,11 +79,11 @@ class OwnerFragment : AbstractFragment(){
         }
 
         override fun getItemCount(): Int {
-            return p_ownerResponse.data.organisationEntityRealms.size
+            return p_ownerResponse.data.organisationRealmEntities.size
         }
 
         override fun onBindViewHolder(holder: OwnerViewHolder, position: Int) {
-            val organisationEntityRealms = p_ownerResponse.data.organisationEntityRealms[position]
+            val organisationEntityRealms = p_ownerResponse.data.organisationRealmEntities[position]
             holder.tv.text = organisationEntityRealms.name
 
             holder.llc.rootView.setOnClickListener(holder)

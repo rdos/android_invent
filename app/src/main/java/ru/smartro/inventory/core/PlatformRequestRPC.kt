@@ -7,7 +7,7 @@ import okhttp3.Callback
 import okhttp3.Response
 import ru.smartro.inventory.base.AbstractO
 import ru.smartro.inventory.base.RestClient
-import ru.smartro.inventory.database.OrigJsonRealm
+import ru.smartro.inventory.database.OrigJsonRealmEntity
 import ru.smartro.inventory.database.PlatformEntityRealm
 import java.io.IOException
 
@@ -45,7 +45,7 @@ class PlatformRequestRPC(val p_RestClient: RestClient): AbstractO(), Callback {
         log.info("onResponse responseO=${responseO}")
         db.save {
             for(payload in responseO.payload) {
-                payload.orig_json = OrigJsonRealm(bodyString)
+                payload.orig_jsonEntity = OrigJsonRealmEntity(bodyString)
                 db.insert(payload)
             }
         }

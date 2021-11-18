@@ -6,7 +6,6 @@ import okhttp3.Callback
 import okhttp3.Response
 import ru.smartro.inventory.base.AbstractO
 import ru.smartro.inventory.base.RestClient
-import ru.smartro.inventory.database.OrganisationEntityRealm
 import ru.smartro.inventory.database.OwnerResponse
 import java.io.IOException
 

@@ -40,7 +40,7 @@ data class Data1(
     @SerializedName("organisation_ids")
     val organisationIds: List<Int>,
     @SerializedName("organisations")
-    val organisationEntityRealms: List<OrganisationEntityRealm>,
+    val organisationRealmEntities: List<OrganisationRealmEntity>,
     @SerializedName("role_srp_ids")
     val roleSrpIds: List<Int>,
     @SerializedName("roles")

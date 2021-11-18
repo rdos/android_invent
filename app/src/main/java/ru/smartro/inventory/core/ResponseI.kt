@@ -30,7 +30,3 @@ data class PayloadCatalog(
         val container_type: List<ContainerTypeRealm>,
         @SerializedName("container_platform_type")
         val container_platform_type : List<PlatformEntityRealm>
-)
-{
-
-}

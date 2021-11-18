@@ -6,7 +6,7 @@ import io.realm.RealmModel
 import io.realm.RealmResults
 
 //RealmLiveData!!
-class LiveRealmData<T : RealmModel>(realmResults: RealmResults<T>) :
+class zzLiveRealmData<T : RealmModel>(realmResults: RealmResults<T>) :
     LiveData<RealmResults<T>>() {
 
     private val results: RealmResults<T> = realmResults

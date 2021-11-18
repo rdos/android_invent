@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
@@ -61,12 +60,16 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
     }
 
     private fun gotoAddPlatform() {
-        val platformEntity = PlatformEntityRealm((0..2002).random())
-        db().save {
-            db().insert(platformEntity)
+        val platformEntity: PlatformEntityRealm = db().createPlatformEntity()
+        if (platformEntity.isOnull()) {
+            db().saveRealmEntity(platformEntity)
+            showNextFragment(PlatformPhotoFragment.newInstance(platformEntity.id))
         }
-        showNextFragment(PlatformPhotoFragment.newInstance(platformEntity.id))
-
+//        val platformEntity = PlatformEntityRealm((0..2002).random())
+//        db().save {
+//            db().insert(platformEntity)
+//        }
+//        showNextFragment(PlatformPhotoFragment.newInstance(platformEntity.id))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -2,11 +2,10 @@ package ru.smartro.inventory
 
 import android.util.Log
 import io.realm.Realm
+import io.realm.RealmList
 import io.realm.RealmObject
-import ru.smartro.inventory.database.ConfigEntityRealm
-import ru.smartro.inventory.database.OwnerResponse
-import ru.smartro.inventory.database.PlatformEntityRealm
-import ru.smartro.inventory.database.PlatformTypeRealm
+import ru.smartro.inventory.database.*
+import java.lang.Exception
 import java.util.concurrent.Executors
 
 // find! has
@@ -27,8 +26,14 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
     }
 
     fun saveOwner(ownerEntityList: OwnerResponse) {
+        execInTransaction{ p_realm ->
+            p_realm.insertOrUpdate(ownerEntityList.data.organisationRealmEntities)
+        }
+    }
+
+    private fun execInTransaction(block: (p_realm: Realm) -> Unit) {
         mRealm.executeTransaction { realm ->
-            realm.insertOrUpdate(ownerEntityList.data.organisationEntityRealms)
+            block(realm)
         }
     }
 
@@ -50,7 +55,7 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
 
     fun saveSave(platform_id: Int) {
         val exe = Executors.newSingleThreadExecutor()
-
+        Log.e("TAG", "kasta каста ()")
         exe.execute {
             Log.i("TAG", Thread.currentThread().id.toString())
             val onSuccess = Realm.Transaction.OnSuccess {
@@ -68,23 +73,50 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         val realmResults = mRealm.where(PlatformTypeRealm::class.java).findAll()
         val result = mRealm.copyFromRealm(realmResults)
         return result
-        }
+    }
 
-    fun loadPlatformEntity() : List<PlatformEntityRealm> {
+    fun loadPlatformEntity(): List<PlatformEntityRealm> {
         val realmResults = mRealm.where(PlatformEntityRealm::class.java ).findAll()
         val result = mRealm.copyFromRealm(realmResults)
         return result
     }
 
-    fun addPlatformEntity(platformEntityRealm: PlatformEntityRealm){
-        mRealm.createObject(PlatformEntityRealm::class.java)
-        val realmResults = mRealm.ins(PlatformEntityRealm::class.java ).findAll()
-        val result = mRealm.copyFromRealm(realmResults)
+    fun createPlatformEntity(): PlatformEntityRealm {
+        Log.e("ErrorsE", "kasta каста ()")
+        val result = try {
+            mRealm.createObject(PlatformEntityRealm::class.java)?: Onull
+        } catch (e: Exception) {
+            Log.e("ErrorsE", "kasta каста ()")
+            Onull
+        }
         return result
     }
-//    DynamicRealmObject
 
-
+    /** entityRealm entityRealmS**/
+    fun saveRealmEntity(entityRealm: ARealmObject) {
+        execInTransaction{ p_realm ->
+            p_realm.insertOrUpdate(entityRealm)
+        }
+    }
+    /**? //entityRealmS vs entitySRealm **/
+    fun saveRealmEntity(entityRealmS: RealmList<ARealmObject>) {
+        execInTransaction{ p_realm ->
+            p_realm.insertOrUpdate(entityRealmS)
+        }
+    }
+    /** entitySRealm**/
+    fun createContainerEntityS(): List<ContainerEntityRealm> {
+        Log.e("ErrorsE", "kasta каста ()")
+        val result = try {
+            mRealm.createObject(ContainerEntityRealm::class.java)?: O2null
+        } catch (e: Exception) {
+            Log.e("ErrorsE", "kasta каста ()")
+            O2null
+        }
+        val resMList =  mutableListOf<ContainerEntityRealm>()
+        resMList.add(result)
+        return resMList
+    }
 
 
 //fun findWayTask(): WayTaskEntity {

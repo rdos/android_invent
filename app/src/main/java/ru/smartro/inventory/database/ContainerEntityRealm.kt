@@ -7,9 +7,6 @@ import ru.smartro.inventory.Inull
 import ru.smartro.inventory.Snull
 
 open class ContainerEntityRealm(
-    @SerializedName("id")
-    @PrimaryKey
-    var id: Int = Inull,
     @SerializedName("number")
     var number: String = Snull,
     @SerializedName("container_status_id")
@@ -22,12 +19,9 @@ open class ContainerEntityRealm(
     var type: ContainerTypeRealm? = null,
     @SerializedName("comment")
     var comment: String? = null
-) : RealmObject()
+) : ARealmObject()
 
 open class ContainerTypeRealm(
-    @SerializedName("id")
-    @PrimaryKey
-    var id: Int = Inull,
     @SerializedName("name")
     var name: String = Snull,
     @SerializedName("organisation_id")

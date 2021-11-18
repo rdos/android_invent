@@ -5,20 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import ru.smartro.inventory.core.LoginEntity
 import ru.smartro.inventory.R
 
-import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import ru.smartro.inventory.base.AbstractFragment
-import ru.smartro.inventory.base.RestClient
-import ru.smartro.inventory.core.LoginRequest
-import ru.smartro.inventory.database.OwnerResponse
+import ru.smartro.inventory.database.ContainerEntityRealm
+
+
 
 
 class PlatformFragmentContainer : AbstractFragment(){
@@ -26,7 +23,16 @@ class PlatformFragmentContainer : AbstractFragment(){
     companion object {
         fun newInstance() = PlatformFragmentContainer()
     }
-
+    //
+    inner class PlatformContainerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+        View.OnClickListener {
+        val tv = itemView.findViewById<AppCompatTextView>(R.id.aptv_platform_fragment_container__rv__item)
+        val llc = itemView.findViewById<LinearLayoutCompat>(R.id.llc_platform_fragment_container__rv__item)
+        override fun onClick(p0: View?) {
+//            TODO("Not yet implemented")
+//            showFragment(MapFragment.newInstance())
+        }
+    }
     private lateinit var viewModel: PlatformContainerViewModel
 
 
@@ -38,6 +44,21 @@ class PlatformFragmentContainer : AbstractFragment(){
         return view
     }
 
+
+    private fun goPlatformAddContainerS(): List<ContainerEntityRealm> {
+//private fun gotoAddContainerS(): List<ContainerEntityRealm> {
+//          reSUlt
+//      val containerSE =  db().createContainerSEntity()
+        val containerS =  db().createContainerEntityS()
+//        if (containerS.isOnull()) {
+//            db().saveRealmEntity(containerS)
+//            showNextFragment(PlatformPhotoFragment.newInstance(res.id))
+//       }
+
+        //
+     return containerS
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(
@@ -47,10 +68,12 @@ class PlatformFragmentContainer : AbstractFragment(){
         // TODO: Use the ViewModel
         showHideActionBar(true)
 
+
+        val containerS: List<ContainerEntityRealm> = goPlatformAddContainerS()
+
         val rv = view.findViewById<RecyclerView>(R.id.rv_platform_fragment_container)
         rv.layoutManager = GridLayoutManager(requireContext(), 3)
-
-        rv.adapter = ContainerInPlatfornAdapter()
+        rv.adapter = ContainerInPlatfornAdapter(containerS)
 
 //        baseview.setOnClickListener {
 //            MyUtil.hideKeyboard(this)
@@ -58,23 +81,23 @@ class PlatformFragmentContainer : AbstractFragment(){
 
     }
 
-    inner class ContainerInPlatfornAdapter(private val p_ownerResponse: OwnerResponse) :
-        RecyclerView.Adapter<OwnerFragment.OwnerViewHolder>() {
+    inner class ContainerInPlatfornAdapter(private val p_containerS: List<ContainerEntityRealm>) :
+        RecyclerView.Adapter<PlatformContainerViewHolder>() {
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OwnerFragment.OwnerViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.owner_fragment_rv__item,
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlatformContainerViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.platform_fragment_container__rv,
                 parent, false)
-            return OwnerViewHolder(view)
+            return PlatformContainerViewHolder(view)
 
         }
 
         override fun getItemCount(): Int {
-            return p_ownerResponse.data.organisationEntityRealms.size
+            return p_containerS.size
         }
 
-        override fun onBindViewHolder(holder: OwnerFragment.OwnerViewHolder, position: Int) {
-            val organisationEntityRealms = p_ownerResponse.data.organisationEntityRealms[position]
-            holder.tv.text = organisationEntityRealms.name
+        override fun onBindViewHolder(holder: PlatformContainerViewHolder, position: Int) {
+            val container = p_containerS.get(position)
+            holder.tv.text = container.number
 
             holder.llc.rootView.setOnClickListener(holder)
 //            holder.llc.animation =
@@ -84,9 +107,17 @@ class PlatformFragmentContainer : AbstractFragment(){
 
     }
 
+    private fun <E> List<E>.isOnull(): Boolean {
+        log.error(" private fun <E> List<E>.isOnull(): Boolean {")
+        log.warn("TODO")
+        log.info("TODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODO")
+        log.error("PlatformFragmentContainer.isOnull")
+        return false
+    }
 
 
     class PlatformContainerViewModel : ViewModel() {
         // TODO: Implement the ViewModel
     }
 }
+

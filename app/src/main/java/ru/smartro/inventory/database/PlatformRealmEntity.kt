@@ -9,8 +9,6 @@ import android.util.Base64
 import com.google.gson.annotations.SerializedName
 import io.realm.RealmList
 import io.realm.RealmObject
-import io.realm.annotations.PrimaryKey
-import io.realm.annotations.Required
 import ru.smartro.inventory.Dnull
 import ru.smartro.inventory.Inull
 import ru.smartro.inventory.R
@@ -20,9 +18,6 @@ import java.io.InputStream
 import java.io.Serializable
 
 open class PlatformEntityRealm(
-    @SerializedName("id")
-    @PrimaryKey
-    var id: Int = Inull,
     @SerializedName("length")
     var length: Int? = Inull,
     @SerializedName("width")
@@ -43,7 +38,7 @@ open class PlatformEntityRealm(
     var type: PlatformTypeRealm? = null,
 
     @SerializedName("coordinates")
-    var coordinates: CoordinatesRealm? = null,
+    var coordinates: CoordinatesRealmEntity? = null,
     @SerializedName("datetime")
     var datetime: String? = null,
     @SerializedName("comment")
@@ -55,9 +50,9 @@ open class PlatformEntityRealm(
     @SerializedName("containers")
     var containers: RealmList<ContainerEntityRealm> = RealmList(),
 
-    var imageBase64: RealmList<ImageRealm> = RealmList(),
-    var orig_json: OrigJsonRealm? = null
-) : RealmObject(), Serializable {
+    var imageBase64Entity: RealmList<ImageRealmEntity>? = RealmList(),
+    var orig_jsonEntity: OrigJsonRealmEntity? = OrigJsonRealmEntity()
+) : ARealmObject() {
 
 
 
@@ -69,54 +64,6 @@ open class PlatformEntityRealm(
 //        }
     fun getIconDrawableResId(): Int {
         return R.drawable.ic_map_fragment_bunker_green
-//        if (this.beginnedAt.isNotNull() && this.status == StatusEnum.NEW) {
-//            return R.drawable.ic_serving
-//        }
-//        return when (this.icon) {
-//            "bunker" ->
-//                when (this.status) {
-//                    StatusEnum.NEW -> R.drawable.ic_bunker_blue
-//                    StatusEnum.SUCCESS -> R.drawable.ic_bunker_green
-//                    StatusEnum.ERROR -> R.drawable.ic_bunker_red
-//                    else -> R.drawable.ic_bunker_orange
-//                }
-//            "bag" ->
-//                when (this.status) {
-//                    StatusEnum.NEW -> R.drawable.ic_bag_blue
-//                    StatusEnum.SUCCESS -> R.drawable.ic_bag_green
-//                    StatusEnum.ERROR -> R.drawable.ic_bag_red
-//                    else -> R.drawable.ic_bag_orange
-//                }
-//            "bulk" ->
-//                when (this.status) {
-//                    StatusEnum.NEW -> R.drawable.ic_bulk_blue
-//                    StatusEnum.SUCCESS -> R.drawable.ic_bulk_green
-//                    StatusEnum.ERROR -> R.drawable.ic_bulk_red
-//                    else -> R.drawable.ic_bulk_orange
-//                }
-//            "euro" ->
-//                when (this.status) {
-//                    StatusEnum.NEW -> R.drawable.ic_euro_blue
-//                    StatusEnum.SUCCESS ->  R.drawable.ic_euro_green
-//                    StatusEnum.ERROR -> R.drawable.ic_euro_red
-//                    else -> R.drawable.ic_euro_orange
-//                }
-//            "metal" ->
-//                when (this.status) {
-//                    StatusEnum.NEW -> R.drawable.ic_metal_blue
-//                    StatusEnum.SUCCESS -> R.drawable.ic_metal_green
-//                    StatusEnum.ERROR -> R.drawable.ic_metal_red
-//                    else -> R.drawable.ic_metal_orange
-//                }
-//            else ->
-//                //many
-//                when (this.status) {
-//                    StatusEnum.NEW -> R.drawable.ic_many_blue
-//                    StatusEnum.SUCCESS -> R.drawable.ic_many_green
-//                    StatusEnum.ERROR -> R.drawable.ic_many_red
-//                    else -> R.drawable.ic_many_orange
-//                }
-//        }
     }
 
     fun imageToBase64(imageUri: Uri, rotationDegrees: Float, context: Context): String {
@@ -139,34 +86,34 @@ open class PlatformEntityRealm(
     }
 }
 
-open class OrigJsonRealm(
+open class OrigJsonRealmEntity(
     var date: String? = Snull,
-) : Serializable, RealmObject(
+) : RealmObject(
 ) {
 
 }
 
-open class ImageRealm(
+open class ImageRealmEntity(
     var imageBase64: String = Snull,
     var date: String = Snull,
-    var coordinates: CoordinatesRealm? = null,
-) : Serializable, RealmObject()
+    var coordinates: CoordinatesRealmEntity? = CoordinatesRealmEntity(),
+) : ARealmObject() {
 
-open class CoordinatesRealm(
+}
+
+open class CoordinatesRealmEntity(
     var lat: Double = Dnull,
     var lng: Double = Dnull
-): RealmObject()
-
+): ARealmObject()
+{
+}
 
 open class PlatformTypeRealm(
-    @SerializedName("id")
-    @PrimaryKey
-    var id: Int = Inull,
     @SerializedName("name")
     var name: String = Snull,
     @SerializedName("organisation_id")
     var organisation_id: Int = Inull
-) : RealmObject()
+) : ARealmObject()
 
 //open class CardStatusTypeRealm(
 //    @SerializedName("id")

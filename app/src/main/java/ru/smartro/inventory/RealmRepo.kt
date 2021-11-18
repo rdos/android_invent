@@ -1,9 +1,12 @@
-package ru.smartro.inventory.database
+package ru.smartro.inventory
 
 import android.util.Log
 import io.realm.Realm
 import io.realm.RealmObject
-import ru.smartro.inventory.Snull
+import ru.smartro.inventory.database.ConfigEntityRealm
+import ru.smartro.inventory.database.OwnerResponse
+import ru.smartro.inventory.database.PlatformEntityRealm
+import ru.smartro.inventory.database.PlatformTypeRealm
 import java.util.concurrent.Executors
 
 // find! has
@@ -14,7 +17,7 @@ import java.util.concurrent.Executors
 //src;dest
 
 //    LiveRealmData
-class RealmRepository(private val mRealm: Realm) /*: Realm.Transaction*/ {
+class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
     private val TAG : String = "RealmRepository--AAA"
 
     fun saveConfig(configEntity: ConfigEntityRealm) {
@@ -67,6 +70,18 @@ class RealmRepository(private val mRealm: Realm) /*: Realm.Transaction*/ {
         return result
         }
 
+    fun loadPlatformEntity() : List<PlatformEntityRealm> {
+        val realmResults = mRealm.where(PlatformEntityRealm::class.java ).findAll()
+        val result = mRealm.copyFromRealm(realmResults)
+        return result
+    }
+
+    fun addPlatformEntity(platformEntityRealm: PlatformEntityRealm){
+        mRealm.createObject(PlatformEntityRealm::class.java)
+        val realmResults = mRealm.ins(PlatformEntityRealm::class.java ).findAll()
+        val result = mRealm.copyFromRealm(realmResults)
+        return result
+    }
 //    DynamicRealmObject
 
 

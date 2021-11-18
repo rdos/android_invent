@@ -7,6 +7,7 @@ import okhttp3.Callback
 import okhttp3.Response
 import ru.smartro.inventory.base.AbstractO
 import ru.smartro.inventory.base.RestClient
+import ru.smartro.inventory.database.OrigJsonRealm
 import ru.smartro.inventory.database.PlatformEntityRealm
 import java.io.IOException
 
@@ -38,11 +39,13 @@ class PlatformRequestRPC(val p_RestClient: RestClient): AbstractO(), Callback {
 
 //        val typeToken: Type = object : TypeToken<List<PlatformEntityRealm>>() {}.type
         val responseO = Gson().fromJson(bodyString, ResponseO::class.java)
+
 //        val json = Gson().toJson(responseO.payload)
 //        val platformEntityRealms = Gson().fromJson<List<PlatformEntityRealm>>(json, typeToken)
         log.info("onResponse responseO=${responseO}")
         db.save {
             for(payload in responseO.payload) {
+                payload.orig_json = OrigJsonRealm(bodyString)
                 db.insert(payload)
             }
         }

@@ -47,7 +47,7 @@ class PlatformFragment : AbstractFragment() {
 
         val vidAdapter: ArrayAdapter<*> = ArrayAdapter.createFromResource(
             requireContext(), R.array.PlatformVid,
-            android.R.layout.simple_spinner_item
+          R.layout.platform_fragment_acs_vid__item
         )
         vidAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
@@ -58,7 +58,12 @@ class PlatformFragment : AbstractFragment() {
         val acsType = view.findViewById<AppCompatSpinner>(R.id.acs_platform_fragment__type)
         val typeAdapter = TypeAdapter(requireContext(), platformType)
         acsType.setAdapter(typeAdapter)
+
+        childFragmentManager.beginTransaction()
+            .replace(R.id.fl_platform_fragment, PlatformFragmentContainer.newInstance())
+            .commitNow()
     }
+
 
 
     class TypeAdapter(context: Context,
@@ -77,7 +82,7 @@ class PlatformFragment : AbstractFragment() {
             val country = getItem(position)
 
             val view = recycledView ?: LayoutInflater.from(context).inflate(
-                R.layout.platform_fragment_acs__item,
+                R.layout.platform_fragment_acs_type_item,
                 parent,
                 false
             )

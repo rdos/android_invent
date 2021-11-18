@@ -10,6 +10,7 @@ import com.google.gson.annotations.SerializedName
 import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
+import io.realm.annotations.Required
 import ru.smartro.inventory.Dnull
 import ru.smartro.inventory.Inull
 import ru.smartro.inventory.R
@@ -55,6 +56,7 @@ open class PlatformEntityRealm(
     var containers: RealmList<ContainerEntityRealm> = RealmList(),
 
     var imageBase64: RealmList<ImageRealm> = RealmList(),
+    var orig_json: OrigJsonRealm? = null
 ) : RealmObject(), Serializable {
 
 
@@ -137,6 +139,13 @@ open class PlatformEntityRealm(
     }
 }
 
+open class OrigJsonRealm(
+    var date: String? = Snull,
+) : Serializable, RealmObject(
+) {
+
+}
+
 open class ImageRealm(
     var imageBase64: String = Snull,
     var date: String = Snull,
@@ -148,33 +157,6 @@ open class CoordinatesRealm(
     var lng: Double = Dnull
 ): RealmObject()
 
-open class ContainerEntityRealm(
-    @SerializedName("id")
-    @PrimaryKey
-    var id: Int = Inull,
-    @SerializedName("number")
-    var number: String = Snull,
-    @SerializedName("container_status_id")
-    var container_status_id: Int = Inull,
-    @SerializedName("container_status_name")
-    var container_status_name: String = Snull,
-    @SerializedName("has_pedal")
-    var has_pedal: Int = Inull,
-    @SerializedName("type")
-    var type: ContainerTypeRealm? = null,
-    @SerializedName("comment")
-    var comment: String? = null
-) : RealmObject()
-
-open class ContainerTypeRealm(
-    @SerializedName("id")
-    @PrimaryKey
-    var id: Int = Inull,
-    @SerializedName("name")
-    var name: String = Snull,
-    @SerializedName("organisation_id")
-    var organisation_id: Int = Inull
-) : RealmObject()
 
 open class PlatformTypeRealm(
     @SerializedName("id")

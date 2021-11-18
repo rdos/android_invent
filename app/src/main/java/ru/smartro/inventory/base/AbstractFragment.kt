@@ -8,9 +8,8 @@ import com.yandex.mapkit.location.Location
 import com.yandex.mapkit.location.LocationManagerUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import ru.smartro.inventory.Activity
-import ru.smartro.inventory.database.RealmRepository
-import ru.smartro.inventory.ui.main.MapFragment
+import ru.smartro.inventory.*
+import ru.smartro.inventory.RealmRepo
 import java.io.File
 
 abstract class AbstractFragment : Fragment() {
@@ -20,15 +19,56 @@ abstract class AbstractFragment : Fragment() {
         activity as Activity
     }
 
+
+    fun getCurrentTimeStamp(): Long {
+//        return System.currentTimeMillis() / 1000L
+        return System.currentTimeMillis()
+    }
+
     fun getLastPoint(): Point {
-        val location: Location? = LocationManagerUtils.getLastKnownLocation()
-        val position = location?.position?: TARGET_LOCATION
+        val location: Location? = getLastKnownLocation()
+        val position = location?: TARGET_LOCATION
         // TODO: 15.11.2021 !!
         return Point(54.881347, 55.44919)
     }
 
-    protected fun showFragment(fragment: AbstractFragment) {
-        mActivity.showFragment(fragment)
+    fun hasLastPoint(): Boolean {
+        val result = getLastKnownLocation() == null
+        log.debug("hasLastPoint.result=${result}")
+        return result
+    }
+
+    private fun getLastKnownLocation(): Location? {
+        log.debug("getLastPoint.before")
+        val lastKnownLocation: Location? = LocationManagerUtils.getLastKnownLocation()
+        var subtraction = Lnull
+        lastKnownLocation?.apply {
+            subtraction  = getCurrentTimeStamp() - absoluteTimestamp
+        }
+
+        var result = lastKnownLocation
+        if (subtraction < 1000) {
+            result = null
+        }
+        log.debug("hasLastPoint.result=${result}")
+        return result
+    }
+/// TODO: 18.11.2021 !!!
+//    fun getLastPoint(): Point {
+//        val location: Location? = LocationManagerUtils.getLastKnownLocation()
+//        val position = location?.position?: TARGET_LOCATION
+//        // TODO: 15.11.2021 !!
+//        return Point(54.881347, 55.44919)
+//    }
+
+    protected fun showFragment(container: Int, fragment: AbstractFragment) {
+        mActivity.showFragment(container, fragment)
+
+    }
+
+    protected fun showFragment(fragment: AbstractFragment, ) {
+        mActivity.showFragment(fragment,)
+
     }
 
     protected fun showNextFragment(fragment: AbstractFragment) {
@@ -61,7 +101,7 @@ abstract class AbstractFragment : Fragment() {
         mActivity.onBackPressed()
     }
 
-    protected fun db(): RealmRepository {
+    protected fun db(): RealmRepo {
         return mActivity.db
     }
 

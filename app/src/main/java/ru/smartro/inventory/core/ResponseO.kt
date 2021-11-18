@@ -11,7 +11,8 @@ data class ResponseO(
         @SerializedName("payload")
         val payload: List<PlatformEntityRealm>,
         @SerializedName("error")
-        val error: List<ResponseRPCError>
+        val error: List<ResponseRPCError>,
+
 
 ) {
 //        companion object {

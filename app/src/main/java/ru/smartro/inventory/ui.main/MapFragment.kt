@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
@@ -15,8 +16,6 @@ import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.layers.ObjectEvent
-import com.yandex.mapkit.location.Location
-import com.yandex.mapkit.location.LocationManagerUtils
 import com.yandex.mapkit.map.*
 import com.yandex.mapkit.map.Map
 import com.yandex.mapkit.mapview.MapView
@@ -36,6 +35,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         fun newInstance() = MapFragment()
     }
 
+    private lateinit var mApbAddPlatform: AppCompatButton
     private lateinit var mMapObjectCollection: MapObjectCollection
     private lateinit var mViewModel: MapViewModel
     private lateinit var mMapView: MapView
@@ -60,6 +60,15 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         }
     }
 
+    private fun gotoAddPlatform() {
+        val platformEntity = PlatformEntityRealm((0..2002).random())
+        db().save {
+            db().insert(platformEntity)
+        }
+        showNextFragment(PlatformPhotoFragment.newInstance(platformEntity.id))
+
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mViewModel = ViewModelProvider(
@@ -68,6 +77,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         ).get(MapViewModel::class.java)
 
         mMapView = view.findViewById<View>(R.id.mapview) as MapView
+        mMapObjectCollection = mMapView.map.mapObjects
         showHideActionBar(true)
 
         val mMapKit = MapKitFactory.getInstance()
@@ -82,17 +92,15 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
             gotoMyLocation()
         }
 
-        val apbAddPlatform = view.findViewById<AppCompatButton>(R.id.apb_map_fragment__add_platform)
-        apbAddPlatform.setOnClickListener{
-            val platformEntity = PlatformEntityRealm((0..2002).random())
-            db().save {
-                db().insert(platformEntity)
-            }
-            showNextFragment(PlatformPhotoFragment.newInstance(platformEntity.id))
+        mApbAddPlatform = view.findViewById<AppCompatButton>(R.id.apb_map_fragment__add_platform)
+        mApbAddPlatform.setOnClickListener{
+            gotoAddPlatform()
         }
         gotoMyLocation()
+        val platformEntity =  db().loadPlatformEntity()
+        addPlatformToMap(platformEntity)
 
-        mMapObjectCollection = mMapView.map.mapObjects
+
         // TODO: 15.11.2021
         val rpcEntity = RPCProvider("inventory_mobile_get_platforms", getLastPoint()).getRPCEntity()
         val restClient = RestClient()
@@ -109,6 +117,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
             }
         )
 
+
         val rpcGetCatalogs = CatalogsRequestEntity(PayLoadCatalogRequest())
 
         val con = CatalogRequestRPC(restClient).callAsyncRPC(rpcGetCatalogs)
@@ -122,6 +131,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         }
     }
 
+
     private fun getIconViewProvider(drawableResId: Int): ViewProvider {
         fun iconMarker(_drawableResId: Int): View {
             val resultIcon = View(context).apply { background = ContextCompat.getDrawable(context, _drawableResId) }
@@ -132,8 +142,13 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
 
     private fun addPlatformToMap(platforms: List<PlatformEntityRealm>) {
         platforms.forEach {
-            val point = Point(it.coordinates!!.lat, it.coordinates!!.lng)
-            mMapObjectCollection.addPlacemark(point, getIconViewProvider(it.getIconDrawableResId()))
+            try {
+                val point = Point(it.coordinates!!.lat, it.coordinates!!.lng)
+                mMapObjectCollection.addPlacemark(point, getIconViewProvider(it.getIconDrawableResId()))
+            } catch (e: Exception) {
+                log.error("addPlatformToMap", e)
+                log.error("addPlatformToMap platforms.id= ${it.id}")
+            }
         }
     }
 

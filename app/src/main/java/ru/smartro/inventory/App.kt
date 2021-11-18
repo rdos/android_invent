@@ -11,11 +11,6 @@ private val MAPKIT_API_KEY = "948e55bc-da44-452d-9629-00898d438ca9"
 class App : Application(){
     override fun onCreate() {
         super.onCreate()
-        /**
-         * Set the api key before calling initialize on MapKitFactory.
-         * It is recommended to set api key in the Application.onCreate method,
-         * but here we do it in each activity to make examples isolated.
-         */
         MapKitFactory.setApiKey(MAPKIT_API_KEY)
     }
 }
@@ -23,8 +18,10 @@ class App : Application(){
 const val AUTH_STAGE = "https://auth.stage.smartro.ru/api"
 const val Snull = "rNull"
 const val Inull = -111
+const val Lnull = -111222333 as Long
+const val Fnull = -111.01
 const val Dnull = -110.1
-//https://ru.wikipedia.org/wiki/TensorFlow
+
 fun AbstractFragment.toast(text: String? = "") {
     try {
         Toast.makeText(this.context, text, Toast.LENGTH_SHORT).show()
@@ -33,3 +30,16 @@ fun AbstractFragment.toast(text: String? = "") {
     }
 
 }
+
+
+/**HELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIRE
+ * HELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIRE
+ * HELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIRE
+ *
+ *
+
+ **/
+
+
+//public <E extends RealmModel> E createObject(Class<E> clazz) {
+//https://ru.wikipedia.org/wiki/TensorFlow

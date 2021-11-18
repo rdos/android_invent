@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,14 +17,14 @@ import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.OwnerRequest
 import ru.smartro.inventory.database.OwnerResponse
 
-
+//     android:background="?android:attr/selectableItemBackground">
 class OwnerFragment : AbstractFragment(){
     private lateinit var viewModel: OwnerViewModel
 //
     inner class OwnerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
         val tv = itemView.findViewById<AppCompatTextView>(R.id.aptv_owner_fragment_rv__item)
-
+        val llc = itemView.findViewById<LinearLayoutCompat>(R.id.llc_owner_fragment_rv__item)
         override fun onClick(p0: View?) {
 //            TODO("Not yet implemented")
             showFragment(MapFragment.newInstance())
@@ -74,6 +77,7 @@ class OwnerFragment : AbstractFragment(){
             val view = LayoutInflater.from(parent.context).inflate(R.layout.owner_fragment_rv__item,
                 parent, false)
             return OwnerViewHolder(view)
+
         }
 
         override fun getItemCount(): Int {
@@ -84,10 +88,15 @@ class OwnerFragment : AbstractFragment(){
             val organisationEntityRealms = p_ownerResponse.data.organisationEntityRealms[position]
             holder.tv.text = organisationEntityRealms.name
 
-            holder.tv.setOnClickListener(holder)
+            holder.llc.rootView.setOnClickListener(holder)
+//            holder.llc.animation =
+//                AnimationUtils.loadAnimation(holder.itemView.context, R.anim.slide_in_left)
+//            setAnimation(holder.itemView, position)
         }
 
         }
+
+
 
     class OwnerViewModel : ViewModel() {
         // TODO: Implement the ViewModel

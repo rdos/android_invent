@@ -50,57 +50,11 @@
         android:id="@+id/acb_login_fragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_min"
-        android:layout_marginEnd="@dimen/margin_min"
-        android:text="@string/platform_fragment__save_to_the_sys"
-        android:textColor="@color/white"
-        android:background="@color/purple_200"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="@dimen/margin_max">
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Вид КП"/>
-
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/acs_platform_fragment__vid"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Тип TК"/>
-
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/acs_platform_fragment__type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
+        android:layout_margin="@dimen/margin_16"
+        android:text="@string/login_fragment__welcome_to_system"
+        android:textColor="@color/purple_white_full"
+        android:backgroundTint="@color/purple_200"
+        android:backgroundTintMode="multiply"/>
 
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -109,23 +63,46 @@
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Вид КП"/>
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/acs_platform_fragment__vid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <androidx.appcompat.widget.AppCompatCheckBox
-                android:layout_width="wrap_content"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Основание"
-                />
-            <androidx.appcompat.widget.AppCompatCheckBox
-                android:layout_width="wrap_content"
+                android:text="Тип TК"/>
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/acs_platform_fragment__type"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ограждение"
                 />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
+    </androidx.appcompat.widget.LinearLayoutCompat>
+<!--    TODO /-->
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -148,6 +125,24 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Основание"
+            />
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Ограждение"
+            />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
@@ -204,6 +199,11 @@
 <!--        android:layout_width=""-->
 <!--        android:layout_height=""-->
 
+    <FrameLayout
+        android:id="@+id/fl_platform_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </FrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="wrap_content"

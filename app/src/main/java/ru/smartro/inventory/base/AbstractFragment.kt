@@ -1,19 +1,30 @@
 package ru.smartro.inventory.base
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.location.Location
+import com.yandex.mapkit.location.LocationManagerUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import ru.smartro.inventory.Activity
-import ru.smartro.inventory.RealmRepository
+import ru.smartro.inventory.database.RealmRepository
+import ru.smartro.inventory.ui.main.MapFragment
 import java.io.File
 
 abstract class AbstractFragment : Fragment() {
+    private val TARGET_LOCATION = Point(-80.243123, 25.107800)
 
     private val mActivity: Activity by lazy {
         activity as Activity
+    }
+
+    fun getLastPoint(): Point {
+        val location: Location? = LocationManagerUtils.getLastKnownLocation()
+        val position = location?.position?: TARGET_LOCATION
+        // TODO: 15.11.2021 !!
+        return Point(54.881347, 55.44919)
     }
 
     protected fun showFragment(fragment: AbstractFragment) {
@@ -34,6 +45,10 @@ abstract class AbstractFragment : Fragment() {
 
     protected fun setActionBarTitle(resId: Int) {
         mActivity.setActionBarTitle(getString(resId))
+    }
+
+    protected fun setActionBarTitle(string: String) {
+        mActivity.setActionBarTitle(string)
     }
 
     protected fun setScreenOrientation(isLockMode: Boolean) {

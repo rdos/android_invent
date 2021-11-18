@@ -33,8 +33,6 @@ import ru.smartro.inventory.toast
 class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCallback{
 
     companion object {
-//
-        private val TARGET_LOCATION = Point(-80.243123, 25.107800)
         fun newInstance() = MapFragment()
     }
 
@@ -62,14 +60,6 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         }
     }
 
-    fun getLastPoint(): Point {
-        val location: Location? = LocationManagerUtils.getLastKnownLocation()
-        val position = location?.position?: TARGET_LOCATION
-        // TODO: 15.11.2021 !! 
-        return Point(54.881347, 55.44919)
-    }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mViewModel = ViewModelProvider(
@@ -94,7 +84,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
 
         val apbAddPlatform = view.findViewById<AppCompatButton>(R.id.apb_map_fragment__add_platform)
         apbAddPlatform.setOnClickListener{
-            val platformEntity = PlatformEntityRealm()
+            val platformEntity = PlatformEntityRealm((0..2002).random())
             db().save {
                 db().insert(platformEntity)
             }

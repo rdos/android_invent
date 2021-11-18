@@ -1,11 +1,9 @@
 package ru.smartro.inventory
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Environment
 import androidx.core.app.ActivityCompat
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
@@ -14,6 +12,7 @@ import io.realm.Realm
 import io.realm.RealmConfiguration
 import ru.smartro.inventory.base.AbstractAct
 import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.inventory.database.RealmRepository
 import ru.smartro.inventory.ui.main.LoginFragment
 import ru.smartro.inventory.ui.main.MapFragment
 import java.io.File

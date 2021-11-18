@@ -1,11 +1,9 @@
-package ru.smartro.inventory
+package ru.smartro.inventory.database
 
 import android.util.Log
 import io.realm.Realm
 import io.realm.RealmObject
-import ru.smartro.inventory.database.ConfigEntityRealm
-import ru.smartro.inventory.database.OwnerResponse
-import ru.smartro.inventory.database.PlatformEntityRealm
+import ru.smartro.inventory.Snull
 import java.util.concurrent.Executors
 
 // find! has
@@ -62,6 +60,12 @@ class RealmRepository(private val mRealm: Realm) /*: Realm.Transaction*/ {
             }
         }
     }
+
+    fun loadPlatformType(): List<PlatformTypeRealm> {
+        val realmResults = mRealm.where(PlatformTypeRealm::class.java).findAll()
+        val result = mRealm.copyFromRealm(realmResults)
+        return result
+        }
 
 //    DynamicRealmObject
 

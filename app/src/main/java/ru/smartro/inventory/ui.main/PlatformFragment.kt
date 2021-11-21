@@ -12,6 +12,7 @@ import ru.smartro.inventory.base.AbstractFragment
 
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatTextView
 import ru.smartro.inventory.database.PlatformTypeRealm
 import java.text.SimpleDateFormat
@@ -58,6 +59,15 @@ class PlatformFragment : AbstractFragment() {
         val acsType = view.findViewById<AppCompatSpinner>(R.id.acs_platform_fragment__type)
         val typeAdapter = TypeAdapter(requireContext(), platformType)
         acsType.setAdapter(typeAdapter)
+
+
+
+        val acbSave = view.findViewById<AppCompatButton>(R.id.acb_platform_fragment__save)
+        acbSave.setOnClickListener {
+            showFragment(PlatformFragmentContainerDlt.newInstance())
+        }
+
+
 
         childFragmentManager.beginTransaction()
             .replace(R.id.fl_platform_fragment, PlatformFragmentContainer.newInstance())

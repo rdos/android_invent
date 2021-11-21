@@ -16,8 +16,6 @@ import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.database.ContainerEntityRealm
 
 
-
-
 class PlatformFragmentContainer : AbstractFragment(){
 
     companion object {

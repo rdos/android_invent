@@ -47,11 +47,11 @@
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/acb_login_fragment"
+        android:id="@+id/acb_platform_fragment__save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_16"
-        android:text="@string/login_fragment__welcome_to_system"
+        android:text="@string/platform_fragment__save_to_the_sys"
         android:textColor="@color/purple_white_full"
         android:backgroundTint="@color/purple_200"
         android:backgroundTintMode="multiply"/>

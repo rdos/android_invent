@@ -103,10 +103,15 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
     /** entitySRealm**/
     fun createContainerEntityS(): List<ContainerEntityRealm> {
         val resMList= mutableListOf<ContainerEntityRealm>()
-        mRealm.executeTransaction{
-            val result = mRealm.createObject(ContainerEntityRealm::class.java, 66)
-            resMList.add(result)
-        }
+
+        val result = ContainerEntityRealm(66)
+        saveRealmEntity(result)
+        resMList.add(result)
+
+//        mRealm.executeTransaction{
+//            val result = mRealm.createObject(ContainerEntityRealm::class.java, 66)
+//            resMList.add(result)
+//        }
         return resMList
     }
 

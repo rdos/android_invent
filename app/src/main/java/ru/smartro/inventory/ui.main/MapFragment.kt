@@ -60,11 +60,11 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
     }
 
     private fun gotoAddPlatform() {
-        val platformEntity: PlatformEntityRealm = db().createPlatformEntity()
-        if (platformEntity.isOnull()) {
+        val platformEntity: PlatformEntityRealm = db().createPlatformEntity(666)
+//        if (platformEntity.isOnull()) {
             db().saveRealmEntity(platformEntity)
             showNextFragment(PlatformPhotoFragment.newInstance(platformEntity.id))
-        }
+//        }
 //        val platformEntity = PlatformEntityRealm((0..2002).random())
 //        db().save {
 //            db().insert(platformEntity)
@@ -103,8 +103,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         val platformEntity =  db().loadPlatformEntity()
         addPlatformToMap(platformEntity)
 
-
-        // TODO: 15.11.2021
+        // TODO: 15.11.2021 
         val rpcEntity = RPCProvider("inventory_mobile_get_platforms", getLastPoint()).getRPCEntity()
         val restClient = RestClient()
         val conic = PlatformRequestRPC(restClient).callAsyncRPC(rpcEntity)
@@ -112,7 +111,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
             viewLifecycleOwner,
             { platforms ->
 //                cats?.let {
-//                    Log.d(TAG, "mafka: 0)ne ${it.size}")
+//                    Log.d(TAG, "mafka: 0)ne ${it.size}"
 //                    photoRecyclerView.adapter = PhotoAdapter(it, context)
 //                }
 //                showFragment(OwnerFragment.newInstance())

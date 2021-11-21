@@ -24,7 +24,7 @@ class CatalogRequestRPC(val p_RestClient: RestClient): AbstractO(), Callback {
     }
 
     override fun onFailure(call: Call, e: IOException) {
-        throw IOException("Error response ${e}")
+//        throw IOException("Error response ${e}")
     }
 
     override fun onResponse(call: Call, response: Response) {
@@ -37,19 +37,12 @@ class CatalogRequestRPC(val p_RestClient: RestClient): AbstractO(), Callback {
         }
         val responseI = Gson().fromJson(bodyString, ResponseI::class.java)
         log.info("onResponse responseO=${responseI}")
-        db.saveRealmEntity(responseI.payload.container_platform_type)
-        db.save {
-            for(container_platform_type in responseI.payload.container_platform_type) {
-                db.insert(container_platform_type)
-            }
-        }
-
-        db.save {
-            for(container_type in responseI.payload.container_type) {
-                db.insert(container_type)
-            }
-        }
-
+        db.saveRealmEntityList(responseI.payload.container_platform_type)
+//        db.save {
+//            for(container_platform_type in responseI.payload.container_platform_type) {
+//                db.insert(container_platform_type)
+//            }
+//        }
 //        result.postValue(responseO.payload)
     }
 

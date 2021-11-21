@@ -5,7 +5,6 @@ import io.realm.Realm
 import io.realm.RealmList
 import io.realm.RealmObject
 import ru.smartro.inventory.database.*
-import java.lang.Exception
 import java.util.concurrent.Executors
 
 // find! has
@@ -76,45 +75,38 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
     }
 
     fun loadPlatformEntity(): List<PlatformEntityRealm> {
-        val realmResults = mRealm.where(PlatformEntityRealm::class.java ).findAll()
+        val realmResults = mRealm.where(PlatformEntityRealm::class.java).findAll()
         val result = mRealm.copyFromRealm(realmResults)
         return result
     }
 
-    fun createPlatformEntity(): PlatformEntityRealm {
-        Log.e("ErrorsE", "kasta каста ()")
-        val result = try {
-            mRealm.createObject(PlatformEntityRealm::class.java)?: Onull
-        } catch (e: Exception) {
-            Log.e("ErrorsE", "kasta каста ()")
-            Onull
-        }
+    fun createPlatformEntity(id: Int): PlatformEntityRealm {
+//        val result =  mRealm.createObject(PlatformEntityRealm::class.java, id)
+        val result = PlatformEntityRealm(id)
+        saveRealmEntity(result)
         return result
     }
 
     /** entityRealm entityRealmS**/
-    fun saveRealmEntity(entityRealm: ARealmObject) {
+    fun saveRealmEntity(entityRealm: RealmObject) {
         execInTransaction{ p_realm ->
             p_realm.insertOrUpdate(entityRealm)
         }
     }
     /**? //entityRealmS vs entitySRealm **/
-    fun saveRealmEntity(entityRealmS: RealmList<ARealmObject>) {
+    fun saveRealmEntityList(entityRealmS: RealmList<PlatformTypeRealm>) {
         execInTransaction{ p_realm ->
             p_realm.insertOrUpdate(entityRealmS)
         }
     }
+
     /** entitySRealm**/
     fun createContainerEntityS(): List<ContainerEntityRealm> {
-        Log.e("ErrorsE", "kasta каста ()")
-        val result = try {
-            mRealm.createObject(ContainerEntityRealm::class.java)?: O2null
-        } catch (e: Exception) {
-            Log.e("ErrorsE", "kasta каста ()")
-            O2null
+        val resMList= mutableListOf<ContainerEntityRealm>()
+        mRealm.executeTransaction{
+            val result = mRealm.createObject(ContainerEntityRealm::class.java, 66)
+            resMList.add(result)
         }
-        val resMList =  mutableListOf<ContainerEntityRealm>()
-        resMList.add(result)
         return resMList
     }
 

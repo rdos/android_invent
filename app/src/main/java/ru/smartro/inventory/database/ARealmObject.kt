@@ -9,18 +9,15 @@ import ru.smartro.inventory.Snull
 import java.io.Serializable
 
 private const val LIVE_MSG_A = "Оо.!.Ошибочка"
-abstract class ARealmObject (
-    @SerializedName("id")
-    @PrimaryKey
-    var id: Int = Inull,
+open class ARealmObject (
     var LiveMsg_App: String = Snull
-) : RealmModel, Serializable
+) : RealmObject(), Serializable
 {
-//    //==is error
-//    fun isRealmO(): Boolean {
-//        return !isOnull()
-//    }
-//    fun isOnull(): Boolean {
-//        return LIVE_MSG_A == this.LiveMsg_App
-//    }
+    //==is error
+    fun isRealmO(): Boolean {
+        return !isOnull()
+    }
+    fun isOnull(): Boolean {
+        return LIVE_MSG_A == this.LiveMsg_App
+    }
 }

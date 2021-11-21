@@ -8,7 +8,9 @@ import android.net.Uri
 import android.util.Base64
 import com.google.gson.annotations.SerializedName
 import io.realm.RealmList
+import io.realm.RealmModel
 import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
 import ru.smartro.inventory.Dnull
 import ru.smartro.inventory.Inull
 import ru.smartro.inventory.R
@@ -18,6 +20,9 @@ import java.io.InputStream
 import java.io.Serializable
 
 open class PlatformEntityRealm(
+    @SerializedName("id")
+    @PrimaryKey
+    var id: Int = Inull,
     @SerializedName("length")
     var length: Int? = Inull,
     @SerializedName("width")
@@ -52,7 +57,7 @@ open class PlatformEntityRealm(
 
     var imageBase64Entity: RealmList<ImageRealmEntity>? = RealmList(),
     var orig_jsonEntity: OrigJsonRealmEntity? = OrigJsonRealmEntity()
-) : ARealmObject() {
+) : RealmObject() {
 
 
 
@@ -94,26 +99,32 @@ open class OrigJsonRealmEntity(
 }
 
 open class ImageRealmEntity(
+    @SerializedName("id")
+    @PrimaryKey
+    var id: Int = Inull,
     var imageBase64: String = Snull,
     var date: String = Snull,
     var coordinates: CoordinatesRealmEntity? = CoordinatesRealmEntity(),
-) : ARealmObject() {
+) : RealmObject() {
 
 }
 
 open class CoordinatesRealmEntity(
     var lat: Double = Dnull,
     var lng: Double = Dnull
-): ARealmObject()
+): RealmObject()
 {
 }
 
 open class PlatformTypeRealm(
+    @SerializedName("id")
+    @PrimaryKey
+    var id: Int = Inull,
     @SerializedName("name")
     var name: String = Snull,
     @SerializedName("organisation_id")
     var organisation_id: Int = Inull
-) : ARealmObject()
+) : RealmObject()
 
 //open class CardStatusTypeRealm(
 //    @SerializedName("id")

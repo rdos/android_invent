@@ -7,11 +7,11 @@ import ru.smartro.inventory.database.PlatformEntityRealm
 //data class ResponseO(
 data class ResponseO(
         @SerializedName("type")
-        val type: String = Snull,
+        var type: String = Snull,
         @SerializedName("payload")
-        val payload: List<PlatformEntityRealm>,
+        var payload: List<PlatformEntityRealm>,
         @SerializedName("error")
-        val error: List<ResponseRPCError>,
+        var error: List<ResponseRPCError>,
 
 
 ) {

@@ -1,18 +1,23 @@
 package ru.smartro.inventory.core
 
 import com.google.gson.annotations.SerializedName
+import io.realm.RealmList
+import io.realm.RealmObject
 import ru.smartro.inventory.Snull
+import ru.smartro.inventory.database.ARealmObject
 import ru.smartro.inventory.database.ContainerTypeRealm
 import ru.smartro.inventory.database.PlatformEntityRealm
+import ru.smartro.inventory.database.PlatformTypeRealm
+import java.io.Serializable
 
 //data class Responsel(
 data class ResponseI(
         @SerializedName("type")
-        val type: String = Snull,
+        var type: String = Snull,
         @SerializedName("payload")
         val payload: PayloadCatalog,
         @SerializedName("error")
-        val error: List<ResponseRPCError>
+        val error: RealmList<ResponseRPCError> = RealmList()
 
 ) {
 
@@ -25,8 +30,9 @@ data class ResponseI(
 //        }
 }
 
-data class PayloadCatalog(
+open class PayloadCatalog(
         @SerializedName("container_type")
-        val container_type: List<ContainerTypeRealm>,
+        var container_type: RealmList<ContainerTypeRealm> = RealmList(),
         @SerializedName("container_platform_type")
-        val container_platform_type : List<PlatformEntityRealm>
+        var container_platform_type : RealmList<PlatformTypeRealm> = RealmList()
+) : RealmObject(), Serializable

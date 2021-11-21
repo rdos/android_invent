@@ -25,7 +25,7 @@ class PlatformRequestRPC(val p_RestClient: RestClient): AbstractO(), Callback {
     }
 
     override fun onFailure(call: Call, e: IOException) {
-        throw IOException("Error response ${e}")
+//        Toast. throw IOException("Error response ${e}")
     }
 
     override fun onResponse(call: Call, response: Response) {

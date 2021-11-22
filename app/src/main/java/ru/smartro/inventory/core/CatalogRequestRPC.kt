@@ -38,6 +38,9 @@ class CatalogRequestRPC(val p_RestClient: RestClient): AbstractO(), Callback {
         val responseI = Gson().fromJson(bodyString, ResponseI::class.java)
         log.info("onResponse responseO=${responseI}")
         db.saveRealmEntityList(responseI.payload.container_platform_type)
+        db.saveRealmEntityList(responseI.payload.container_type)
+        db.saveRealmEntityList(responseI.payload.card_status)
+        db.saveRealmEntityList(responseI.payload.container_status)
 //        db.save {
 //            for(container_platform_type in responseI.payload.container_platform_type) {
 //                db.insert(container_platform_type)

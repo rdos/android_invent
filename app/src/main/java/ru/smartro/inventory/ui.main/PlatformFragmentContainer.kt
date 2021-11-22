@@ -16,10 +16,10 @@ import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.database.ContainerEntityRealm
 
 
-class PlatformFragmentContainer : AbstractFragment(){
+class PlatformFragmentContainer(val p_platformId: Int) : AbstractFragment(){
 
     companion object {
-        fun newInstance() = PlatformFragmentContainer()
+        fun newInstance(p_platformId: Int) = PlatformFragmentContainer(p_platformId)
     }
     //
     inner class PlatformContainerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
@@ -67,11 +67,12 @@ class PlatformFragmentContainer : AbstractFragment(){
         showHideActionBar(true)
 
 
-        val containerS: List<ContainerEntityRealm> = goPlatformAddContainerS()
+//        val containerS: List<ContainerEntityRealm> = goPlatformAddContainerS()
 
         val rv = view.findViewById<RecyclerView>(R.id.rv_platform_fragment_container)
         rv.layoutManager = GridLayoutManager(requireContext(), 3)
-        rv.adapter = ContainerInPlatfornAdapter(containerS)
+        val platformContainerList = db().loadPlatformContainers(p_platformId)
+        rv.adapter = ContainerInPlatfornAdapter(platformContainerList)
 
 //        baseview.setOnClickListener {
 //            MyUtil.hideKeyboard(this)
@@ -79,7 +80,7 @@ class PlatformFragmentContainer : AbstractFragment(){
 
     }
 
-    inner class ContainerInPlatfornAdapter(private val p_containerS: List<ContainerEntityRealm>) :
+    inner class ContainerInPlatfornAdapter(private val platformContainerList: List<ContainerEntityRealm>) :
         RecyclerView.Adapter<PlatformContainerViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlatformContainerViewHolder {
@@ -90,11 +91,11 @@ class PlatformFragmentContainer : AbstractFragment(){
         }
 
         override fun getItemCount(): Int {
-            return p_containerS.size
+            return platformContainerList.size
         }
 
         override fun onBindViewHolder(holder: PlatformContainerViewHolder, position: Int) {
-            val container = p_containerS.get(position)
+            val container = platformContainerList.get(position)
             holder.tv.text = container.number
 
             holder.llc.rootView.setOnClickListener(holder)

@@ -51,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_16"
-        android:text="@string/platform_fragment__save_to_the_sys"
+        android:text="@string/platform_fragment__save"
         android:textColor="@color/purple_white_full"
         android:backgroundTint="@color/purple_200"
         android:backgroundTintMode="multiply"/>
@@ -199,14 +199,20 @@
 <!--        android:layout_width=""-->
 <!--        android:layout_height=""-->
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/acb_platform_fragment__add_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_16"
+        android:text="@string/platform_fragment__add_containers"
+        android:textColor="@color/purple_white_full"
+        android:backgroundTint="@color/purple_200"
+        android:backgroundTintMode="multiply"/>
+
     <FrameLayout
         android:id="@+id/fl_platform_fragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
     </FrameLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
 </androidx.appcompat.widget.LinearLayoutCompat>

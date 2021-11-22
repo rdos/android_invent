@@ -65,7 +65,7 @@ fun ImageButton.simulateClick(delay: Long = ANIMATION_FAST_MILLIS) {
  * - Photo taking
  * - Image analysis
 :()*/
-abstract class CameraAbstractFragment(private val p_id: Int) : AbstractFragment() {
+abstract class AbstractPhotoFragment(private val p_platform_id: Int, private val p_container_id: Int?) : AbstractFragment() {
 
     companion object {
 
@@ -80,9 +80,12 @@ abstract class CameraAbstractFragment(private val p_id: Int) : AbstractFragment(
             File(baseFolder, SimpleDateFormat(format, Locale.US)
                 .format(System.currentTimeMillis()) + extension)
     }
+
+
+
     private var mCameraUiFragment: View? = null
     private lateinit var mPreviewView: PreviewView
-    private lateinit var outputDirectory: File
+    protected lateinit var outputDirectory: File
     private lateinit var broadcastManager: LocalBroadcastManager
 
     private var displayId: Int = -1
@@ -115,6 +118,19 @@ abstract class CameraAbstractFragment(private val p_id: Int) : AbstractFragment(
 //        } ?: Unit
 //    }
 
+
+    protected fun imageToBase64(imageUri: Uri, rotationDegrees: Float): String {
+        val imageStream: InputStream? = requireContext().contentResolver.openInputStream(imageUri)
+        val selectedImage = BitmapFactory.decodeStream(imageStream)
+        val matrix = Matrix()
+        matrix.preRotate(rotationDegrees)
+        val rotatedBitmap = Bitmap.createBitmap(selectedImage, 0, 0, selectedImage.width, selectedImage.height, matrix, true)
+        val compressedBitmap = Bitmap.createScaledBitmap(rotatedBitmap, 320, 620, false)
+        val baos = ByteArrayOutputStream()
+        compressedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val b: ByteArray = baos.toByteArray()
+        return "data:image/png;base64,${Base64.encodeToString(b, Base64.DEFAULT)}"
+    }
 
 
     override fun onDestroyView() {
@@ -165,7 +181,7 @@ abstract class CameraAbstractFragment(private val p_id: Int) : AbstractFragment(
         windowManager = WindowManager(view.context)
 
         // Determine the output directory
-        outputDirectory= getOutputDirectory(p_id)
+        outputDirectory= getOutputDirectory(p_platform_id, p_container_id)
         mPreviewView = view.findViewById(R.id.pv_camera_fragment)
 
         // Wait for the views to be properly laid out
@@ -380,14 +396,16 @@ abstract class CameraAbstractFragment(private val p_id: Int) : AbstractFragment(
 
         val acibShow = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__show_photo)
         acibShow?.setOnClickListener {
-            showNextFragment(GalleryFragment.newInstance(p_id))
+            showNextFragment(GalleryFragment.newInstance(p_platform_id, p_container_id))
         }
 
         val acibNext = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__next)
         acibNext?.setOnClickListener {
-            showNextFragment(PlatformFragment.newInstance())
+            onNextClick()
         }
     }
+
+    abstract fun onNextClick()
 
     /** Enabled or disabled a button to switch cameras depending on the available cameras */
     private fun updateCameraSwitchButton() {

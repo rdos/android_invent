@@ -4,10 +4,7 @@ import com.google.gson.annotations.SerializedName
 import io.realm.RealmList
 import io.realm.RealmObject
 import ru.smartro.inventory.Snull
-import ru.smartro.inventory.database.ARealmObject
-import ru.smartro.inventory.database.ContainerTypeRealm
-import ru.smartro.inventory.database.PlatformEntityRealm
-import ru.smartro.inventory.database.PlatformTypeRealm
+import ru.smartro.inventory.database.*
 import java.io.Serializable
 
 //data class Responsel(
@@ -34,5 +31,9 @@ open class PayloadCatalog(
         @SerializedName("container_type")
         var container_type: RealmList<ContainerTypeRealm> = RealmList(),
         @SerializedName("container_platform_type")
-        var container_platform_type : RealmList<PlatformTypeRealm> = RealmList()
-) : RealmObject(), Serializable
+        var container_platform_type : RealmList<PlatformTypeRealm> = RealmList(),
+        @SerializedName("card_status")
+        var card_status : RealmList<CardStatusTypeRealm> = RealmList(),
+        @SerializedName("container_status")
+        var container_status : RealmList<ContainerStatusRealm> = RealmList(),
+)

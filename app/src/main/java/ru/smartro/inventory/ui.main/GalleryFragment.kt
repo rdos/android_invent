@@ -35,10 +35,10 @@ import java.util.Locale
 
 val EXTENSION_WHITELIST = arrayOf("JPG")
 //class GalleryFragment(p_id: Int) internal constructor()
-class GalleryFragment(val p_id: Int) : AbstractFragment() {
+class GalleryFragment(val p_platform_id: Int, val p_container_id: Int?) : AbstractFragment() {
 
     companion object {
-        fun newInstance(p_id: Int) = GalleryFragment(p_id)
+        fun newInstance(p_platform_id: Int, p_container_id: Int?) = GalleryFragment(p_platform_id, p_container_id)
     }
 
     private lateinit var mediaList: MutableList<File>
@@ -57,7 +57,7 @@ class GalleryFragment(val p_id: Int) : AbstractFragment() {
         retainInstance = true
 
         // Get root directory of media from navigation arguments
-        val outputDirectory = getOutputDirectory(p_id)
+        val outputDirectory = getOutputDirectory(p_platform_id, p_container_id)
         val rootDirectory = File(outputDirectory.absolutePath)
 
         // Walk through all files in the root directory

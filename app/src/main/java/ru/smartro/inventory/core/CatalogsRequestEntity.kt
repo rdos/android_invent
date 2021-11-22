@@ -11,6 +11,6 @@ data class CatalogsRequestEntity(
 
 data class PayLoadCatalogRequest (
     val organisation_id: Int = 1,
-    var catalogs: MutableList<String> = mutableListOf("container_type", "container_platform_type", "card_status")
+    var catalogs: MutableList<String> = mutableListOf("container_type", "container_platform_type", "card_status", "container_status")
 ) : AbstractEntity()
 

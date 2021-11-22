@@ -74,9 +74,39 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         return result
     }
 
+    fun loadContainerType(): List<ContainerTypeRealm> {
+        val realmResults = mRealm.where(ContainerTypeRealm::class.java).findAll()
+        val result = mRealm.copyFromRealm(realmResults)
+        return result
+    }
+
+    fun loadContainerStatus(): List<ContainerStatusRealm> {
+        val realmResults = mRealm.where(ContainerStatusRealm::class.java).findAll()
+        val result = mRealm.copyFromRealm(realmResults)
+        return result
+    }
+
     fun loadPlatformEntity(): List<PlatformEntityRealm> {
         val realmResults = mRealm.where(PlatformEntityRealm::class.java).findAll()
         val result = mRealm.copyFromRealm(realmResults)
+        return result
+    }
+
+    fun loadPlatformEntity(platformId: Int): PlatformEntityRealm {
+        val realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("id", platformId).findFirst()
+        val result = mRealm.copyFromRealm(realmResults!!)
+        return result
+    }
+
+    fun loadContainerEntity(containerId: Int): ContainerEntityRealm {
+        val realmResults = mRealm.where(ContainerEntityRealm::class.java).equalTo("id", containerId).findFirst()
+        val result = mRealm.copyFromRealm(realmResults!!)
+        return result
+    }
+
+    fun loadPlatformContainers(platformId: Int): List<ContainerEntityRealm> {
+        val realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("id", platformId).findFirst()
+        val result = mRealm.copyFromRealm(realmResults!!.containers)
         return result
     }
 
@@ -94,7 +124,7 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         }
     }
     /**? //entityRealmS vs entitySRealm **/
-    fun saveRealmEntityList(entityRealmS: RealmList<PlatformTypeRealm>) {
+    fun saveRealmEntityList(entityRealmS: RealmList<out RealmObject>) {
         execInTransaction{ p_realm ->
             p_realm.insertOrUpdate(entityRealmS)
         }

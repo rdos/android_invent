@@ -43,7 +43,7 @@ open class PlatformEntityRealm(
     var type: PlatformTypeRealm? = null,
 
     @SerializedName("coordinates")
-    var coordinates: CoordinatesRealmEntity? = null,
+    var coordinates: CoordinatesRealmEntity? = CoordinatesRealmEntity(),
     @SerializedName("datetime")
     var datetime: String? = null,
     @SerializedName("comment")
@@ -54,8 +54,7 @@ open class PlatformEntityRealm(
     var status_name: String = Snull,
     @SerializedName("containers")
     var containers: RealmList<ContainerEntityRealm> = RealmList(),
-
-    var imageBase64Entity: RealmList<ImageRealmEntity>? = RealmList(),
+    var imageBase64Entity: RealmList<ImageRealmEntity> = RealmList(),
     var orig_jsonEntity: OrigJsonRealmEntity? = OrigJsonRealmEntity()
 ) : RealmObject() {
 
@@ -71,18 +70,7 @@ open class PlatformEntityRealm(
         return R.drawable.ic_map_fragment_bunker_green
     }
 
-    fun imageToBase64(imageUri: Uri, rotationDegrees: Float, context: Context): String {
-        val imageStream: InputStream? = context.contentResolver.openInputStream(imageUri)
-        val selectedImage = BitmapFactory.decodeStream(imageStream)
-        val matrix = Matrix()
-        matrix.preRotate(rotationDegrees)
-        val rotatedBitmap = Bitmap.createBitmap(selectedImage, 0, 0, selectedImage.width, selectedImage.height, matrix, true)
-        val compressedBitmap = Bitmap.createScaledBitmap(rotatedBitmap, 320, 620, false)
-        val baos = ByteArrayOutputStream()
-        compressedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        val b: ByteArray = baos.toByteArray()
-        return "data:image/png;base64,${Base64.encodeToString(b, Base64.DEFAULT)}"
-    }
+
 
     fun base64ToImage(encodedImage: String?): Bitmap {
         val decodedString: ByteArray =
@@ -98,16 +86,6 @@ open class OrigJsonRealmEntity(
 
 }
 
-open class ImageRealmEntity(
-    @SerializedName("id")
-    @PrimaryKey
-    var id: Int = Inull,
-    var imageBase64: String = Snull,
-    var date: String = Snull,
-    var coordinates: CoordinatesRealmEntity? = CoordinatesRealmEntity(),
-) : RealmObject() {
-
-}
 
 open class CoordinatesRealmEntity(
     var lat: Double = Dnull,
@@ -126,12 +104,12 @@ open class PlatformTypeRealm(
     var organisation_id: Int = Inull
 ) : RealmObject()
 
-//open class CardStatusTypeRealm(
-//    @SerializedName("id")
-//    @PrimaryKey
-//    var id: Int = Inull,
-//    @SerializedName("name")
-//    var name: String = Snull,
-//    @SerializedName("organisation_id")
-//    var organisation_id: Int = Inull
-//) : RealmObject()
+open class CardStatusTypeRealm(
+    @SerializedName("id")
+    @PrimaryKey
+    var id: Int = Inull,
+    @SerializedName("name")
+    var name: String = Snull,
+    @SerializedName("organisation_id")
+    var organisation_id: Int = Inull
+) : RealmObject()

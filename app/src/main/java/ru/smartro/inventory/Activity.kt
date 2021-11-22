@@ -40,7 +40,6 @@ class Activity : AbstractAct() , LocationListener {
         log.info("onCreate", location?.position.toString())
 
         // TODO: 12.11.2021 место!))
-        initRealm()
 
         if (savedInstanceState == null) {
             if (Snull == db.loadConfig("token")) {
@@ -181,10 +180,17 @@ class Activity : AbstractAct() , LocationListener {
 
     }
 
-    fun getOutputDirectory(p_id: Int): File {
-        val dirPath = filesDir.absolutePath + File.separator + p_id
+    fun getOutputDirectory(p_platform_id: Int, p_container_id: Int?): File {
+        var dirPath = filesDir.absolutePath
+        if(p_container_id == null) {
+            dirPath = dirPath + File.separator + p_platform_id
+        } else {
+            dirPath = dirPath + File.separator + p_platform_id + File.separator + p_container_id
+        }
+
         val file = File(dirPath)
         if (!file.exists()) file.mkdirs()
         return file
     }
+
 }

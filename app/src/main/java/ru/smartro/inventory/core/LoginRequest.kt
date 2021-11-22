@@ -1,5 +1,6 @@
 package ru.smartro.inventory.core
 
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import okhttp3.Call
 import okhttp3.Callback
@@ -25,7 +26,9 @@ class LoginRequest(val p_RestClient: RestClient): AbstractO(), Callback {
     }
 
     override fun onFailure(call: Call, e: IOException) {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
+        log.error("TODOTODOTODOTODOTODOTODOTODO", e)
+//        Toast.makeText()
     }
 
 

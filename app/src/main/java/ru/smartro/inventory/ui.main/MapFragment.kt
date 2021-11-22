@@ -21,9 +21,12 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.ui_view.ViewProvider
+import io.realm.Realm
+import ru.smartro.inventory.Inull
 import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.*
+import ru.smartro.inventory.database.ContainerEntityRealm
 import ru.smartro.inventory.database.PlatformEntityRealm
 import ru.smartro.inventory.toast
 
@@ -60,10 +63,10 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
     }
 
     private fun gotoAddPlatform() {
-        val platformEntity: PlatformEntityRealm = db().createPlatformEntity(666)
+        val nextId = Realm.getDefaultInstance().where(PlatformEntityRealm::class.java).max("id")?.toInt()?.plus(1)?: Inull
+        val platformEntity: PlatformEntityRealm = db().createPlatformEntity(nextId)
 //        if (platformEntity.isOnull()) {
-            db().saveRealmEntity(platformEntity)
-            showNextFragment(PlatformPhotoFragment.newInstance(platformEntity.id))
+            showNextFragment(PhotoPlatformFragment.newInstance(platformEntity.id))
 //        }
 //        val platformEntity = PlatformEntityRealm((0..2002).random())
 //        db().save {

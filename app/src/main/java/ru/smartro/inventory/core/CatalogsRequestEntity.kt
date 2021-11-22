@@ -1,5 +1,6 @@
 package ru.smartro.inventory.core
 
+import ru.smartro.inventory.Inull
 import ru.smartro.inventory.base.AbstractEntity
 
 data class CatalogsRequestEntity(
@@ -10,7 +11,7 @@ data class CatalogsRequestEntity(
 }
 
 data class PayLoadCatalogRequest (
-    val organisation_id: Int = 1,
-    var catalogs: MutableList<String> = mutableListOf("container_type", "container_platform_type", "card_status", "container_status")
+    var organisation_id: Int = Inull,
+    val catalogs: MutableList<String> = mutableListOf("container_type", "container_platform_type", "card_status", "container_status")
 ) : AbstractEntity()
 

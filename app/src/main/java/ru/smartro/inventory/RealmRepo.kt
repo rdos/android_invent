@@ -19,12 +19,13 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
     private val TAG : String = "RealmRepository--AAA"
 
     fun saveConfig(configEntity: ConfigEntityRealm) {
+        configEntity.name = configEntity.name.uppercase()
         mRealm.executeTransaction { realm ->
             realm.insertOrUpdate(configEntity)
         }
     }
 
-    fun saveOwner(ownerEntityList: OwnerResponse) {
+    fun saveOwnerList(ownerEntityList: OwnerResponse) {
         execInTransaction{ p_realm ->
             p_realm.insertOrUpdate(ownerEntityList.data.organisationRealmEntities)
         }
@@ -38,7 +39,7 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
 
     fun loadConfig(name: String): String {
         mRealm.refresh()
-        val configEntity = mRealm.where(ConfigEntityRealm::class.java).findFirst() ?: return Snull
+        val configEntity = mRealm.where(ConfigEntityRealm::class.java).equalTo("name", name.uppercase()).findFirst() ?: return Snull
         return configEntity.value
     }
 

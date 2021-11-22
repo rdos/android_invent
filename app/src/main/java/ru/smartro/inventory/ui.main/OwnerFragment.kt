@@ -13,21 +13,14 @@ import ru.smartro.inventory.R
 import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.OwnerRequest
+import ru.smartro.inventory.database.ConfigEntityRealm
 import ru.smartro.inventory.database.OwnerResponse
 
 //     android:background="?android:attr/selectableItemBackground">
 class OwnerFragment : AbstractFragment(){
     private lateinit var viewModel: OwnerViewModel
 //
-    inner class OwnerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
-        View.OnClickListener {
-        val tv = itemView.findViewById<AppCompatTextView>(R.id.aptv_owner_fragment_rv__item)
-        val llc = itemView.findViewById<LinearLayoutCompat>(R.id.llc_owner_fragment_rv__item)
-        override fun onClick(p0: View?) {
-//            TODO("Not yet implemented")
-            showFragment(MapFragment.newInstance())
-        }
-    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -52,6 +45,7 @@ class OwnerFragment : AbstractFragment(){
                 recyclerView.adapter = OwnerAdapter(ownerResponse)
             }
         )
+
         // TODO: Use the ViewModel
 //        view.findViewById<AppCompatButton>(R.id.).setOnClickListener(this)
     }
@@ -85,8 +79,11 @@ class OwnerFragment : AbstractFragment(){
         override fun onBindViewHolder(holder: OwnerViewHolder, position: Int) {
             val organisationEntityRealms = p_ownerResponse.data.organisationRealmEntities[position]
             holder.tv.text = organisationEntityRealms.name
-
-            holder.llc.rootView.setOnClickListener(holder)
+            holder.llc.rootView.setOnClickListener{
+                val config = ConfigEntityRealm(name="Owner", value=organisationEntityRealms.id.toString())
+                db().saveConfig(config)
+                showFragment(MapFragment.newInstance())
+            }
 //            holder.llc.animation =
 //                AnimationUtils.loadAnimation(holder.itemView.context, R.anim.slide_in_left)
 //            setAnimation(holder.itemView, position)
@@ -94,7 +91,10 @@ class OwnerFragment : AbstractFragment(){
 
         }
 
-
+    class OwnerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+        val tv = itemView.findViewById<AppCompatTextView>(R.id.aptv_owner_fragment_rv__item)
+        val llc = itemView.findViewById<LinearLayoutCompat>(R.id.llc_owner_fragment_rv__item)
+    }
 
     class OwnerViewModel : ViewModel() {
         // TODO: Implement the ViewModel

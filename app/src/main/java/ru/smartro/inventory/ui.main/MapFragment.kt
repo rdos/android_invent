@@ -113,23 +113,15 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         conic.observe(
             viewLifecycleOwner,
             { platforms ->
-//                cats?.let {
-//                    Log.d(TAG, "mafka: 0)ne ${it.size}"
-//                    photoRecyclerView.adapter = PhotoAdapter(it, context)
-//                }
-//                showFragment(OwnerFragment.newInstance())
                 addPlatformToMap(platforms)
             }
         )
 
-
         val rpcGetCatalogs = CatalogsRequestEntity(PayLoadCatalogRequest())
-
+        val ownerId = db().loadConfig("Owner")
+        rpcGetCatalogs.payload.organisation_id = ownerId.toInt()
         val con = CatalogRequestRPC(restClient).callAsyncRPC(rpcGetCatalogs)
 
-//        debug_fab.setOnClickListener {
-//            startActivity(Intent(this, DebugActivity::class.java))
-//        }
         mMapObjectCollection.addTapListener { mapObject, point ->
             log.info("mMapObjectCollection")
             true

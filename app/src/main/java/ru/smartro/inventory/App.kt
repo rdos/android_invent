@@ -34,6 +34,7 @@ class App : Application(){
 }
 
 const val AUTH_STAGE = "https://auth.stage.smartro.ru/api"
+const val URL_RPC_STAGE = "https://worknote-back.stage.smartro.ru/api/rpc"
 const val Snull = "rNull"
 const val Inull = -111
 const val Lnull = -111222333 as Long

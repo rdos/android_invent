@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
+import ru.smartro.inventory.URL_RPC_STAGE
 import ru.smartro.inventory.base.AbstractO
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.database.OrigJsonRealmEntity
@@ -18,8 +19,7 @@ class PlatformRequestRPC(val p_RestClient: RestClient): AbstractO(), Callback {
     fun callAsyncRPC(rpcPlatformEntity: RPCPlatformEntity): MutableLiveData<List<PlatformEntityRealm>> {
         log.debug("callAsyncRPC.before" )
         val requestBody = rpcPlatformEntity.toRequestBody()
-        val url = "https://worknote-back.stage.smartro.ru/api/rpc"
-        val request = p_RestClient.newRequest(url).post(requestBody).build()
+        val request = p_RestClient.newRequest(URL_RPC_STAGE).post(requestBody).build()
         p_RestClient.newCall(request, this)
         return result
     }

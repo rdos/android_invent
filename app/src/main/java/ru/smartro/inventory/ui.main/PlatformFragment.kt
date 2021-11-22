@@ -17,6 +17,8 @@ import androidx.appcompat.widget.AppCompatTextView
 import com.google.android.material.textfield.TextInputEditText
 import io.realm.Realm
 import ru.smartro.inventory.Inull
+import ru.smartro.inventory.base.RestClient
+import ru.smartro.inventory.core.*
 import ru.smartro.inventory.database.ContainerEntityRealm
 import ru.smartro.inventory.database.PlatformTypeRealm
 import java.text.SimpleDateFormat
@@ -72,6 +74,7 @@ class PlatformFragment(val p_platform_id: Int) : AbstractFragment() {
 
         val acbSave = view.findViewById<AppCompatButton>(R.id.acb_platform_fragment__save)
         acbSave.setOnClickListener {
+            acbSave.isEnabled = false
             if(acsVid.selectedItem.toString() == "Открытая") {
                 platformEntity.is_open = 1
             } else {
@@ -87,11 +90,26 @@ class PlatformFragment(val p_platform_id: Int) : AbstractFragment() {
             } catch (e: Exception) {
                 log.error("TODOTODOTODO")
             }
-            
-            getOutputDirectory(p_platform_id, null).deleteOnExit()
 
-            exitFragment()
-            exitFragment()
+            val synchroRequestEntity = SynchroRequestEntity()
+            val ownerId = db().loadConfig("Owner")
+            synchroRequestEntity.payload.organisation_id = ownerId.toInt()
+            synchroRequestEntity.payload.data.add(platformEntity)
+            val restClient = RestClient()
+            val con = SynchroRequestRPC(restClient).callAsyncRPC(synchroRequestEntity)
+            con.observe(
+                viewLifecycleOwner,
+                { bool ->
+                    if (bool){
+                        getOutputDirectory(p_platform_id, null).deleteOnExit()
+                        exitFragment()
+                        exitFragment()
+                    } else
+                    {
+                        acbSave.isEnabled = true
+                    }
+                }
+            )
 //            showFragment(PlatformFragmentContainerDlt.newInstance())
         }
 

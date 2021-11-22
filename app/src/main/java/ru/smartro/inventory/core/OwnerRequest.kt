@@ -32,7 +32,7 @@ class OwnerRequest(val p_RestClient: RestClient): AbstractO(), Callback {
         }
         val ownerResponse = OwnerResponse.from(response)
 //        AppPreferences.accessToken = loginResponse.data.token
-        db.saveOwner(ownerResponse)
+        db.saveOwnerList(ownerResponse)
 
 //        val config = ConfigEntity(name="token", value=loginResponse.data.token)
 //        p_RealmRepository.insertWayTask(config)

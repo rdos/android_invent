@@ -18,6 +18,7 @@ import ru.smartro.inventory.Snull
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.io.Serializable
+import java.util.*
 
 open class PlatformEntityRealm(
     @SerializedName("id")
@@ -28,14 +29,14 @@ open class PlatformEntityRealm(
     @SerializedName("width")
     var width: Int = Inull,
     @SerializedName("containers_count")
-    var containers_count: Int? = null,
+    var containers_count: Int? = Inull,
     @SerializedName("has_base")
-    var has_base: Int? = null,
+    var has_base: Int = Inull,
     @SerializedName("has_fence")
-    var has_fence: Int? = null,
+    var has_fence: Int = Inull,
 
     @SerializedName("is_open")
-    var is_open: Int? = null,
+    var is_open: Int = Inull,
     @SerializedName("address")
     var address: String? = null,
     //раскоментируй и посмотри!
@@ -55,7 +56,6 @@ open class PlatformEntityRealm(
     @SerializedName("containers")
     var containers: RealmList<ContainerEntityRealm> = RealmList(),
     var imageBase64Entity: RealmList<ImageRealmEntity> = RealmList(),
-    var orig_jsonEntity: OrigJsonRealmEntity? = OrigJsonRealmEntity()
 ) : RealmObject() {
 
 
@@ -78,14 +78,6 @@ open class PlatformEntityRealm(
         return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
     }
 }
-
-open class OrigJsonRealmEntity(
-    var date: String? = Snull,
-) : RealmObject(
-) {
-
-}
-
 
 open class CoordinatesRealmEntity(
     var lat: Double = Dnull,

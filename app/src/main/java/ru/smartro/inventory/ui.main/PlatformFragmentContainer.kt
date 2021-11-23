@@ -64,7 +64,7 @@ class PlatformFragmentContainer(val p_platformId: Int) : AbstractFragment(){
             ViewModelProvider.NewInstanceFactory()
         ).get(PlatformContainerViewModel::class.java)
         // TODO: Use the ViewModel
-        showHideActionBar(true)
+//        showHideActionBar(true)
 
 
 //        val containerS: List<ContainerEntityRealm> = goPlatformAddContainerS()

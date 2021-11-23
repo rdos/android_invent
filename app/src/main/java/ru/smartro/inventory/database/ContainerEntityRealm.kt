@@ -34,9 +34,7 @@ open class ContainerTypeRealm(
     @PrimaryKey
     var id: Int = Inull,
     @SerializedName("name")
-    var name: String = Snull,
-    @SerializedName("organisation_id")
-    var organisation_id: Int = Inull
+    var name: String = Snull
 ) : RealmObject()
 
 open class ContainerStatusRealm(
@@ -44,7 +42,5 @@ open class ContainerStatusRealm(
     @PrimaryKey
     var id: Int = Inull,
     @SerializedName("name")
-    var name: String = Snull,
-    @SerializedName("organisation_id")
-    var organisation_id: Int = Inull
+    var name: String = Snull
 ) : RealmObject()

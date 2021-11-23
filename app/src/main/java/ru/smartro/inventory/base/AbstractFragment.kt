@@ -27,9 +27,10 @@ abstract class AbstractFragment : Fragment() {
 
     fun getLastPoint(): Point {
         val location: Location? = getLastKnownLocation()
-        val position = location?: TARGET_LOCATION
+        val position = location?.position?: TARGET_LOCATION
         // TODO: 15.11.2021 !!
-        return Point(54.881347, 55.44919)
+        Point(54.881347, 55.44919)
+        return position
     }
 
     fun hasLastPoint(): Boolean {
@@ -111,7 +112,6 @@ abstract class AbstractFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         log.debug("onViewCreated.before")
         setScreenOrientation(false)
-
     }
 
     override fun onDestroyView() {

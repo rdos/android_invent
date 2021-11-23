@@ -14,6 +14,7 @@ import ru.smartro.inventory.base.AbstractAct
 import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.ui.main.LoginFragment
 import ru.smartro.inventory.ui.main.MapFragment
+import ru.smartro.inventory.ui.main.PlatformFragment
 import java.io.File
 
 class Activity : AbstractAct() , LocationListener {
@@ -34,7 +35,7 @@ class Activity : AbstractAct() , LocationListener {
         mMapKit = MapKitFactory.getInstance()
         mLocationManager = mMapKit.createLocationManager()
 
-        mLocationManager.subscribeForLocationUpdates(0.0, 0, 0.0, true, FilteringMode.OFF, this)
+        mLocationManager.subscribeForLocationUpdates(0.0, 500, 0.0, true, FilteringMode.OFF, this)
 
         val location: Location? = LocationManagerUtils.getLastKnownLocation()
         log.info("onCreate", location?.position.toString())
@@ -75,8 +76,6 @@ class Activity : AbstractAct() , LocationListener {
             ActivityCompat.requestPermissions(this, permissions, 1)
         }
     }
-
-
 
 
 

@@ -13,6 +13,7 @@ import ru.smartro.inventory.base.AbstractFragment
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.appcompat.widget.AppCompatTextView
 import com.google.android.material.textfield.TextInputEditText
 import io.realm.Realm
@@ -35,7 +36,7 @@ class PlatformFragment(val p_platform_id: Int) : AbstractFragment() {
     private lateinit var viewModel: PlatformViewModel
 
     fun currentTime(): String {
-        val sdf = SimpleDateFormat("dd/MM/yyyy--HH:mm:ss", Locale.getDefault())
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         return sdf.format(Date())
     }
 
@@ -44,7 +45,6 @@ class PlatformFragment(val p_platform_id: Int) : AbstractFragment() {
 
 //        setActionBarTitle(R.string.platform_fragment__welcome_to_system)
         setActionBarTitle("Данные по КП" + currentTime())
-
         val platformEntity = db().loadPlatformEntity(p_platform_id)
 
         val actvCoordinateLat = view.findViewById<AppCompatTextView>(R.id.actv_platform_fragment__coordinate_lat)
@@ -70,19 +70,22 @@ class PlatformFragment(val p_platform_id: Int) : AbstractFragment() {
 
         val tietHeight = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment__height)
         val tietWidth = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment__width)
-
+        val accbHasBase = view.findViewById<AppCompatCheckBox>(R.id.accb_platform_fragment__has_base)
+        val accbHasFence = view.findViewById<AppCompatCheckBox>(R.id.accb_platform_fragment__has_fence)
 
         val acbSave = view.findViewById<AppCompatButton>(R.id.acb_platform_fragment__save)
         acbSave.setOnClickListener {
             acbSave.isEnabled = false
-            if(acsVid.selectedItem.toString() == "Открытая") {
-                platformEntity.is_open = 1
-            } else {
-                platformEntity.is_open = 0
-            }
+
+            platformEntity.datetime =currentTime()
+            platformEntity.containers_count = platformEntity.containers.size
+            platformEntity.is_open = if(acsVid.selectedItem.toString() == "Открытая") 1 else 0
+            platformEntity.has_base = if(accbHasBase.isChecked) 1 else 0
+            platformEntity.has_fence = if(accbHasFence.isChecked) 1 else 0
             platformEntity.coordinates?.lat= getLastPoint().latitude
             platformEntity.coordinates?.lng= getLastPoint().longitude
             platformEntity.type = acsType.selectedItem as PlatformTypeRealm
+
             try {
                 platformEntity.length = tietHeight.text.toString().toInt()
                 platformEntity.width = tietWidth.text.toString().toInt()
@@ -90,6 +93,8 @@ class PlatformFragment(val p_platform_id: Int) : AbstractFragment() {
             } catch (e: Exception) {
                 log.error("TODOTODOTODO")
             }
+
+            db().saveRealmEntity(platformEntity)
 
             val synchroRequestEntity = SynchroRequestEntity()
             val ownerId = db().loadConfig("Owner")

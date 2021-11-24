@@ -53,6 +53,10 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         mRealm.insertOrUpdate(realmObject)
     }
 
+//    fun delete(realmObject: RealmObject) {
+//        RealmObject.deleteFromRealm(realmObject)
+//    }
+
     fun saveSave(platform_id: Int) {
         val exe = Executors.newSingleThreadExecutor()
         Log.e("TAG", "kasta каста ()")
@@ -131,6 +135,13 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         }
     }
 
+    fun deleteContainerEntity(containerId: Int) {
+        execInTransaction { p_realm ->
+            val realmResults = mRealm.where(ContainerEntityRealm::class.java).equalTo("id", containerId).findAll()
+            realmResults.deleteAllFromRealm()
+        }
+    }
+
     /** entitySRealm**/
     fun createContainerEntityS(): List<ContainerEntityRealm> {
         val resMList= mutableListOf<ContainerEntityRealm>()
@@ -145,6 +156,8 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
 //        }
         return resMList
     }
+
+
 
 
 //fun findWayTask(): WayTaskEntity {

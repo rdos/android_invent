@@ -16,10 +16,11 @@ import ru.smartro.inventory.R
 import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.database.ContainerStatusRealm
 import ru.smartro.inventory.database.ContainerTypeRealm
+import ru.smartro.inventory.showErrorToast
+import java.lang.Exception
 
 
 class PlatformFragmentContainerDlt(val p_container_id: Int) : AbstractFragment() {
-
     companion object {
         fun newInstance(containerId: Int) = PlatformFragmentContainerDlt(containerId)
     }
@@ -27,7 +28,7 @@ class PlatformFragmentContainerDlt(val p_container_id: Int) : AbstractFragment()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val containerEntityRealm = db().loadContainerEntity(p_container_id)
+        val mContainerEntityRealm = db().loadContainerEntity(p_container_id)
 
         val tietNumber = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment_container_dtl__number)
 
@@ -46,20 +47,32 @@ class PlatformFragmentContainerDlt(val p_container_id: Int) : AbstractFragment()
 
         val acbSaveContainer = view.findViewById<AppCompatButton>(R.id.acb_platform_fragment_container_dtl__save_container)
         acbSaveContainer.setOnClickListener {
+            try {
+                mContainerEntityRealm.type = acsContainerType.selectedItem as ContainerTypeRealm?
+                mContainerEntityRealm.container_status_id = (acsContainerStatus.selectedItem as ContainerStatusRealm).id
+                mContainerEntityRealm.container_status_name = (acsContainerStatus.selectedItem as ContainerStatusRealm).name
+                mContainerEntityRealm.has_pedal = if(accbPedal.isChecked) 1 else 0
+                mContainerEntityRealm.number = tietNumber.text.toString()
+                mContainerEntityRealm.comment = tietComment.text.toString()
+                db().saveRealmEntity(mContainerEntityRealm)
+                // TODO: 22.11.2021 !!!
+                callOnBackPressed()
+                callOnBackPressed()
+            } catch (e: Exception) {
+                showErrorToast(e.message)
+            }
 
-
-
-            containerEntityRealm.type = acsContainerType.selectedItem as ContainerTypeRealm?
-            containerEntityRealm.container_status_id = (acsContainerStatus.selectedItem as ContainerStatusRealm).id
-            containerEntityRealm.container_status_name = (acsContainerStatus.selectedItem as ContainerStatusRealm).name
-            containerEntityRealm.has_pedal = if(accbPedal.isChecked) 1 else 0
-            containerEntityRealm.number = tietNumber.text.toString()
-            containerEntityRealm.comment = tietComment.text.toString()
-            db().saveRealmEntity(containerEntityRealm)
-            // TODO: 22.11.2021 !!!
-            exitFragment()
-            exitFragment()
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        try {
+
+        } catch (e: Exception) {
+
+        }
+        db().deleteContainerEntity(p_container_id)
     }
 
     override fun onCreateView(

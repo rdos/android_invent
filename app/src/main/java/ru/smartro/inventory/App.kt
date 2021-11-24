@@ -1,10 +1,13 @@
 package ru.smartro.inventory
 
 import android.app.Application
+import android.media.MediaScannerConnection
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import com.yandex.mapkit.MapKitFactory
 import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.worknote.extensions.showImmersive
 
 /**HELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIRE
 РАЗ * //gotoAdd = Add -> create->ПОТОМ->Save->ПОТОМ Show
@@ -46,5 +49,34 @@ fun AbstractFragment.showErrorToast(text: String? = "") {
         Toast.makeText(this.context, text, Toast.LENGTH_SHORT).show()
     } catch (e: Exception) {
 
+    }
+}
+
+fun AbstractFragment.showErrorDialog(text: String? = "") {
+    view?.let {
+        AlertDialog.Builder(it.context, android.R.style.Theme_Material_Dialog)
+        .setTitle(getString(R.string.delete_title))
+        .setMessage(getString(R.string.delete_dialog))
+        .setIcon(android.R.drawable.ic_dialog_alert)
+//        .setPositiveButton(android.R.string.yes) { _, _ ->
+//
+//            // Delete current photo
+//            mediaFile.delete()
+//
+//            // Send relevant broadcast to notify other apps of deletion
+//            MediaScannerConnection.scanFile(
+//                view.context, arrayOf(mediaFile.absolutePath), null, null)
+//
+//            // Notify our view pager
+//            mediaList.removeAt(viewPager.currentItem)
+//            viewPager.adapter?.notifyDataSetChanged()
+//
+//            // If all photos have been deleted, return to camera
+//            if (mediaList.isEmpty()) {
+//                this.exitFragment()
+//            }
+//        }
+        .setNegativeButton(android.R.string.no, null)
+        .create().showImmersive()
     }
 }

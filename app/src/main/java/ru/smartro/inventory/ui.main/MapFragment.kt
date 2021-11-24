@@ -28,7 +28,8 @@ import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.*
 import ru.smartro.inventory.database.PlatformEntityRealm
-import ru.smartro.inventory.toast
+import ru.smartro.inventory.showErrorToast
+import ru.smartro.worknote.extensions.simulateClick
 
 
 class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCallback{
@@ -58,7 +59,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
             val cameraAnimation = Animation(Animation.Type.SMOOTH, 1F)
             mMapView.map.move(cameraPosition, cameraAnimation, this)
         } catch (e: Exception) {
-            toast("Что-то пошло не так :(")
+            showErrorToast("Что-то пошло не так :(")
         }
     }
 
@@ -102,12 +103,15 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         mApbAddPlatform.setOnClickListener{
             gotoAddPlatform()
         }
+        mApbAddPlatform.simulateClick()
         gotoMyLocation()
         val platformEntity =  db().loadPlatformEntity()
         addPlatformToMap(platformEntity)
 
-        // TODO: 15.11.2021 
-        val rpcEntity = RPCProvider("get_platforms", getLastPoint()).getRPCEntity()
+        // TODO: 15.11.2021
+        val ownerId = db().loadConfig("Owner")
+        val rpcEntity = RPCProvider("inventory_get_platforms", getLastPoint()).getRPCEntity(ownerId.toInt())
+
         val restClient = RestClient()
         val conic = PlatformRequestRPC(restClient, requireContext()).callAsyncRPC(rpcEntity)
         conic.observe(
@@ -122,7 +126,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         errorLiveData.observe(
             viewLifecycleOwner,
             { errorText ->
-                toast(errorText)
+                showErrorToast(errorText)
             }
         )
         mMapObjectCollection.addTapListener { mapObject, point ->
@@ -137,6 +141,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
                 cancelUniqueWork("SynchroWorkerWorkName"
                 )
         }
+        apbStopWork.simulateClick()
     }
 
 

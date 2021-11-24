@@ -27,26 +27,32 @@ import android.media.MediaScannerConnection
 import android.os.Build
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import ru.smartro.inventory.R
 import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.worknote.extensions.showImmersive
 import java.util.Locale
 
 val EXTENSION_WHITELIST = arrayOf("JPG")
 //class GalleryFragment(p_id: Int) internal constructor()
-class GalleryFragment(val p_platform_id: Int, val p_container_id: Int?) : AbstractFragment() {
+class PhotoShowFragment(val p_platform_id: Int, val p_container_id: Int?) : AbstractFragment() {
 
     companion object {
-        fun newInstance(p_platform_id: Int, p_container_id: Int?) = GalleryFragment(p_platform_id, p_container_id)
+        fun newInstance(p_platform_id: Int, p_container_id: Int?) = PhotoShowFragment(p_platform_id, p_container_id)
     }
 
+    private var mAptvNumOfCount: AppCompatTextView? = null
     private lateinit var mediaList: MutableList<File>
 
     /** Adapter class used to present a fragment containing one photo or video as a page */
     inner class MediaAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
         override fun getCount(): Int = mediaList.size
-        override fun getItem(position: Int): Fragment = MediaAdapterFragment.create(mediaList[position])
+        override fun getItem(position: Int): Fragment  {
+            mAptvNumOfCount?.text = "${position+1} из ${getCount()}"
+            return MediaAdapterFragment.create(mediaList[position])
+        }
         override fun getItemPosition(obj: Any): Int = POSITION_NONE
     }
 
@@ -78,7 +84,15 @@ class GalleryFragment(val p_platform_id: Int, val p_container_id: Int?) : Abstra
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val apibDelete =  view.findViewById<AppCompatImageButton>(R.id.apib_photo_show_fragment__delete)
+
         val viewPager = view.findViewById<ViewPager>(R.id.vp_photo_show_fragment)
+
+        val apibBack = view.findViewById<AppCompatImageButton>(R.id.apib_photo_show_fragment__back)
+        apibBack.setOnClickListener {
+            callOnBackPressed()
+        }
+        mAptvNumOfCount = view.findViewById<AppCompatTextView>(R.id.aptv_photo_show_fragment__num_of_count)
+
 
         //Checking media files list
         if (mediaList.isEmpty()) {
@@ -99,9 +113,7 @@ class GalleryFragment(val p_platform_id: Int, val p_container_id: Int?) : Abstra
         }
 
         // Handle back button press
-//        fragmentGalleryBinding.backButton.setOnClickListener {
-//            Navigation.findNavController(requireActivity(), R.id.fragment_container).navigateUp()
-//        }
+
 
         // Handle share button press
 //        fragmentGalleryBinding.shareButton.setOnClickListener {
@@ -134,29 +146,29 @@ class GalleryFragment(val p_platform_id: Int, val p_container_id: Int?) : Abstra
             mediaList.getOrNull(viewPager.currentItem)?.let { mediaFile ->
 
                 AlertDialog.Builder(view.context, android.R.style.Theme_Material_Dialog)
-                        .setTitle(getString(R.string.delete_title))
-                        .setMessage(getString(R.string.delete_dialog))
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes) { _, _ ->
+                    .setTitle(getString(R.string.delete_title))
+                    .setMessage(getString(R.string.delete_dialog))
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes) { _, _ ->
 
-                            // Delete current photo
-                            mediaFile.delete()
+                        // Delete current photo
+                        mediaFile.delete()
 
-                            // Send relevant broadcast to notify other apps of deletion
-                            MediaScannerConnection.scanFile(
-                                    view.context, arrayOf(mediaFile.absolutePath), null, null)
+                        // Send relevant broadcast to notify other apps of deletion
+                        MediaScannerConnection.scanFile(
+                            view.context, arrayOf(mediaFile.absolutePath), null, null)
 
-                            // Notify our view pager
-                            mediaList.removeAt(viewPager.currentItem)
-                            viewPager.adapter?.notifyDataSetChanged()
+                        // Notify our view pager
+                        mediaList.removeAt(viewPager.currentItem)
+                        viewPager.adapter?.notifyDataSetChanged()
 
-                            // If all photos have been deleted, return to camera
-                            if (mediaList.isEmpty()) {
-                                this.exitFragment()
-                            }
+                        // If all photos have been deleted, return to camera
+                        if (mediaList.isEmpty()) {
+                            this.callOnBackPressed()
                         }
-                        .setNegativeButton(android.R.string.no, null)
-                        .create().showImmersive()
+                    }
+                    .setNegativeButton(android.R.string.no, null)
+                    .create().showImmersive()
             }
         }
     }

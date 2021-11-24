@@ -1,6 +1,5 @@
 package ru.smartro.inventory.ui.main
 
-import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -17,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
 import android.widget.ImageButton
+import androidx.annotation.Px
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -26,6 +26,8 @@ import androidx.core.net.toFile
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.window.WindowManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.smartro.inventory.R
@@ -45,19 +47,6 @@ typealias LumaListener = (luma: Double) -> Unit
 const val ANIMATION_FAST_MILLIS = 50L
 const val ANIMATION_SLOW_MILLIS = 100L
 
-/**
- * Simulate a button click, including a small delay while it is being pressed to trigger the
- * appropriate animations.
- */
-fun ImageButton.simulateClick(delay: Long = ANIMATION_FAST_MILLIS) {
-    performClick()
-    isPressed = true
-    invalidate()
-    postDelayed({
-        invalidate()
-        isPressed = false
-    }, delay)
-}
 
 /**
  * Main fragment for this app. Implements all camera operations including:
@@ -82,7 +71,7 @@ abstract class AbstractPhotoFragment(private val p_platform_id: Int, private val
     }
 
 
-
+    private var mAcibShow: AppCompatImageButton? = null
     private var mCameraUiFragment: View? = null
     private lateinit var mPreviewView: PreviewView
     protected lateinit var outputDirectory: File
@@ -151,18 +140,22 @@ abstract class AbstractPhotoFragment(private val p_platform_id: Int, private val
 
     private fun setGalleryThumbnail(uri: Uri) {
         // Run the operations in the view's thread
-//        cameraUiContainerBinding?.photoViewButton?.let { photoViewButton ->
-//            photoViewButton.post {
-//                // Remove thumbnail padding
-//                photoViewButton.setPadding(resources.getDimension(R.dimen.stroke_small).toInt())
-//
-//                // Load thumbnail into circular button using Glide
-//                Glide.with(photoViewButton)
-//                        .load(uri)
-//                        .apply(RequestOptions.circleCropTransform())
-//                        .into(photoViewButton)
-//            }
-//        }
+        mAcibShow?.let { photoViewButton ->
+            photoViewButton.post {
+                // Remove thumbnail padding
+                photoViewButton.setPadding(resources.getDimension(R.dimen.stroke_small).toInt())
+
+                // Load thumbnail into circular button using Glide
+                Glide.with(photoViewButton)
+                        .load(uri)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(photoViewButton)
+            }
+        }
+    }
+
+    inline fun View.setPadding(@Px size: Int) {
+        setPadding(size, size, size, size)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -394,15 +387,16 @@ abstract class AbstractPhotoFragment(private val p_platform_id: Int, private val
         }
 
 
-        val acibShow = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__show_photo)
-        acibShow?.setOnClickListener {
-            showNextFragment(GalleryFragment.newInstance(p_platform_id, p_container_id))
+        mAcibShow = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__show_photo)
+        mAcibShow?.setOnClickListener {
+            showNextFragment(PhotoShowFragment.newInstance(p_platform_id, p_container_id))
         }
 
         val acibNext = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__next)
         acibNext?.setOnClickListener {
             onNextClick()
         }
+
     }
 
     abstract fun onNextClick()

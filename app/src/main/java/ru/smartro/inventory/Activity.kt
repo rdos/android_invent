@@ -18,14 +18,14 @@ import ru.smartro.inventory.base.AbstractAct
 import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.ui.main.LoginFragment
 import ru.smartro.inventory.ui.main.MapFragment
-import ru.smartro.inventory.ui.main.PlatformFragment
+
 import java.io.File
 import java.util.concurrent.TimeUnit
 
 class Activity : AbstractAct() , LocationListener {
     private lateinit var mLocationManager: LocationManager
     private lateinit var mMapKit: MapKit
-
+    private var mLastShowFragment: AbstractFragment? = null
     val db: RealmRepo by lazy {
         //Remember to call close() on all Realm instances.
         initRealm()
@@ -34,7 +34,6 @@ class Activity : AbstractAct() , LocationListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity)
-
 // TODO: 18.11.2021 Initializing in the Application.onCreate method may lead to extra calls and increased battery use.
         MapKitFactory.initialize(this)
 
@@ -141,22 +140,23 @@ class Activity : AbstractAct() , LocationListener {
 
     fun showFragment(container: Int, fragment: AbstractFragment) {
         log.info("showFragment.before")
+        mLastShowFragment = fragment
         supportFragmentManager.beginTransaction()
             .replace(container, fragment)
             .commitNow()
 //TOdo            .commitNow()
     }
-
-
-
     fun showNextFragment(fragment: AbstractFragment) {
+        mLastShowFragment = fragment
         supportFragmentManager.beginTransaction()
             .replace(R.id.fl_activity, fragment)
             .addToBackStack(fragment.javaClass.simpleName)
             .commit()
     }
 
+
     override fun onBackPressed() {
+        mLastShowFragment?.onBackPressed()
         if (supportFragmentManager.backStackEntryCount > 1) {
             supportFragmentManager.popBackStack();
         } else {

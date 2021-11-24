@@ -3,6 +3,7 @@ package ru.smartro.inventory.ui.main
 import android.net.Uri
 import ru.smartro.inventory.database.ImageRealmEntity
 import java.io.File
+import java.lang.Exception
 
 class PhotoContainerFragment(val p_platform_id: Int, val p_container_id: Int) : AbstractPhotoFragment(p_platform_id, p_container_id) {
 
@@ -29,5 +30,15 @@ class PhotoContainerFragment(val p_platform_id: Int, val p_container_id: Int) : 
         }
         db().saveRealmEntity(containerEntity)
         showNextFragment(PlatformFragmentContainerDlt.newInstance(p_container_id))
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        try {
+
+        } catch (e: Exception) {
+
+        }
+        db().deleteContainerEntity(p_container_id)
     }
 }

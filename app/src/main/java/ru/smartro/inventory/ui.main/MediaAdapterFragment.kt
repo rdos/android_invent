@@ -27,7 +27,7 @@ import ru.smartro.inventory.R
 import java.io.File
 
 
-/** Fragment used for each individual page showing a photo inside of [GalleryFragment] */
+/** Fragment used for each individual page showing a photo inside of [PhotoShowFragment] */
 class MediaAdapterFragment internal constructor() : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

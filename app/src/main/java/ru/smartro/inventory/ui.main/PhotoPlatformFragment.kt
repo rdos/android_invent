@@ -25,11 +25,16 @@ class PhotoPlatformFragment(val p_platform_id: Int) : AbstractPhotoFragment(p_pl
                 log.debug("onNextClick.isDirectory")
                 continue
             }
-            val uri = Uri.fromFile(inFile)
-            val imageInBase64 = imageToBase64(uri, 0f)
-            val imageRealmEntity = ImageRealmEntity()
-            imageRealmEntity.imageBase64 = imageInBase64
-            platformEntity.imageList.add(imageRealmEntity)
+            try {
+                val uri = Uri.fromFile(inFile)
+                val imageInBase64 = imageToBase64(uri, 0f)
+                val imageRealmEntity = ImageRealmEntity()
+                imageRealmEntity.imageBase64 = imageInBase64
+                platformEntity.imageList.add(imageRealmEntity)
+            } catch (e: Exception) {
+                log.error("onNextClick", e)
+            }
+
         }
         db().saveRealmEntity(platformEntity)
         showNextFragment(PlatformFragment.newInstance(p_platform_id))

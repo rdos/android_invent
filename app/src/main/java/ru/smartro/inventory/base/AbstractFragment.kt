@@ -139,7 +139,8 @@ abstract class AbstractFragment : Fragment() {
         log.debug("setScreenOrientation.after")
     }
 
-    protected fun exitFragment() {
+    //todo: call?_!!!
+    protected fun callOnBackPressed() {
         mActivity.onBackPressed()
     }
 
@@ -165,6 +166,11 @@ abstract class AbstractFragment : Fragment() {
         super.onDetach()
         log.debug("onDetach.before")
 
+    }
+
+
+    open fun onBackPressed() {
+        log.info("onBackPressed.before")
     }
 
 

@@ -11,8 +11,8 @@ class RPCProvider(
     val type: String,
     val position: Point
 ) : AbstractEntity() {
-    fun getRPCEntity(): RPCPlatformEntity{
-        val rpcEntity = RPCPlatformEntity(type, PayLoadPlatform(position.latitude, position.longitude, 1))
+    fun getRPCEntity(organisationId: Int): RPCPlatformEntity{
+        val rpcEntity = RPCPlatformEntity(type, PayLoadPlatform(position.latitude, position.longitude, organisationId))
         Log.w("RPCProvider", rpcEntity.toString() )
         return rpcEntity
     }

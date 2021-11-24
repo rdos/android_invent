@@ -18,7 +18,6 @@ import androidx.appcompat.widget.AppCompatTextView
 import com.google.android.material.textfield.TextInputEditText
 import io.realm.Realm
 import ru.smartro.inventory.Inull
-import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.*
 import ru.smartro.inventory.database.ContainerEntityRealm
 import ru.smartro.inventory.database.PlatformTypeRealm
@@ -108,8 +107,9 @@ class PlatformFragment(val p_platform_id: Int) : AbstractFragment() {
                 { bool ->
                     if (bool){
                         getOutputDirectory(p_platform_id, null).deleteOnExit()
-                        exitFragment()
-                        exitFragment()
+                        // TODO: 22.11.2021 !!!
+                        callOnBackPressed()
+                        callOnBackPressed()
                     } else
                     {
                         acbSave.isEnabled = true

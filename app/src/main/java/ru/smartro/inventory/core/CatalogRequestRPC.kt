@@ -72,7 +72,7 @@ class CatalogRequestRPC(val p_RestClient: RestClient, val p_context: Context?): 
 
     data class CatalogsRequestEntity(
         var payload: PayLoadCatalogRequest,
-        var type: String = "get_catalogs",
+        var type: String = "inventory_get_catalogs",
     )  : AbstractEntity() {
 
     }

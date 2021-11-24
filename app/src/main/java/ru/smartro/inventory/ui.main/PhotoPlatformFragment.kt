@@ -7,17 +7,17 @@ import ru.smartro.inventory.database.ImageRealmEntity
 import java.io.File
 
 
-class PhotoPlatformFragment(val p_platform_id: Int) : AbstractPhotoFragment(p_platform_id, null) {
+class PhotoPlatformFragment(val p_platform_uuid: String) : AbstractPhotoFragment(p_platform_uuid, null) {
 
     companion object {
-        fun newInstance(platform_id: Int) = PhotoPlatformFragment(platform_id)
+        fun newInstance(platformUuid: String) = PhotoPlatformFragment(platformUuid)
     }
 
     override fun onNextClick() {
         // TODO: 22.11.2021 copy-past !
-        val file = getOutputDirectory(p_platform_id, null)
+        val file = getOutputDirectory(p_platform_uuid, null)
         val files: Array<File> = file.listFiles()
-        val platformEntity = db().loadPlatformEntity(p_platform_id)
+        val platformEntity = db().loadPlatformEntity(p_platform_uuid)
         platformEntity.imageList.clear()
         for (inFile in files) {
             log.debug("onNextClick ${inFile.name}")
@@ -37,6 +37,6 @@ class PhotoPlatformFragment(val p_platform_id: Int) : AbstractPhotoFragment(p_pl
 
         }
         db().saveRealmEntity(platformEntity)
-        showNextFragment(PlatformFragment.newInstance(p_platform_id))
+        showNextFragment(PlatformFragment.newInstance(p_platform_uuid))
     }
 }

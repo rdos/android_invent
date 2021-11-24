@@ -54,7 +54,7 @@ const val ANIMATION_SLOW_MILLIS = 100L
  * - Photo taking
  * - Image analysis
 :()*/
-abstract class AbstractPhotoFragment(private val p_platform_id: Int, private val p_container_id: Int?) : AbstractFragment() {
+abstract class AbstractPhotoFragment(private val p_platform_uuid: String, private val p_container_uuid: String?) : AbstractFragment() {
 
     companion object {
 
@@ -174,7 +174,7 @@ abstract class AbstractPhotoFragment(private val p_platform_id: Int, private val
         windowManager = WindowManager(view.context)
 
         // Determine the output directory
-        outputDirectory= getOutputDirectory(p_platform_id, p_container_id)
+        outputDirectory= getOutputDirectory(p_platform_uuid, p_container_uuid)
         mPreviewView = view.findViewById(R.id.pv_camera_fragment)
 
         // Wait for the views to be properly laid out
@@ -389,7 +389,7 @@ abstract class AbstractPhotoFragment(private val p_platform_id: Int, private val
 
         mAcibShow = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__show_photo)
         mAcibShow?.setOnClickListener {
-            showNextFragment(PhotoShowFragment.newInstance(p_platform_id, p_container_id))
+            showNextFragment(PhotoShowFragment.newInstance(p_platform_uuid, p_container_uuid))
         }
 
         val acibNext = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__next)

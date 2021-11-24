@@ -21,11 +21,11 @@ import java.io.Serializable
 import java.util.*
 
 open class PlatformEntityRealm(
-    @SerializedName("id")
     @PrimaryKey
-    var id: Int = Inull,
     @SerializedName("uuid")
     var uuid: String = Snull,
+    @SerializedName("id")
+    var id: Int = Inull,
     @SerializedName("length")
     var length: Int? = Inull,
     @SerializedName("width")

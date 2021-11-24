@@ -8,10 +8,13 @@ import io.realm.annotations.Ignore
 import io.realm.annotations.PrimaryKey
 import ru.smartro.inventory.Inull
 import ru.smartro.inventory.Snull
+import java.util.*
 
 open class ContainerEntityRealm(
-    @SerializedName("id")
     @PrimaryKey
+    @SerializedName("uuid")
+    var uuid: String = Snull,
+    @SerializedName("id")
     var id: Int = Inull,
     @SerializedName("number")
     var number: String = Snull,

@@ -26,10 +26,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class PlatformFragment(val p_platform_id: Int) : AbstractFragment() {
+class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
 
     companion object {
-        fun newInstance(p_id: Int) = PlatformFragment(p_id)
+        fun newInstance(platformUuid: String) = PlatformFragment(platformUuid)
     }
 
     private lateinit var mIn: LayoutInflater
@@ -45,7 +45,7 @@ class PlatformFragment(val p_platform_id: Int) : AbstractFragment() {
 
 //        setActionBarTitle(R.string.platform_fragment__welcome_to_system)
         setActionBarTitle("Данные по КП" + currentTime())
-        val platformEntity = db().loadPlatformEntity(p_platform_id)
+        val platformEntity = db().loadPlatformEntity(p_platform_uuid)
 
         val actvCoordinateLat = view.findViewById<AppCompatTextView>(R.id.actv_platform_fragment__coordinate_lat)
         actvCoordinateLat.text = getLastPoint().latitude.toString()
@@ -78,7 +78,6 @@ class PlatformFragment(val p_platform_id: Int) : AbstractFragment() {
             acbSave.isEnabled = false
 
             platformEntity.datetime =currentTime()
-            platformEntity.uuid = UUID.randomUUID().toString()
             platformEntity.containers_count = platformEntity.containers.size
             platformEntity.is_open = if(acsVid.selectedItem.toString() == "Открытая") 1 else 0
             platformEntity.has_base = if(accbHasBase.isChecked) 1 else 0
@@ -105,8 +104,8 @@ class PlatformFragment(val p_platform_id: Int) : AbstractFragment() {
             con.observe(
                 viewLifecycleOwner,
                 { bool ->
+                    getOutputDirectory(p_platform_uuid, null).deleteRecursively()
                     if (bool){
-                        getOutputDirectory(p_platform_id, null).deleteOnExit()
                         // TODO: 22.11.2021 !!!
                         callOnBackPressed()
                         callOnBackPressed()
@@ -122,17 +121,18 @@ class PlatformFragment(val p_platform_id: Int) : AbstractFragment() {
 
         val acbAddContainer = view.findViewById<AppCompatButton>(R.id.acb_platform_fragment__add_container)
         acbAddContainer.setOnClickListener {
-            val nextId = Realm.getDefaultInstance().where(ContainerEntityRealm::class.java).max("id")?.toInt()?.plus(1)?: Inull
-            platformEntity.containers.add(ContainerEntityRealm(nextId))
+//            val nextId = Realm.getDefaultInstance().where(ContainerEntityRealm::class.java).max("id")?.toInt()?.plus(1)?: Inull
+            val uuid = UUID.randomUUID().toString()
+            platformEntity.containers.add(ContainerEntityRealm(uuid))
             db().saveRealmEntity(platformEntity)
-            showNextFragment(PhotoContainerFragment.newInstance(p_platform_id, nextId))
+            showNextFragment(PhotoContainerFragment.newInstance(p_platform_uuid, uuid))
 //            childFragmentManager.beginTransaction()
 //                .replace(R.id.fl_platform_fragment, PlatformFragmentContainerDlt.newInstance(nextId))
 //                .commitNow()
         }
 
         childFragmentManager.beginTransaction()
-            .replace(R.id.fl_platform_fragment, PlatformFragmentContainer.newInstance(p_platform_id))
+            .replace(R.id.fl_platform_fragment, PlatformFragmentContainer.newInstance(p_platform_uuid))
             .commitNow()
     }
 

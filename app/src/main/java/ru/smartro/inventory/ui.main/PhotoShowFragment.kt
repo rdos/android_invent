@@ -37,10 +37,10 @@ import java.util.Locale
 
 val EXTENSION_WHITELIST = arrayOf("JPG")
 //class GalleryFragment(p_id: Int) internal constructor()
-class PhotoShowFragment(val p_platform_id: Int, val p_container_id: Int?) : AbstractFragment() {
+class PhotoShowFragment(val p_platform_uuid: String, val p_container_uuid: String?) : AbstractFragment() {
 
     companion object {
-        fun newInstance(p_platform_id: Int, p_container_id: Int?) = PhotoShowFragment(p_platform_id, p_container_id)
+        fun newInstance(platformUuid: String, containerUuid: String?) = PhotoShowFragment(platformUuid, containerUuid)
     }
 
     private var mAptvNumOfCount: AppCompatTextView? = null
@@ -63,7 +63,7 @@ class PhotoShowFragment(val p_platform_id: Int, val p_container_id: Int?) : Abst
         retainInstance = true
 
         // Get root directory of media from navigation arguments
-        val outputDirectory = getOutputDirectory(p_platform_id, p_container_id)
+        val outputDirectory = getOutputDirectory(p_platform_uuid, p_container_uuid)
         val rootDirectory = File(outputDirectory.absolutePath)
 
         // Walk through all files in the root directory

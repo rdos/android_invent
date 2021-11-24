@@ -193,12 +193,12 @@ class Activity : AbstractAct() , LocationListener {
 
     }
 
-    fun getOutputDirectory(p_platform_id: Int, p_container_id: Int?): File {
+    fun getOutputDirectory(platformUuid: String, containerUuid: String?): File {
         var dirPath = filesDir.absolutePath
-        if(p_container_id == null) {
-            dirPath = dirPath + File.separator + p_platform_id
+        if(containerUuid == null) {
+            dirPath = dirPath + File.separator + platformUuid
         } else {
-            dirPath = dirPath + File.separator + p_platform_id + File.separator + p_container_id
+            dirPath = dirPath + File.separator + platformUuid + File.separator + containerUuid
         }
 
         val file = File(dirPath)

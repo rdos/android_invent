@@ -14,6 +14,10 @@ abstract class AbstractO {
     protected val log: Logger = LoggerFactory.getLogger("${this::class.simpleName}")
 
     protected val db by lazy {
-        RealmRepo(Realm.getDefaultInstance())
+        db()
+    }
+
+    private fun db(): RealmRepo {
+        return RealmRepo(Realm.getDefaultInstance())
     }
 }

@@ -57,7 +57,7 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
 //        RealmObject.deleteFromRealm(realmObject)
 //    }
 
-    fun saveSave(platform_id: Int) {
+    fun saveSave(platformUuid: String) {
         val exe = Executors.newSingleThreadExecutor()
         Log.e("TAG", "kasta каста ()")
         exe.execute {
@@ -67,7 +67,7 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
             }
             val backgroundRealm = Realm.getDefaultInstance()
             val realmAsyncTask: Unit = backgroundRealm.executeTransaction {
-                val containerEntity = PlatformEntityRealm(platform_id)
+                val containerEntity = PlatformEntityRealm(platformUuid)
                 backgroundRealm.insertOrUpdate(containerEntity)
             }
         }
@@ -92,32 +92,32 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
     }
 
     fun loadPlatformEntity(): List<PlatformEntityRealm> {
-        val realmResults = mRealm.where(PlatformEntityRealm::class.java).findAll()
+        val realmResults = mRealm.where(PlatformEntityRealm::class.java).notEqualTo("status_id", Inull).findAll()
         val result = mRealm.copyFromRealm(realmResults)
         return result
     }
 
-    fun loadPlatformEntity(platformId: Int): PlatformEntityRealm {
-        val realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("id", platformId).findFirst()
+    fun loadPlatformEntity(platformUuid: String): PlatformEntityRealm {
+        val realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("uuid", platformUuid).findFirst()
         val result = mRealm.copyFromRealm(realmResults!!)
         return result
     }
 
-    fun loadContainerEntity(containerId: Int): ContainerEntityRealm {
-        val realmResults = mRealm.where(ContainerEntityRealm::class.java).equalTo("id", containerId).findFirst()
+    fun loadContainerEntity(containerUuid: String): ContainerEntityRealm {
+        val realmResults = mRealm.where(ContainerEntityRealm::class.java).equalTo("uuid", containerUuid).findFirst()
         val result = mRealm.copyFromRealm(realmResults!!)
         return result
     }
 
-    fun loadPlatformContainers(platformId: Int): List<ContainerEntityRealm> {
-        val realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("id", platformId).findFirst()
+    fun loadPlatformContainers(platformUuid: String): List<ContainerEntityRealm> {
+        val realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("uuid", platformUuid).findFirst()
         val result = mRealm.copyFromRealm(realmResults!!.containers)
         return result
     }
 
-    fun createPlatformEntity(id: Int): PlatformEntityRealm {
+    fun createPlatformEntity(platformUuid: String): PlatformEntityRealm {
 //        val result =  mRealm.createObject(PlatformEntityRealm::class.java, id)
-        val result = PlatformEntityRealm(id)
+        val result = PlatformEntityRealm(platformUuid)
         saveRealmEntity(result)
         return result
     }
@@ -135,9 +135,9 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         }
     }
 
-    fun deleteContainerEntity(containerId: Int) {
+    fun deleteContainerEntity(containerUuid: String) {
         execInTransaction { p_realm ->
-            val realmResults = mRealm.where(ContainerEntityRealm::class.java).equalTo("id", containerId).findAll()
+            val realmResults = mRealm.where(ContainerEntityRealm::class.java).equalTo("uuid", containerUuid).findAll()
             realmResults.deleteAllFromRealm()
         }
     }
@@ -146,7 +146,7 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
     fun createContainerEntityS(): List<ContainerEntityRealm> {
         val resMList= mutableListOf<ContainerEntityRealm>()
 
-        val result = ContainerEntityRealm(66)
+        val result = ContainerEntityRealm("66")
         saveRealmEntity(result)
         resMList.add(result)
 
@@ -157,7 +157,9 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         return resMList
     }
 
-
+    fun clearData() {
+        mRealm.deleteAll()
+    }
 
 
 //fun findWayTask(): WayTaskEntity {

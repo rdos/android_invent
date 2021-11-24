@@ -16,10 +16,10 @@ import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.database.ContainerEntityRealm
 
 
-class PlatformFragmentContainer(val p_platformId: Int) : AbstractFragment(){
+class PlatformFragmentContainer(val p_platform_uuid: String) : AbstractFragment(){
 
     companion object {
-        fun newInstance(p_platformId: Int) = PlatformFragmentContainer(p_platformId)
+        fun newInstance(platformUuid: String) = PlatformFragmentContainer(platformUuid)
     }
     //
     inner class PlatformContainerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
@@ -71,7 +71,7 @@ class PlatformFragmentContainer(val p_platformId: Int) : AbstractFragment(){
 
         val rv = view.findViewById<RecyclerView>(R.id.rv_platform_fragment_container)
         rv.layoutManager = GridLayoutManager(requireContext(), 3)
-        val platformContainerList = db().loadPlatformContainers(p_platformId)
+        val platformContainerList = db().loadPlatformContainers(p_platform_uuid)
         rv.adapter = ContainerInPlatfornAdapter(platformContainerList)
 
 //        baseview.setOnClickListener {

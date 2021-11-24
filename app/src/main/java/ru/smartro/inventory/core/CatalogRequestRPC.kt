@@ -15,19 +15,20 @@ import ru.smartro.inventory.database.PlatformEntityRealm
 import java.io.IOException
 
 
-class CatalogRequestRPC(val p_RestClient: RestClient, val p_context: Context?): AbstractO(), Callback {
+class CatalogRequestRPC(): AbstractO(), Callback {
     private val result = MutableLiveData<String>()
 
-    fun callAsyncRPC(): MutableLiveData<String> {
+    fun callAsyncRPC(ownerId: Int): MutableLiveData<String> {
         log.debug("callAsyncRPC.before" )
-        val ownerId = db.loadConfig("Owner")
+//  it`s errorS?      val ownerI = db.loadConfig("Owner").toInt()
         val rpcGetCatalogs = CatalogsRequestEntity(PayLoadCatalogRequest())
-        rpcGetCatalogs.payload.organisation_id = ownerId.toInt()
+        rpcGetCatalogs.payload.organisation_id = ownerId
 
         val requestBody = rpcGetCatalogs.toRequestBody()
         val url = "https://worknote-back.stage.smartro.ru/api/rpc"
-        val request = p_RestClient.newRequest(url).post(requestBody).build()
-        p_RestClient.newCall(request, this)
+        val restClient = RestClient()
+        val request = restClient.newRequest(url).post(requestBody).build()
+        restClient.newCall(request, this)
         return result
     }
 
@@ -50,15 +51,16 @@ class CatalogRequestRPC(val p_RestClient: RestClient, val p_context: Context?): 
         try {
             responseI = Gson().fromJson(bodyString, ResponseI::class.java)
             log.info("onResponse responseO=${responseI}")
+//            db.clearData()
             db.saveRealmEntityList(responseI.payload.container_platform_type)
             db.saveRealmEntityList(responseI.payload.container_type)
             db.saveRealmEntityList(responseI.payload.card_status)
             db.saveRealmEntityList(responseI.payload.container_status)
         } catch (e: Exception) {
             bodyString?.let {
-                result.postValue(bodyString!!)
+                result.postValue(it)
             }
-
+            result.postValue(e.message)
         }
 
 
@@ -72,7 +74,7 @@ class CatalogRequestRPC(val p_RestClient: RestClient, val p_context: Context?): 
 
     data class CatalogsRequestEntity(
         var payload: PayLoadCatalogRequest,
-        var type: String = "inventory_get_catalogs",
+        var type: String = "get_catalogs",
     )  : AbstractEntity() {
 
     }

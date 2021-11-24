@@ -18,17 +18,18 @@ import ru.smartro.inventory.database.ContainerStatusRealm
 import ru.smartro.inventory.database.ContainerTypeRealm
 import ru.smartro.inventory.showErrorToast
 import java.lang.Exception
+import java.util.*
 
 
-class PlatformFragmentContainerDlt(val p_container_id: Int) : AbstractFragment() {
+class PlatformFragmentContainerDlt(val p_container_uuid: String) : AbstractFragment() {
     companion object {
-        fun newInstance(containerId: Int) = PlatformFragmentContainerDlt(containerId)
+        fun newInstance(containerUuid: String) = PlatformFragmentContainerDlt(containerUuid)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val mContainerEntityRealm = db().loadContainerEntity(p_container_id)
+        val mContainerEntityRealm = db().loadContainerEntity(p_container_uuid)
 
         val tietNumber = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment_container_dtl__number)
 
@@ -63,16 +64,6 @@ class PlatformFragmentContainerDlt(val p_container_id: Int) : AbstractFragment()
             }
 
         }
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        try {
-
-        } catch (e: Exception) {
-
-        }
-        db().deleteContainerEntity(p_container_id)
     }
 
     override fun onCreateView(

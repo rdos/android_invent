@@ -30,6 +30,7 @@ import ru.smartro.inventory.core.*
 import ru.smartro.inventory.database.PlatformEntityRealm
 import ru.smartro.inventory.showErrorToast
 import ru.smartro.worknote.extensions.simulateClick
+import java.util.*
 
 
 class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCallback{
@@ -64,10 +65,10 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
     }
 
     private fun gotoAddPlatform() {
-        val nextId = Realm.getDefaultInstance().where(PlatformEntityRealm::class.java).max("id")?.toInt()?.plus(1)?: Inull
-        val platformEntity: PlatformEntityRealm = db().createPlatformEntity(nextId)
+//        val nextId = Realm.getDefaultInstance().where(PlatformEntityRealm::class.java).max("id")?.toInt()?.plus(1)?: Inull
+        val platformEntity: PlatformEntityRealm = db().createPlatformEntity(UUID.randomUUID().toString())
 //        if (platformEntity.isOnull()) {
-            showNextFragment(PhotoPlatformFragment.newInstance(platformEntity.id))
+            showNextFragment(PhotoPlatformFragment.newInstance(platformEntity.uuid))
 //        }
 //        val platformEntity = PlatformEntityRealm((0..2002).random())
 //        db().save {
@@ -101,6 +102,21 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
 
         mApbAddPlatform = view.findViewById<AppCompatButton>(R.id.apb_map_fragment__add_platform)
         mApbAddPlatform.setOnClickListener{
+            val containerStatus = db().loadContainerStatus()
+            if (containerStatus.isEmpty()) {
+                showErrorToast("containerStatus is Empty")
+                return@setOnClickListener
+            }
+            val containerType = db().loadContainerType()
+            if (containerType.isEmpty()) {
+                showErrorToast("containerType is Empty")
+                return@setOnClickListener
+            }
+            val platformType = db().loadPlatformType()
+            if (platformType.isEmpty()) {
+                showErrorToast("platformType is Empty")
+                return@setOnClickListener
+            }
             gotoAddPlatform()
         }
         mApbAddPlatform.simulateClick()
@@ -109,8 +125,8 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         addPlatformToMap(platformEntity)
 
         // TODO: 15.11.2021
-        val ownerId = db().loadConfig("Owner")
-        val rpcEntity = RPCProvider("inventory_get_platforms", getLastPoint()).getRPCEntity(ownerId.toInt())
+        val ownerId = db().loadConfig("Owner").toInt()
+        val rpcEntity = RPCProvider("inventory_get_platforms", getLastPoint()).getRPCEntity(ownerId)
 
         val restClient = RestClient()
         val conic = PlatformRequestRPC(restClient, requireContext()).callAsyncRPC(rpcEntity)
@@ -122,7 +138,8 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         )
 
 
-        val errorLiveData = CatalogRequestRPC(restClient, context).callAsyncRPC()
+
+        val errorLiveData = CatalogRequestRPC().callAsyncRPC(ownerId)
         errorLiveData.observe(
             viewLifecycleOwner,
             { errorText ->

@@ -117,8 +117,8 @@ abstract class AbstractFragment : Fragment() {
         mActivity.showNextFragment(fragment)
     }
 
-    protected fun getOutputDirectory(p_platform_id: Int, p_container_id: Int?): File {
-        return mActivity.getOutputDirectory(p_platform_id, p_container_id)
+    protected fun getOutputDirectory(p_platform_uuid: String, p_container_uuid: String?): File {
+        return mActivity.getOutputDirectory(p_platform_uuid, p_container_uuid)
     }
 
     protected fun showHideActionBar(isHideMode: Boolean) {

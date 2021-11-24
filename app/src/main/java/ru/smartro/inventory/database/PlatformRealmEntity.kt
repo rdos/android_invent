@@ -24,6 +24,8 @@ open class PlatformEntityRealm(
     @SerializedName("id")
     @PrimaryKey
     var id: Int = Inull,
+    @SerializedName("uuid")
+    var uuid: String = Snull,
     @SerializedName("length")
     var length: Int? = Inull,
     @SerializedName("width")
@@ -55,7 +57,7 @@ open class PlatformEntityRealm(
     var status_name: String = Snull,
     @SerializedName("containers")
     var containers: RealmList<ContainerEntityRealm> = RealmList(),
-    var imageBase64Entity: RealmList<ImageRealmEntity> = RealmList(),
+    var imageList: RealmList<ImageRealmEntity> = RealmList(),
 ) : RealmObject() {
 
 

@@ -9,12 +9,12 @@ data class ResponseO(
         @SerializedName("type")
         var type: String = Snull,
         @SerializedName("payload")
-        var payload: List<PlatformEntityRealm>,
+        var payload: List<PlatformEntityRealm> = emptyList(),
         @SerializedName("error")
-        var error: List<ResponseRPCError>,
+        var error: List<ResponseRPCError> = emptyList()
 
 
-) {
+        ) {
 //        companion object {
 //                fun from(responseBody: String?, classs: Class<*>): ResponseO<T> {
 //                        val body = responseBody ?: Snull

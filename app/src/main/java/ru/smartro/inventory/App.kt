@@ -41,7 +41,7 @@ const val Lnull = -111222333 as Long
 const val Fnull = -111.01
 const val Dnull = -110.1
 const val ErrorsE = "ErrorsE"
-fun AbstractFragment.toast(text: String? = "") {
+fun AbstractFragment.showErrorToast(text: String? = "") {
     try {
         Toast.makeText(this.context, text, Toast.LENGTH_SHORT).show()
     } catch (e: Exception) {

@@ -1,5 +1,7 @@
 package ru.smartro.inventory.core
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import okhttp3.Call
@@ -12,7 +14,7 @@ import ru.smartro.inventory.database.PlatformEntityRealm
 import java.io.IOException
 
 
-class PlatformRequestRPC(val p_RestClient: RestClient): AbstractO(), Callback {
+class PlatformRequestRPC(val p_RestClient: RestClient, val p_context: Context?): AbstractO(), Callback {
     private val result = MutableLiveData<List<PlatformEntityRealm>>()
 
     fun callAsyncRPC(rpcPlatformEntity: RPCPlatformEntity): MutableLiveData<List<PlatformEntityRealm>> {
@@ -37,17 +39,25 @@ class PlatformRequestRPC(val p_RestClient: RestClient): AbstractO(), Callback {
         }
 
 //        val typeToken: Type = object : TypeToken<List<PlatformEntityRealm>>() {}.type
-        val responseO = Gson().fromJson(bodyString, ResponseO::class.java)
-
-//        val json = Gson().toJson(responseO.payload)
+        var responseO = ResponseO()
+        try {
+            responseO = Gson().fromJson(bodyString, ResponseO::class.java)
+            //        val json = Gson().toJson(responseO.payload)
 //        val platformEntityRealms = Gson().fromJson<List<PlatformEntityRealm>>(json, typeToken)
-        log.info("onResponse responseO=${responseO}")
-        db.save {
-            for(payload in responseO.payload) {
-                db.insert(payload)
+            log.info("onResponse responseO=${responseO}")
+            db.save {
+                for(payload in responseO.payload) {
+                    db.insert(payload)
+                }
             }
+            result.postValue(responseO.payload)
+        } catch (e: Exception) {
+//            p_context?.let {
+//                Toast.makeText(p_context, bodyString, Toast.LENGTH_SHORT).show()
+//            }
+
         }
-        result.postValue(responseO.payload)
+
     }
 
 

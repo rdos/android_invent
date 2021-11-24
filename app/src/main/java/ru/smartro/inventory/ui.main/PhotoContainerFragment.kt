@@ -15,13 +15,13 @@ class PhotoContainerFragment(val p_platform_id: Int, val p_container_id: Int) : 
         val file = getOutputDirectory(p_platform_id, p_container_id)
         val files: Array<File> = file.listFiles()
         val containerEntity = db().loadContainerEntity(p_container_id)
-        containerEntity.imageBase64Entity.clear()
+        containerEntity.imageList.clear()
         for (inFile in files) {
             val uri = Uri.fromFile(inFile)
             val imageInBase64 = imageToBase64(uri, 0f)
             val imageRealmEntity = ImageRealmEntity()
             imageRealmEntity.imageBase64 = imageInBase64
-            containerEntity.imageBase64Entity.add(imageRealmEntity)
+            containerEntity.imageList.add(imageRealmEntity)
             log.info("onNextClick ${inFile.name}")
             if (inFile.isDirectory()) {
                log.info("onNextClick.isDirectory")

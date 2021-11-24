@@ -4,7 +4,11 @@ import android.Manifest
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.core.app.ActivityCompat
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.location.*
@@ -16,12 +20,14 @@ import ru.smartro.inventory.ui.main.LoginFragment
 import ru.smartro.inventory.ui.main.MapFragment
 import ru.smartro.inventory.ui.main.PlatformFragment
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 class Activity : AbstractAct() , LocationListener {
     private lateinit var mLocationManager: LocationManager
     private lateinit var mMapKit: MapKit
 
     val db: RealmRepo by lazy {
+        //Remember to call close() on all Realm instances.
         initRealm()
     }
 
@@ -50,10 +56,18 @@ class Activity : AbstractAct() , LocationListener {
             }
             checkPermission(PERMISSIONS)
         }
+        startSynchronizeData()
     }
 
 
-
+    private fun startSynchronizeData() {
+        Log.w("TAG", "SynchroWorkerWorkName.before thread_id=${Thread.currentThread().id}")
+//        AppPreferences.workerStatus = true
+        val workManager = PeriodicWorkRequestBuilder<SynchroWorker>(16, TimeUnit.MINUTES).build()
+        WorkManager.getInstance(this)
+            .enqueueUniquePeriodicWork("SynchroWorkerWorkName", ExistingPeriodicWorkPolicy.REPLACE, workManager)
+        Log.d("TAG", "SynchroWorkerWorkName.after")
+    }
 
 
     val PERMISSIONS = arrayOf(

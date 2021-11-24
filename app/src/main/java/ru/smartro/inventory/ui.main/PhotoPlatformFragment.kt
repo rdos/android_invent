@@ -18,7 +18,7 @@ class PhotoPlatformFragment(val p_platform_id: Int) : AbstractPhotoFragment(p_pl
         val file = getOutputDirectory(p_platform_id, null)
         val files: Array<File> = file.listFiles()
         val platformEntity = db().loadPlatformEntity(p_platform_id)
-        platformEntity.imageBase64Entity.clear()
+        platformEntity.imageList.clear()
         for (inFile in files) {
             log.debug("onNextClick ${inFile.name}")
             if (inFile.isDirectory()) {
@@ -29,7 +29,7 @@ class PhotoPlatformFragment(val p_platform_id: Int) : AbstractPhotoFragment(p_pl
             val imageInBase64 = imageToBase64(uri, 0f)
             val imageRealmEntity = ImageRealmEntity()
             imageRealmEntity.imageBase64 = imageInBase64
-            platformEntity.imageBase64Entity.add(imageRealmEntity)
+            platformEntity.imageList.add(imageRealmEntity)
         }
         db().saveRealmEntity(platformEntity)
         showNextFragment(PlatformFragment.newInstance(p_platform_id))

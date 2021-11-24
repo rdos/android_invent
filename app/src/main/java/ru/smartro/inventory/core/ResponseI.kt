@@ -12,7 +12,7 @@ data class ResponseI(
         @SerializedName("type")
         var type: String = Snull,
         @SerializedName("payload")
-        val payload: PayloadCatalog,
+        val payload: PayloadCatalog = PayloadCatalog(),
         @SerializedName("error")
         val error: RealmList<ResponseRPCError> = RealmList()
 

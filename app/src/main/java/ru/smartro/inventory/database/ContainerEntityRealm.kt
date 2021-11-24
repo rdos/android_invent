@@ -25,7 +25,7 @@ open class ContainerEntityRealm(
     var type: ContainerTypeRealm? = null,
     @SerializedName("comment")
     var comment: String? = null,
-    var imageBase64Entity: RealmList<ImageRealmEntity> = RealmList(),
+    var imageList: RealmList<ImageRealmEntity> = RealmList(),
 ) : RealmObject()
 
 

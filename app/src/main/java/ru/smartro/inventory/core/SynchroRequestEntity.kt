@@ -8,7 +8,7 @@ import ru.smartro.inventory.database.PlatformEntityRealm
 
 class SynchroRequestEntity (
     val payload: PayLoadSynchroRequest = PayLoadSynchroRequest(),
-    var type: String = "mobile_inventory_synchro_store",
+    var type: String = "inventory_synchro",
 )  : AbstractEntity() {
 
 }

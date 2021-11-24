@@ -22,6 +22,7 @@ import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.*
 import ru.smartro.inventory.database.ContainerEntityRealm
 import ru.smartro.inventory.database.PlatformTypeRealm
+import ru.smartro.inventory.showErrorToast
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -78,6 +79,7 @@ class PlatformFragment(val p_platform_id: Int) : AbstractFragment() {
             acbSave.isEnabled = false
 
             platformEntity.datetime =currentTime()
+            platformEntity.uuid = UUID.randomUUID().toString()
             platformEntity.containers_count = platformEntity.containers.size
             platformEntity.is_open = if(acsVid.selectedItem.toString() == "Открытая") 1 else 0
             platformEntity.has_base = if(accbHasBase.isChecked) 1 else 0
@@ -94,14 +96,13 @@ class PlatformFragment(val p_platform_id: Int) : AbstractFragment() {
                 log.error("TODOTODOTODO")
             }
 
-            db().saveRealmEntity(platformEntity)
+            try {
+                db().saveRealmEntity(platformEntity)
+            } catch (e: java.lang.Exception) {
+                showErrorToast(e.message)
+            }
 
-            val synchroRequestEntity = SynchroRequestEntity()
-            val ownerId = db().loadConfig("Owner")
-            synchroRequestEntity.payload.organisation_id = ownerId.toInt()
-            synchroRequestEntity.payload.data.add(platformEntity)
-            val restClient = RestClient()
-            val con = SynchroRequestRPC(restClient).callAsyncRPC(synchroRequestEntity)
+            val con = SynchroRequestRPC().callAsyncRPC(platformEntity)
             con.observe(
                 viewLifecycleOwner,
                 { bool ->

@@ -1,6 +1,9 @@
 package ru.smartro.inventory.base
 
+import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.yandex.mapkit.geometry.Point
@@ -19,17 +22,54 @@ abstract class AbstractFragment : Fragment() {
         activity as Activity
     }
 
+    fun getDeviceName(): String? {
+        fun capitalize(s: String?): String? {
+            if (s == null || s.isEmpty()) {
+                return ""
+            }
+            val first = s[0]
+            return if (Character.isUpperCase(first)) {
+                s
+            } else {
+                Character.toUpperCase(first).toString() + s.substring(1)
+            }
+        }
+
+        val manufacturer = Build.MANUFACTURER
+        val model = Build.MODEL
+        return if (model.toLowerCase().startsWith(manufacturer.toLowerCase())) {
+            capitalize(model)
+        } else {
+            capitalize(manufacturer).toString() + " " + model
+        }
+    }
+
+    fun calculateDistance(
+        currentLocation: Point,
+        finishLocation: Point
+    ): Int {
+        val userLocation = android.location.Location(LocationManager.GPS_PROVIDER)
+        userLocation.latitude = currentLocation.latitude
+        userLocation.longitude = currentLocation.longitude
+
+        val checkPointLocation = android.location.Location(LocationManager.GPS_PROVIDER)
+        checkPointLocation.latitude = finishLocation.latitude
+        checkPointLocation.longitude = finishLocation.longitude
+        return userLocation.distanceTo(checkPointLocation).toInt()
+    }
+
 
     fun getCurrentTimeStamp(): Long {
 //        return System.currentTimeMillis() / 1000L
         return System.currentTimeMillis()
     }
 
+
     fun getLastPoint(): Point {
         val location: Location? = getLastKnownLocation()
         val position = location?.position?: TARGET_LOCATION
         // TODO: 15.11.2021 !!
-        Point(54.881347, 55.44919)
+//        Point(54.881347, 55.44919)
         return position
     }
 
@@ -48,7 +88,8 @@ abstract class AbstractFragment : Fragment() {
         }
 
         var result = lastKnownLocation
-        if (subtraction < 1000) {
+        // TODO: 23.11.2021 100?wtf! 
+        if (subtraction < 100) {
             result = null
         }
         log.debug("hasLastPoint.result=${result}")

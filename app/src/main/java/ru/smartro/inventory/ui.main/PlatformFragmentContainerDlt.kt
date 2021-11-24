@@ -5,20 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.appcompat.widget.AppCompatSpinner
-import ru.smartro.inventory.R
-
 import androidx.lifecycle.ViewModel
 import com.google.android.material.textfield.TextInputEditText
+import ru.smartro.inventory.R
 import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.database.ContainerStatusRealm
 import ru.smartro.inventory.database.ContainerTypeRealm
-import ru.smartro.inventory.database.PlatformTypeRealm
 
 
 class PlatformFragmentContainerDlt(val p_container_id: Int) : AbstractFragment() {
@@ -49,6 +46,9 @@ class PlatformFragmentContainerDlt(val p_container_id: Int) : AbstractFragment()
 
         val acbSaveContainer = view.findViewById<AppCompatButton>(R.id.acb_platform_fragment_container_dtl__save_container)
         acbSaveContainer.setOnClickListener {
+
+
+
             containerEntityRealm.type = acsContainerType.selectedItem as ContainerTypeRealm?
             containerEntityRealm.container_status_id = (acsContainerStatus.selectedItem as ContainerStatusRealm).id
             containerEntityRealm.container_status_name = (acsContainerStatus.selectedItem as ContainerStatusRealm).name

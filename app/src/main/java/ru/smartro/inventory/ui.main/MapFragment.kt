@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
+import androidx.work.WorkManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ru.smartro.inventory.R
 
@@ -26,7 +27,6 @@ import ru.smartro.inventory.Inull
 import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.*
-import ru.smartro.inventory.database.ContainerEntityRealm
 import ru.smartro.inventory.database.PlatformEntityRealm
 import ru.smartro.inventory.toast
 
@@ -107,9 +107,9 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         addPlatformToMap(platformEntity)
 
         // TODO: 15.11.2021 
-        val rpcEntity = RPCProvider("inventory_mobile_get_platforms", getLastPoint()).getRPCEntity()
+        val rpcEntity = RPCProvider("get_platforms", getLastPoint()).getRPCEntity()
         val restClient = RestClient()
-        val conic = PlatformRequestRPC(restClient).callAsyncRPC(rpcEntity)
+        val conic = PlatformRequestRPC(restClient, requireContext()).callAsyncRPC(rpcEntity)
         conic.observe(
             viewLifecycleOwner,
             { platforms ->
@@ -117,14 +117,25 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
             }
         )
 
-        val rpcGetCatalogs = CatalogsRequestEntity(PayLoadCatalogRequest())
-        val ownerId = db().loadConfig("Owner")
-        rpcGetCatalogs.payload.organisation_id = ownerId.toInt()
-        val con = CatalogRequestRPC(restClient).callAsyncRPC(rpcGetCatalogs)
 
+        val errorLiveData = CatalogRequestRPC(restClient, context).callAsyncRPC()
+        errorLiveData.observe(
+            viewLifecycleOwner,
+            { errorText ->
+                toast(errorText)
+            }
+        )
         mMapObjectCollection.addTapListener { mapObject, point ->
             log.info("mMapObjectCollection")
             true
+        }
+
+        val apbStopWork = view.
+            findViewById<AppCompatButton>(R.id.apb_map_fragment__stop_work)
+        apbStopWork.setOnClickListener{
+            WorkManager.getInstance(requireContext()).
+                cancelUniqueWork("SynchroWorkerWorkName"
+                )
         }
     }
 

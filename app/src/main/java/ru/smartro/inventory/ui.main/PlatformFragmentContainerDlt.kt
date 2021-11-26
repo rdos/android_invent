@@ -12,16 +12,20 @@ import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.lifecycle.ViewModel
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
+import okhttp3.internal.filterList
 import ru.smartro.inventory.R
 import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.database.ContainerStatusRealm
 import ru.smartro.inventory.database.ContainerTypeRealm
 import ru.smartro.inventory.showErrorToast
 import java.lang.Exception
-import java.util.*
 
 
 class PlatformFragmentContainerDlt(val p_container_uuid: String) : AbstractFragment() {
+    private lateinit var mTietNumber: TextInputEditText
+    private lateinit var mTilNumber: TextInputLayout
+
     companion object {
         fun newInstance(containerUuid: String) = PlatformFragmentContainerDlt(containerUuid)
     }
@@ -31,7 +35,9 @@ class PlatformFragmentContainerDlt(val p_container_uuid: String) : AbstractFragm
 
         val mContainerEntityRealm = db().loadContainerEntity(p_container_uuid)
 
-        val tietNumber = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment_container_dtl__number)
+        mTietNumber = view.findViewById(R.id.tiet_platform_fragment_container_dtl__number)
+        mTilNumber = view.findViewById(R.id.til_platform_fragment_container_dtl__number)
+
 
         val containerStatus = db().loadContainerStatus()
         val acsContainerStatus = view.findViewById<AppCompatSpinner>(R.id.acs_platform_fragment_container_dtl__status)
@@ -49,21 +55,51 @@ class PlatformFragmentContainerDlt(val p_container_uuid: String) : AbstractFragm
         val acbSaveContainer = view.findViewById<AppCompatButton>(R.id.acb_platform_fragment_container_dtl__save_container)
         acbSaveContainer.setOnClickListener {
             try {
-                mContainerEntityRealm.type = acsContainerType.selectedItem as ContainerTypeRealm?
-                mContainerEntityRealm.container_status_id = (acsContainerStatus.selectedItem as ContainerStatusRealm).id
-                mContainerEntityRealm.container_status_name = (acsContainerStatus.selectedItem as ContainerStatusRealm).name
-                mContainerEntityRealm.has_pedal = if(accbPedal.isChecked) 1 else 0
-                mContainerEntityRealm.number = tietNumber.text.toString()
-                mContainerEntityRealm.comment = tietComment.text.toString()
-                db().saveRealmEntity(mContainerEntityRealm)
-                // TODO: 22.11.2021 !!!
-                callOnBackPressed()
-                callOnBackPressed()
+                acbSaveContainer.isEnabled = false
+                if (checkData()) {
+                    mContainerEntityRealm.type = acsContainerType.selectedItem as ContainerTypeRealm?
+                    mContainerEntityRealm.container_status_id = (acsContainerStatus.selectedItem as ContainerStatusRealm).id
+                    mContainerEntityRealm.container_status_name = (acsContainerStatus.selectedItem as ContainerStatusRealm).name
+                    mContainerEntityRealm.has_pedal = if(accbPedal.isChecked) 1 else 0
+                    mContainerEntityRealm.number = mTietNumber.text.toString()
+                    mContainerEntityRealm.comment = tietComment.text.toString()
+                    db().saveRealmEntity(mContainerEntityRealm)
+                    // TODO: 22.11.2021 !!!
+                    callOnBackPressed(false)
+                    callOnBackPressed(false)
+                }
             } catch (e: Exception) {
                 showErrorToast(e.message)
+            } finally {
+                acbSaveContainer.isEnabled = true
             }
-
         }
+        mTietNumber.setText(mContainerEntityRealm.number)
+        tietComment.setText(mContainerEntityRealm.comment)
+        containerType.forEachIndexed{index, containerTypeRealm ->
+            mContainerEntityRealm.type?.let{
+                if(containerTypeRealm.id == mContainerEntityRealm.type!!.id) {
+                    acsContainerType.setSelection(index)
+                    return@forEachIndexed
+                }
+            }
+        }
+        containerStatus.forEachIndexed { index, containerStatusRealm ->
+                if(mContainerEntityRealm.container_status_id == containerStatusRealm.id) {
+                    acsContainerStatus.setSelection(index)
+                    return@forEachIndexed
+                }
+        }
+        accbPedal.isChecked = mContainerEntityRealm.has_pedal == 1
+    }
+
+    private fun checkData(): Boolean {
+        var result = false
+        if (mTietNumber.text.isNullOrBlank()) {
+            mTietNumber.error = "Поле обязательно для заполнения"
+            return result
+        }
+        return true
     }
 
     override fun onCreateView(

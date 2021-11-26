@@ -143,13 +143,17 @@ abstract class AbstractPhotoFragment(private val p_platform_uuid: String, privat
         mAcibShow?.let { photoViewButton ->
             photoViewButton.post {
                 // Remove thumbnail padding
-                photoViewButton.setPadding(resources.getDimension(R.dimen.stroke_small).toInt())
+                try {
+                    photoViewButton.setPadding(resources.getDimension(R.dimen.stroke_small).toInt())
 
-                // Load thumbnail into circular button using Glide
-                Glide.with(photoViewButton)
+                    // Load thumbnail into circular button using Glide
+                    Glide.with(photoViewButton)
                         .load(uri)
                         .apply(RequestOptions.circleCropTransform())
                         .into(photoViewButton)
+                } catch (e: Exception) {
+                    log.error("setGalleryThumbnail", e)
+                }
             }
         }
     }
@@ -160,7 +164,6 @@ abstract class AbstractPhotoFragment(private val p_platform_uuid: String, privat
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setScreenOrientation(true)
         showHideActionBar(true)
         // Initialize our background executor
         cameraExecutor = Executors.newSingleThreadExecutor()

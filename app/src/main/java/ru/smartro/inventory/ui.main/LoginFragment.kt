@@ -47,10 +47,12 @@ class LoginFragment : AbstractFragment(){
 //        }
         val tilLogin = view.findViewById<TextInputLayout>(R.id.til_login_fragment__login)
         val tietLogin = view.findViewById<TextInputEditText>(R.id.tiet_login_fragment__login)
-        tietLogin.setText("admin@smartro.ru")
+//        tietLogin.setText("admin@smartro.ru")
+        tietLogin.setText("alexander.rdos@gmail.com")
         val tilPassword = view.findViewById<TextInputLayout>(R.id.til_login_fragment__password)
         val tietPassword = view.findViewById<TextInputEditText>(R.id.tiet_login_fragment__password)
-        tietPassword.setText("xot1ieG5ro~hoa,ng4Sh")
+//        tietPassword.setText("xot1ieG5ro~hoa,ng4Sh")
+        tietPassword.setText("Ww123456")
 
         view.findViewById<AppCompatButton>(R.id.acb_login_fragment).setOnClickListener{
             val loginEntity = LoginEntity(tietLogin.text.toString(), tietPassword.text.toString())

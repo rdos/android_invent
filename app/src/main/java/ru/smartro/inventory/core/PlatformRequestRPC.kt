@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
+import io.realm.RealmList
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -47,9 +48,14 @@ class PlatformRequestRPC(val p_RestClient: RestClient, val p_context: Context?):
             log.info("onResponse responseO=${responseO}")
             db.save {
                 for(payload in responseO.payload) {
+                    payload.coordinateLat = payload.coordinates?.lat!!
+                    payload.coordinateLng = payload.coordinates?.lng!!
+                    payload.coordinates = null
+                    log.debug("save_-PlatformRequestRPC.uuid=${payload.uuid}")
                     db.insert(payload)
                 }
             }
+
             result.postValue(responseO.payload)
         } catch (e: Exception) {
 //            p_context?.let {

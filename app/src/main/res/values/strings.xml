@@ -5,6 +5,7 @@
     <string name="login_fragment__welcome_to_system">Вход в систему</string>
     <string name="platform_fragment__save">Сохранить КП</string>
     <string name="platform_fragment__add_containers">Добавить Контейнер</string>
+    <string name="platform_fragment__save_container">Сохранить Контейнер</string>
     <string name="choose">asdas</string>
 
     <string name="switch_camera_button_alt">switch</string>

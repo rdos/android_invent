@@ -39,4 +39,15 @@ class PhotoPlatformFragment(val p_platform_uuid: String) : AbstractPhotoFragment
         db().saveRealmEntity(platformEntity)
         showNextFragment(PlatformFragment.newInstance(p_platform_uuid))
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        try {
+
+        } catch (e: java.lang.Exception) {
+
+        }
+        deleteOutputDirectory(p_platform_uuid, null)
+        db().deletePlatformEntity(p_platform_uuid)
+    }
 }

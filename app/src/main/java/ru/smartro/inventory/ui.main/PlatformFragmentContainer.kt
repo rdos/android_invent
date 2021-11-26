@@ -98,7 +98,9 @@ class PlatformFragmentContainer(val p_platform_uuid: String) : AbstractFragment(
             val container = platformContainerList.get(position)
             holder.tv.text = container.number
 
-            holder.llc.rootView.setOnClickListener(holder)
+            holder.llc.rootView.setOnClickListener {
+                showNextFragment(PhotoContainerFragment.newInstance(p_platform_uuid, container.uuid))
+            }
 //            holder.llc.animation =
 //                AnimationUtils.loadAnimation(holder.itemView.context, R.anim.slide_in_left)
 //            setAnimation(holder.itemView, position)

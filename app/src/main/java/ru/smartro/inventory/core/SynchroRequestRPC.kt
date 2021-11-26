@@ -1,24 +1,35 @@
 package ru.smartro.inventory.core
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
+import io.realm.RealmList
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import ru.smartro.inventory.URL_RPC_STAGE
 import ru.smartro.inventory.base.AbstractO
 import ru.smartro.inventory.base.RestClient
+import ru.smartro.inventory.database.CoordinatesRealmEntity
 import ru.smartro.inventory.database.PlatformEntityRealm
 import java.io.IOException
 
 class SynchroRequestRPC(): AbstractO(), Callback {
+    private lateinit var mPlatformUuid: String
     private val result = MutableLiveData<Boolean>()
 
     fun callAsyncRPC(platformEntity: PlatformEntityRealm): MutableLiveData<Boolean> {
         log.debug("callAsyncRPC.before" )
         val synchroRequestEntity = SynchroRequestEntity()
         val ownerId = db.loadConfig("Owner")
+
+        platformEntity.is_synchro_start = true
+        db.saveRealmEntity(platformEntity)
+
         synchroRequestEntity.payload.organisation_id = ownerId.toInt()
+        mPlatformUuid = platformEntity.uuid
+        platformEntity.coordinates = CoordinatesRealmEntity(platformEntity.coordinateLat, platformEntity.coordinateLng)
+
         synchroRequestEntity.payload.data.add(platformEntity)
         val requestBody = synchroRequestEntity.toRequestBody()
         val restClient = RestClient()
@@ -40,8 +51,16 @@ class SynchroRequestRPC(): AbstractO(), Callback {
         log.debug("onResponse. responseBody=${bodyString}")
         if (!response.isSuccessful) {
             result.postValue(false)
+
 //            throw IOException("Error response $response")
         }
+        val platformEntity = db().loadPlatformEntity(mPlatformUuid)
+        platformEntity.status_id = 1
+        platformEntity.status_name = "Просто статус_RtextS"
+        log.debug("save_-onResponse. saveRealmEntity status_id=${platformEntity.status_name}")
+        log.debug("save_-onResponse. saveRealmEntity status_name=${platformEntity.status_id}")
+        db().saveRealmEntity(platformEntity)
+        log.debug("save_-onResponse. saveRealmEntity.after")
         result.postValue(true)
 //        result.postValue(responseO.payload)
     }

@@ -11,7 +11,6 @@ import ru.smartro.inventory.Inull
 import ru.smartro.inventory.base.AbstractEntity
 import ru.smartro.inventory.base.AbstractO
 import ru.smartro.inventory.base.RestClient
-import ru.smartro.inventory.database.PlatformEntityRealm
 import java.io.IOException
 
 

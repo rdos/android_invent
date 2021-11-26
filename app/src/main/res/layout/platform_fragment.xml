@@ -158,12 +158,12 @@
             android:orientation="vertical">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_platform_fragment__width"
+                android:id="@+id/til_platform_fragment__length"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tiet_platform_fragment__width"
+                    android:id="@+id/tiet_platform_fragment__length"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Длина площадки, м"
@@ -176,12 +176,12 @@
             android:layout_weight="1"
             android:orientation="vertical">
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_platform_fragment__height"
+                android:id="@+id/til_platform_fragment__width"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tiet_platform_fragment__height"
+                    android:id="@+id/tiet_platform_fragment__width"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Ширина площадки, м"

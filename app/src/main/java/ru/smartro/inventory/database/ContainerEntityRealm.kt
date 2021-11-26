@@ -17,7 +17,7 @@ open class ContainerEntityRealm(
     @SerializedName("id")
     var id: Int = Inull,
     @SerializedName("number")
-    var number: String = Snull,
+    var number: String? = null,
     @SerializedName("container_status_id")
     var container_status_id: Int = Inull,
     @SerializedName("container_status_name")

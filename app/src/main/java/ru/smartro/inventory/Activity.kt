@@ -23,6 +23,7 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 class Activity : AbstractAct() , LocationListener {
+    private var mIsCallonBackPressed: Boolean = true
     private lateinit var mLocationManager: LocationManager
     private lateinit var mMapKit: MapKit
     private var mLastShowFragment: AbstractFragment? = null
@@ -140,6 +141,8 @@ class Activity : AbstractAct() , LocationListener {
 
     fun showFragment(container: Int, fragment: AbstractFragment) {
         log.info("showFragment.before")
+        mLastShowFragment?.onCloseFragment()
+        fragment.lastFragmentClazz = mLastShowFragment?.javaClass?.simpleName
         mLastShowFragment = fragment
         supportFragmentManager.beginTransaction()
             .replace(container, fragment)
@@ -147,18 +150,35 @@ class Activity : AbstractAct() , LocationListener {
 //TOdo            .commitNow()
     }
     fun showNextFragment(fragment: AbstractFragment) {
+        fragment.lastFragmentClazz = mLastShowFragment?.javaClass?.simpleName
         mLastShowFragment = fragment
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fl_activity, fragment)
+            .replace(R.id.fl_activity, fragment, fragment.javaClass.simpleName)
             .addToBackStack(fragment.javaClass.simpleName)
             .commit()
     }
 
+    open fun onBackPressed(isCallOnBackPressed: Boolean) {
+        mIsCallonBackPressed = isCallOnBackPressed
+        onBackPressed()
+    }
 
     override fun onBackPressed() {
-        mLastShowFragment?.onBackPressed()
+        if (mIsCallonBackPressed) {
+            mLastShowFragment?.onBackPressed()
+        }
+        mIsCallonBackPressed = true
         if (supportFragmentManager.backStackEntryCount > 1) {
-            supportFragmentManager.popBackStack();
+            supportFragmentManager.popBackStack()
+            mLastShowFragment?.lastFragmentClazz?.let{
+                val fragment = supportFragmentManager.findFragmentByTag(mLastShowFragment?.lastFragmentClazz)
+                if (fragment == null) {
+                    mLastShowFragment = null
+                } else {
+                    mLastShowFragment = fragment as AbstractFragment
+                }
+            }
+
         } else {
             super.onBackPressed()
         }
@@ -191,6 +211,15 @@ class Activity : AbstractAct() , LocationListener {
 //        val log: Logger = LoggerFactory.getLogger(MainActivity::class.java)
 //        log.warn("p0=$p0")
 
+    }
+
+    fun deleteOutputDirectory(platformUuid: String, containerUuid: String?) {
+        try {
+            val file = getOutputDirectory(platformUuid, containerUuid)
+            file.deleteRecursively()
+        } catch (e: Exception) {
+            log.error("deleteOutputDirectory", e)
+        }
     }
 
     fun getOutputDirectory(platformUuid: String, containerUuid: String?): File {

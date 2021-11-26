@@ -22,8 +22,6 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.ui_view.ViewProvider
-import io.realm.Realm
-import ru.smartro.inventory.Inull
 import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.*
@@ -64,7 +62,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         }
     }
 
-    private fun gotoAddPlatform() {
+    private fun gotoCreatePlatform() {
 //        val nextId = Realm.getDefaultInstance().where(PlatformEntityRealm::class.java).max("id")?.toInt()?.plus(1)?: Inull
         val platformEntity: PlatformEntityRealm = db().createPlatformEntity(UUID.randomUUID().toString())
 //        if (platformEntity.isOnull()) {
@@ -79,6 +77,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setScreenOrientation(false)
         mViewModel = ViewModelProvider(
             this,
             ViewModelProvider.NewInstanceFactory()
@@ -117,11 +116,11 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
                 showErrorToast("platformType is Empty")
                 return@setOnClickListener
             }
-            gotoAddPlatform()
+            gotoCreatePlatform()
         }
         mApbAddPlatform.simulateClick()
         gotoMyLocation()
-        val platformEntity =  db().loadPlatformEntity()
+        val platformEntity =  db().loadPlatformEntityS()
         addPlatformToMap(platformEntity)
 
         // TODO: 15.11.2021
@@ -136,7 +135,6 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
                 addPlatformToMap(platforms)
             }
         )
-
 
 
         val errorLiveData = CatalogRequestRPC().callAsyncRPC(ownerId)
@@ -162,6 +160,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
     }
 
 
+
     private fun getIconViewProvider(drawableResId: Int): ViewProvider {
         fun iconMarker(_drawableResId: Int): View {
             val resultIcon = View(context).apply { background = ContextCompat.getDrawable(context, _drawableResId) }
@@ -173,7 +172,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
     private fun addPlatformToMap(platforms: List<PlatformEntityRealm>) {
         platforms.forEach {
             try {
-                val point = Point(it.coordinates!!.lat, it.coordinates!!.lng)
+                val point = Point(it.coordinateLat, it.coordinateLng)
                 mMapObjectCollection.addPlacemark(point, getIconViewProvider(it.getIconDrawableResId()))
             } catch (e: Exception) {
                 log.error("addPlatformToMap", e)

@@ -5,6 +5,7 @@ import io.realm.Realm
 import io.realm.RealmList
 import io.realm.RealmObject
 import ru.smartro.inventory.database.*
+import java.lang.Exception
 import java.util.concurrent.Executors
 
 // find! has
@@ -67,7 +68,7 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
             }
             val backgroundRealm = Realm.getDefaultInstance()
             val realmAsyncTask: Unit = backgroundRealm.executeTransaction {
-                val containerEntity = PlatformEntityRealm(platformUuid)
+                val containerEntity = PlatformEntityRealm(platformUuid, is_synchro_start = false)
                 backgroundRealm.insertOrUpdate(containerEntity)
             }
         }
@@ -91,25 +92,61 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         return result
     }
 
-    fun loadPlatformEntity(): List<PlatformEntityRealm> {
-        val realmResults = mRealm.where(PlatformEntityRealm::class.java).notEqualTo("status_id", Inull).findAll()
+    fun loadPlatformEntityS(): List<PlatformEntityRealm> {
+        try {
+            mRealm.refresh()
+        } catch (e: Exception) {
+            print(e)
+        }
+        val realmResults = mRealm.where(PlatformEntityRealm::class.java).findAll()
         val result = mRealm.copyFromRealm(realmResults)
         return result
     }
 
     fun loadPlatformEntity(platformUuid: String): PlatformEntityRealm {
+        try {
+            mRealm.refresh()
+        } catch (e: Exception) {
+            print(e)
+        }
         val realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("uuid", platformUuid).findFirst()
         val result = mRealm.copyFromRealm(realmResults!!)
         return result
     }
 
+    fun loadPlatformEntitySSynchro(): List<PlatformEntityRealm> {
+        try {
+            mRealm.refresh()
+        } catch (e: Exception) {
+            print(e)
+        }
+        var result = emptyList<PlatformEntityRealm>()
+        try {
+            val realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("status_id", Inull).notEqualTo("is_synchro_start", true).findAll()
+            result = mRealm.copyFromRealm(realmResults!!)
+        } catch (e: Exception) {
+            print(e)
+        }
+        return result
+    }
+
     fun loadContainerEntity(containerUuid: String): ContainerEntityRealm {
+        try {
+            mRealm.refresh()
+        } catch (e: Exception) {
+            print(e)
+        }
         val realmResults = mRealm.where(ContainerEntityRealm::class.java).equalTo("uuid", containerUuid).findFirst()
         val result = mRealm.copyFromRealm(realmResults!!)
         return result
     }
 
     fun loadPlatformContainers(platformUuid: String): List<ContainerEntityRealm> {
+        try {
+            mRealm.refresh()
+        } catch (e: Exception) {
+            print(e)
+        }
         val realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("uuid", platformUuid).findFirst()
         val result = mRealm.copyFromRealm(realmResults!!.containers)
         return result
@@ -117,7 +154,7 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
 
     fun createPlatformEntity(platformUuid: String): PlatformEntityRealm {
 //        val result =  mRealm.createObject(PlatformEntityRealm::class.java, id)
-        val result = PlatformEntityRealm(platformUuid)
+        val result = PlatformEntityRealm(platformUuid, is_synchro_start = false)
         saveRealmEntity(result)
         return result
     }
@@ -137,7 +174,13 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
 
     fun deleteContainerEntity(containerUuid: String) {
         execInTransaction { p_realm ->
-            val realmResults = mRealm.where(ContainerEntityRealm::class.java).equalTo("uuid", containerUuid).findAll()
+            val realmResults = mRealm.where(ContainerEntityRealm::class.java).equalTo("uuid", containerUuid).isNull("number", ).findAll()
+            realmResults.deleteAllFromRealm()
+        }
+    }
+    fun deletePlatformEntity(platformUuid: String) {
+        execInTransaction { p_realm ->
+            val realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("uuid", platformUuid).isNull("type", ).findAll()
             realmResults.deleteAllFromRealm()
         }
     }

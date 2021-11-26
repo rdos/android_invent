@@ -3,7 +3,6 @@ package ru.smartro.inventory.base
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.yandex.mapkit.geometry.Point
@@ -17,7 +16,7 @@ import java.io.File
 
 abstract class AbstractFragment : Fragment() {
     private val TARGET_LOCATION = Point(-80.243123, 25.107800)
-
+    var lastFragmentClazz: String? = null
     private val mActivity: Activity by lazy {
         activity as Activity
     }
@@ -44,19 +43,19 @@ abstract class AbstractFragment : Fragment() {
         }
     }
 
-    fun calculateDistance(
-        currentLocation: Point,
-        finishLocation: Point
-    ): Int {
-        val userLocation = android.location.Location(LocationManager.GPS_PROVIDER)
-        userLocation.latitude = currentLocation.latitude
-        userLocation.longitude = currentLocation.longitude
-
-        val checkPointLocation = android.location.Location(LocationManager.GPS_PROVIDER)
-        checkPointLocation.latitude = finishLocation.latitude
-        checkPointLocation.longitude = finishLocation.longitude
-        return userLocation.distanceTo(checkPointLocation).toInt()
-    }
+//    fun calculateDistance(
+//        currentLocation: Point,
+//        finishLocation: Point
+//    ): Int {
+//        val userLocation = android.location.Location(LocationManager.GPS_PROVIDER)
+//        userLocation.latitude = currentLocation.latitude
+//        userLocation.longitude = currentLocation.longitude
+//
+//        val checkPointLocation = android.location.Location(LocationManager.GPS_PROVIDER)
+//        checkPointLocation.latitude = finishLocation.latitude
+//        checkPointLocation.longitude = finishLocation.longitude
+//        return userLocation.distanceTo(checkPointLocation).toInt()
+//    }
 
 
     fun getCurrentTimeStamp(): Long {
@@ -117,6 +116,10 @@ abstract class AbstractFragment : Fragment() {
         mActivity.showNextFragment(fragment)
     }
 
+    protected fun deleteOutputDirectory(p_platform_uuid: String, p_container_uuid: String?) {
+        mActivity.deleteOutputDirectory(p_platform_uuid, p_container_uuid)
+    }
+
     protected fun getOutputDirectory(p_platform_uuid: String, p_container_uuid: String?): File {
         return mActivity.getOutputDirectory(p_platform_uuid, p_container_uuid)
     }
@@ -139,10 +142,15 @@ abstract class AbstractFragment : Fragment() {
         log.debug("setScreenOrientation.after")
     }
 
-    //todo: call?_!!!
+
     protected fun callOnBackPressed() {
         mActivity.onBackPressed()
     }
+    //todo: call?_!!!
+    protected fun callOnBackPressed(isCallOnBackPressed: Boolean) {
+        mActivity.onBackPressed(isCallOnBackPressed)
+    }
+
 
     protected fun db(): RealmRepo {
         return mActivity.db
@@ -153,7 +161,7 @@ abstract class AbstractFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         log.debug("onViewCreated.before")
-        setScreenOrientation(false)
+        setScreenOrientation(true)
     }
 
     override fun onDestroyView() {
@@ -171,6 +179,10 @@ abstract class AbstractFragment : Fragment() {
 
     open fun onBackPressed() {
         log.info("onBackPressed.before")
+    }
+
+    open fun onCloseFragment(){
+        log.info("onCloseFragment.before")
     }
 
 

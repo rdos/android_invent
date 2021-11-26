@@ -16,8 +16,6 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.appcompat.widget.AppCompatTextView
 import com.google.android.material.textfield.TextInputEditText
-import io.realm.Realm
-import ru.smartro.inventory.Inull
 import ru.smartro.inventory.core.*
 import ru.smartro.inventory.database.ContainerEntityRealm
 import ru.smartro.inventory.database.PlatformTypeRealm
@@ -32,6 +30,7 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
         fun newInstance(platformUuid: String) = PlatformFragment(platformUuid)
     }
 
+    private lateinit var mTietLength: TextInputEditText
     private lateinit var mIn: LayoutInflater
     private lateinit var viewModel: PlatformViewModel
 
@@ -40,6 +39,10 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
         return sdf.format(Date())
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -48,9 +51,10 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
         val platformEntity = db().loadPlatformEntity(p_platform_uuid)
 
         val actvCoordinateLat = view.findViewById<AppCompatTextView>(R.id.actv_platform_fragment__coordinate_lat)
-        actvCoordinateLat.text = getLastPoint().latitude.toString()
+        actvCoordinateLat.text = String.format("%.6f", getLastPoint().latitude)
+
         val actvCoordinateLng = view.findViewById<AppCompatTextView>(R.id.actv_platform_fragment__coordinate_lng)
-        actvCoordinateLng.text = getLastPoint().longitude.toString()
+        actvCoordinateLng.text = String.format("%.6f", getLastPoint().longitude)
 
         val acsVid = view.findViewById<AppCompatSpinner>(R.id.acs_platform_fragment__vid)
         val vidAdapter: ArrayAdapter<*> = ArrayAdapter.createFromResource(
@@ -68,53 +72,63 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
 
         val tietComment = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment__comment)
 
-        val tietHeight = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment__height)
+        mTietLength = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment__length)
         val tietWidth = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment__width)
         val accbHasBase = view.findViewById<AppCompatCheckBox>(R.id.accb_platform_fragment__has_base)
         val accbHasFence = view.findViewById<AppCompatCheckBox>(R.id.accb_platform_fragment__has_fence)
 
         val acbSave = view.findViewById<AppCompatButton>(R.id.acb_platform_fragment__save)
         acbSave.setOnClickListener {
+            log.debug("save_-acbSaveOnClick.before")
             acbSave.isEnabled = false
-
-            platformEntity.datetime =currentTime()
-            platformEntity.containers_count = platformEntity.containers.size
-            platformEntity.is_open = if(acsVid.selectedItem.toString() == "Открытая") 1 else 0
-            platformEntity.has_base = if(accbHasBase.isChecked) 1 else 0
-            platformEntity.has_fence = if(accbHasFence.isChecked) 1 else 0
-            platformEntity.coordinates?.lat= getLastPoint().latitude
-            platformEntity.coordinates?.lng= getLastPoint().longitude
-            platformEntity.type = acsType.selectedItem as PlatformTypeRealm
-
             try {
-                platformEntity.length = tietHeight.text.toString().toInt()
+                if (!isCheckedData(mTietLength)) return@setOnClickListener
+                if (!isCheckedData(tietWidth)) return@setOnClickListener
+
+                platformEntity.datetime = currentTime()
+                platformEntity.is_open =
+                    if (acsVid.selectedItem.toString() == "Открытая") 1 else 0
+                platformEntity.has_base = if (accbHasBase.isChecked) 1 else 0
+                platformEntity.has_fence = if (accbHasFence.isChecked) 1 else 0
+                platformEntity.coordinateLat = getLastPoint().latitude
+                platformEntity.coordinateLng = getLastPoint().longitude
+                platformEntity.type = acsType.selectedItem as PlatformTypeRealm
+
+
+                platformEntity.length = mTietLength.text.toString().toInt()
                 platformEntity.width = tietWidth.text.toString().toInt()
                 platformEntity.comment = tietComment.text.toString()
+
+
+                db().saveRealmEntity(platformEntity)
+                log.debug("save_-acbSaveOnClick.saveRealmEntity")
+                deleteOutputDirectory(p_platform_uuid, null)
+                log.debug("save_-acbSaveOnClick.deleteOutputDirectory p_platform_uuid=${p_platform_uuid}")
+
+                callOnBackPressed(false)
+                callOnBackPressed(false)
+
             } catch (e: Exception) {
                 log.error("TODOTODOTODO")
-            }
-
-            try {
-                db().saveRealmEntity(platformEntity)
-            } catch (e: java.lang.Exception) {
                 showErrorToast(e.message)
+            } finally {
+                acbSave.isEnabled = true
             }
-
-            val con = SynchroRequestRPC().callAsyncRPC(platformEntity)
-            con.observe(
-                viewLifecycleOwner,
-                { bool ->
-                    getOutputDirectory(p_platform_uuid, null).deleteRecursively()
-                    if (bool){
-                        // TODO: 22.11.2021 !!!
-                        callOnBackPressed()
-                        callOnBackPressed()
-                    } else
-                    {
-                        acbSave.isEnabled = true
-                    }
-                }
-            )
+            log.debug("save_-acbSaveOnClick.after")
+//            val con = SynchroRequestRPC().callAsyncRPC(platformEntity)
+//            con.observe(
+//                viewLifecycleOwner,
+//                { bool ->
+//
+//                    if (bool){
+//                        // TODO: 22.11.2021 !!!
+//
+//                    } else
+//                    {
+//
+//                    }
+//                }
+//            )
 //            showFragment(PlatformFragmentContainerDlt.newInstance())
         }
 
@@ -136,6 +150,15 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
             .commitNow()
     }
 
+
+    private fun isCheckedData(mTietHeight: TextInputEditText): Boolean {
+        var result = false
+        if (mTietHeight.text.isNullOrBlank()) {
+            mTietHeight.error = "Поле обязательно для заполнения"
+            return result
+        }
+        return true
+    }
 
     class TypeAdapter(context: Context,
                                platformType: List<PlatformTypeRealm>)

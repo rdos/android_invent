@@ -17,7 +17,7 @@ abstract class AbstractO {
         db()
     }
 
-    private fun db(): RealmRepo {
+    protected fun db(): RealmRepo {
         return RealmRepo(Realm.getDefaultInstance())
     }
 }

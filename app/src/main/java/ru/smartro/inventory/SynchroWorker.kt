@@ -19,6 +19,7 @@ import com.yandex.mapkit.location.LocationManagerUtils
 import io.realm.Realm
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import ru.smartro.inventory.core.SynchroRequestRPC
 
 //https://code.luasoftware.com/tutorials/android/coroutineworker-use-kotlin-coroutines-in-work-manager/
 class SynchroWorker(
@@ -35,7 +36,7 @@ class SynchroWorker(
         }
     }
 
-    private val TAG = "SynchronizeWorker--AaA"
+    private val TAG = "SynchroWorker--AaA"
     private val mDeviceId = Secure.getString(context.contentResolver, Secure.ANDROID_ID)
     private val mMinutesInSec = 30 * 60
 
@@ -49,15 +50,46 @@ class SynchroWorker(
 
         while (true) {
             synchronizeData(db)
-            delay(6000)
+            delayS(6000)
         }
         Result.success()
     }
 
-
+    private suspend fun delayS(timeMillis: Long) {
+        Log.d(TAG, "save_-synchronizeData.start delay")
+        delay(timeMillis)
+        Log.d(TAG, "save_-synchronizeData.stop delay")
+    }
     private suspend fun synchronizeData(db: RealmRepo) {
-        Log.w(TAG, "synchronizeData.before thread_id=${Thread.currentThread().id}")
-        delay(1000)
+        Log.w(TAG, "save_-synchronizeData.before thread_id=${Thread.currentThread().id}")
+        var platformEntityS = db.loadPlatformEntitySSynchro()
+        for(platformEntity in platformEntityS) {
+            Log.i(TAG, "save_-synchronizeData. platformEntity=${platformEntity.uuid}")
+
+
+            SynchroRequestRPC().callAsyncRPC(platformEntity)
+        }
+        delayS(10000)
+        platformEntityS = db.loadPlatformEntityS()
+        for(platformEntity in platformEntityS) {
+            platformEntity.is_synchro_start = false
+            db.saveRealmEntity(platformEntity)
+        }
+
+
+//        con.observe(
+//            viewLifecycleOwner,
+//            { bool ->
+//
+//                if (bool){
+//                    // TODO: 22.11.2021 !!!
+//
+//              } else
+//               {
+//
+//                }
+//            }
+//        )
     }
 
     private fun showNotification(context: Context, ongoing: Boolean, content: String, title: String) {

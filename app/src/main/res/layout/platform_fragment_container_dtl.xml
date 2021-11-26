@@ -17,7 +17,7 @@
             android:layout_weight="1"
             android:orientation="vertical">
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_platform_fragment__number"
+                android:id="@+id/til_platform_fragment_container_dtl__number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -100,7 +100,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_16"
-        android:text="@string/platform_fragment__add_containers"
+        android:text="@string/platform_fragment__save_container"
         android:textColor="@color/purple_white_full"
         android:backgroundTint="@color/purple_200"
         android:backgroundTintMode="multiply"/>

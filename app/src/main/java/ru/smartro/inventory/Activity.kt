@@ -16,6 +16,7 @@ import io.realm.Realm
 import io.realm.RealmConfiguration
 import ru.smartro.inventory.base.AbstractAct
 import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.inventory.database.ConfigEntityRealm
 import ru.smartro.inventory.ui.main.LoginFragment
 import ru.smartro.inventory.ui.main.MapFragment
 
@@ -49,6 +50,8 @@ class Activity : AbstractAct() , LocationListener {
         // TODO: 12.11.2021 место!))
 
         if (savedInstanceState == null) {
+            val configEntityRealm = ConfigEntityRealm("is_allowed_inventory_get_platforms", true.toString())
+            db.saveConfig(configEntityRealm)
             if (Snull == db.loadConfig("Owner")) {
                 showFragment(LoginFragment.newInstance())
             } else {
@@ -56,11 +59,9 @@ class Activity : AbstractAct() , LocationListener {
             }
             checkPermission(PERMISSIONS)
         }
-        startSynchronizeData()
     }
 
     private fun stopSynchronizeData() {
-
         WorkManager.getInstance(this).
         cancelUniqueWork(Synchro_Worker_Work_Name)
     }
@@ -126,6 +127,14 @@ class Activity : AbstractAct() , LocationListener {
 
     override fun onResume() {
         super.onResume()
+        startSynchronizeData()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        // Activity onStop call must be passed to both MapView and MapKit instance.
+        MapKitFactory.getInstance().onStop()
+        stopSynchronizeData()
     }
 
     private fun initRealm(): RealmRepo {
@@ -202,12 +211,7 @@ class Activity : AbstractAct() , LocationListener {
         MapKitFactory.getInstance().onStart()
     }
 
-    override fun onStop() {
-        super.onStop()
-        // Activity onStop call must be passed to both MapView and MapKit instance.
-        MapKitFactory.getInstance().onStop()
-        stopSynchronizeData()
-    }
+
 
     override fun onLocationUpdated(p0: Location) {
 //        log.debug("latitude=${p0.position.latitude},latitude=${p0.position.longitude}")

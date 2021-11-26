@@ -6,10 +6,39 @@ plugins {
 }
 
 android {
+
+    packagingOptions{
+        exclude 'lib/arm64-v8a/libcardioDecider.so'
+        exclude 'lib/arm64-v8a/libcardioRecognizer.so'
+        exclude 'lib/arm64-v8a/libcardioRecognizer_tegra2.so'
+        exclude 'lib/arm64-v8a/libopencv_core.so'
+        exclude 'lib/arm64-v8a/libopencv_imgproc.so'
+        exclude 'lib/armeabi/libcardioDecider.so'
+        exclude 'lib/armeabi-v7a/libcardioDecider.so'
+        exclude 'lib/armeabi-v7a/libcardioRecognizer.so'
+        exclude 'lib/armeabi-v7a/libcardioRecognizer_tegra2.so'
+        exclude 'lib/armeabi-v7a/libopencv_core.so'
+        exclude 'lib/armeabi-v7a/libopencv_imgproc.so'
+        exclude 'lib/mips/libcardioDecider.so'
+        exclude 'lib/x86/libcardioDecider.so'
+        exclude 'lib/x86/libcardioRecognizer.so'
+        exclude 'lib/x86/libcardioRecognizer_tegra2.so'
+        exclude 'lib/x86/libopencv_core.so'
+        exclude 'lib/x86/libopencv_imgproc.so'
+        exclude 'lib/x86_64/libcardioDecider.so'
+        exclude 'lib/x86_64/libcardioRecognizer.so'
+        exclude 'lib/x86_64/libcardioRecognizer_tegra2.so'
+        exclude 'lib/x86_64/libopencv_core.so'
+        exclude 'lib/x86_64/libopencv_imgproc.so'
+    }
+
     compileSdk 31
 
 
     defaultConfig {
+        applicationId "ru.smartro.inventory"
+        minSdk 24
+        targetSdk 31
 
         //устанавливаем версию
         def Properties props = new Properties()
@@ -25,13 +54,6 @@ android {
                 versionName = props['version.name']
             }
         }
-
-
-        applicationId "ru.smartro.inventory"
-        minSdk 24
-        targetSdk 31
-        versionCode 1
-        versionName "1.0"
 //        buildConfigField "boolean", "SRVR_LO", "true"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         archivesBaseName =  "Inventory-" + defaultConfig.versionName + "-"
@@ -65,6 +87,7 @@ android {
             versionNameSuffix '-STAGE'
             resValue "string", "app_name", "Inventory.STAGE"
             signingConfig signingConfigs.release
+            minifyEnabled true
         }
 
         release {
@@ -93,6 +116,8 @@ android {
 }
 
 dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.1'

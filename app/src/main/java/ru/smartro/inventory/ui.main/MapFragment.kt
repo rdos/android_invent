@@ -30,7 +30,8 @@ import ru.smartro.worknote.extensions.simulateClick
 import java.util.*
 
 
-class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCallback{
+class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCallback,
+    MapObjectTapListener {
 
     companion object {
         fun newInstance() = MapFragment()
@@ -124,10 +125,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         updateData()
         gotoMyLocation()
         callPlatformRequest()
-        mMapObjectCollection.addTapListener { mapObject, point ->
-            log.info("mMapObjectCollection")
-            true
-        }
+        mMapObjectCollection.addTapListener(this)
 
         mApbAddPlatform.simulateClick()
     }
@@ -179,10 +177,6 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         return ViewProvider(iconMarker(drawableResId))
     }
 
-    private fun addPlatformToMap(platforms: List<PlatformEntityRealm>) {
-
-    }
-
     override fun onStart() {
         super.onStart()
         mMapView.onStart()
@@ -215,6 +209,13 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
     override fun onMoveFinished(p0: Boolean) {
         log.warn("onMoveFinished p0=", p0)
 
+    }
+
+    override fun onMapObjectTap(p0: MapObject, p1: Point): Boolean {
+        val placeMark = p0 as PlacemarkMapObject
+        val coordinate = placeMark.geometry
+        showErrorToast("${coordinate.latitude} ${coordinate.longitude}")
+        return true
     }
 
 }

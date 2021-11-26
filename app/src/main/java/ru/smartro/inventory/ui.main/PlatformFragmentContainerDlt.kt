@@ -32,7 +32,7 @@ class PlatformFragmentContainerDlt(val p_container_uuid: String) : AbstractFragm
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        setActionBarTitle("Контейнер")
         val mContainerEntityRealm = db().loadContainerEntity(p_container_uuid)
 
         mTietNumber = view.findViewById(R.id.tiet_platform_fragment_container_dtl__number)

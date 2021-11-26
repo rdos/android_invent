@@ -49,7 +49,7 @@ class Activity : AbstractAct() , LocationListener {
         // TODO: 12.11.2021 место!))
 
         if (savedInstanceState == null) {
-            if (Snull == db.loadConfig("token")) {
+            if (Snull == db.loadConfig("Owner")) {
                 showFragment(LoginFragment.newInstance())
             } else {
                 showFragment(MapFragment.newInstance())
@@ -59,13 +59,20 @@ class Activity : AbstractAct() , LocationListener {
         startSynchronizeData()
     }
 
+    private fun stopSynchronizeData() {
 
+        WorkManager.getInstance(this).
+        cancelUniqueWork(Synchro_Worker_Work_Name)
+    }
+
+    val Synchro_Worker_Work_Name = "SynchroWorkerWorkName"
     private fun startSynchronizeData() {
         Log.w("TAG", "SynchroWorkerWorkName.before thread_id=${Thread.currentThread().id}")
 //        AppPreferences.workerStatus = true
         val workManager = PeriodicWorkRequestBuilder<SynchroWorker>(16, TimeUnit.MINUTES).build()
+
         WorkManager.getInstance(this)
-            .enqueueUniquePeriodicWork("SynchroWorkerWorkName", ExistingPeriodicWorkPolicy.REPLACE, workManager)
+            .enqueueUniquePeriodicWork(Synchro_Worker_Work_Name, ExistingPeriodicWorkPolicy.REPLACE, workManager)
         Log.d("TAG", "SynchroWorkerWorkName.after")
     }
 
@@ -199,6 +206,7 @@ class Activity : AbstractAct() , LocationListener {
         super.onStop()
         // Activity onStop call must be passed to both MapView and MapKit instance.
         MapKitFactory.getInstance().onStop()
+        stopSynchronizeData()
     }
 
     override fun onLocationUpdated(p0: Location) {
@@ -233,6 +241,18 @@ class Activity : AbstractAct() , LocationListener {
         val file = File(dirPath)
         if (!file.exists()) file.mkdirs()
         return file
+    }
+
+    fun getOutputFileCount(platformUuid: String, containerUuid: String?): Int {
+        val file = getOutputDirectory(platformUuid, containerUuid)
+        val files = file.listFiles()
+        var result = files.size
+        for(f in  files) {
+            if (f.isDirectory) {
+                result = result - 1
+            }
+        }
+        return result
     }
 
 }

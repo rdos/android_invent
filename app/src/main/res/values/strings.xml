@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Inventory</string>
     <string name="et_login_fragment__password">Введирте пароль</string>
     <string name="login">Логин</string>
     <string name="login_fragment__welcome_to_system">Вход в систему</string>

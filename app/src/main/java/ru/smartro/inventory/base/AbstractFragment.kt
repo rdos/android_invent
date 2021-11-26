@@ -65,35 +65,35 @@ abstract class AbstractFragment : Fragment() {
 
 
     fun getLastPoint(): Point {
-        val location: Location? = getLastKnownLocation()
+        val location: Location? = LocationManagerUtils.getLastKnownLocation()
         val position = location?.position?: TARGET_LOCATION
         // TODO: 15.11.2021 !!
 //        Point(54.881347, 55.44919)
         return position
     }
 
-    fun hasLastPoint(): Boolean {
-        val result = getLastKnownLocation() == null
-        log.debug("hasLastPoint.result=${result}")
-        return result
-    }
-
-    private fun getLastKnownLocation(): Location? {
-        log.debug("getLastPoint.before")
-        val lastKnownLocation: Location? = LocationManagerUtils.getLastKnownLocation()
-        var subtraction = Lnull
-        lastKnownLocation?.apply {
-            subtraction  = getCurrentTimeStamp() - absoluteTimestamp
-        }
-
-        var result = lastKnownLocation
-        // TODO: 23.11.2021 100?wtf! 
-        if (subtraction < 100) {
-            result = null
-        }
-        log.debug("hasLastPoint.result=${result}")
-        return result
-    }
+//    fun hasLastPoint(): Boolean {
+//        val result = getLastKnownLocation() == null
+//        log.debug("hasLastPoint.result=${result}")
+//        return result
+//    }
+//
+//    private fun getLastKnownLocation(): Location? {
+//        log.debug("getLastPoint.before")
+//        val lastKnownLocation: Location? = LocationManagerUtils.getLastKnownLocation()
+//        var subtraction = Lnull
+//        lastKnownLocation?.apply {
+//            subtraction  = getCurrentTimeStamp() - absoluteTimestamp
+//        }
+//
+//        var result = lastKnownLocation
+//        // TODO: 23.11.2021 100?wtf!
+//        if (subtraction < 100) {
+//            result = null
+//        }
+//        log.debug("hasLastPoint.result=${result}")
+//        return result
+//    }
 /// TODO: 18.11.2021 !!!
 //    fun getLastPoint(): Point {
 //        val location: Location? = LocationManagerUtils.getLastKnownLocation()
@@ -118,6 +118,10 @@ abstract class AbstractFragment : Fragment() {
 
     protected fun deleteOutputDirectory(p_platform_uuid: String, p_container_uuid: String?) {
         mActivity.deleteOutputDirectory(p_platform_uuid, p_container_uuid)
+    }
+
+    fun getOutputFileCount(pPlatformUuid: String, pContainerUuid: String?): Int {
+        return mActivity.getOutputFileCount(pPlatformUuid, pContainerUuid)
     }
 
     protected fun getOutputDirectory(p_platform_uuid: String, p_container_uuid: String?): File {
@@ -184,6 +188,8 @@ abstract class AbstractFragment : Fragment() {
     open fun onCloseFragment(){
         log.info("onCloseFragment.before")
     }
+
+
 
 
     //    companion object {

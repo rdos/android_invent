@@ -53,7 +53,13 @@ open class PlatformEntityRealm(
     var is_synchro_start: Boolean = false,
 ) : RealmObject() {
 
+    fun setSynchroEnable() {
+        is_synchro_start = true
+    }
 
+    fun setSynchroDisable() {
+        is_synchro_start = false
+    }
 
 //    companion object {
 //        fun from(responseBody: Array<Any>?, java: Class<PlatformEntityRealm>): PlatformEntityRealm {

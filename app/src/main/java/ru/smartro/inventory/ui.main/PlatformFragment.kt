@@ -99,7 +99,7 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
                 platformEntity.width = tietWidth.text.toString().toInt()
                 platformEntity.comment = tietComment.text.toString()
 
-
+                platformEntity.setSynchroDisable()
                 db().saveRealmEntity(platformEntity)
                 log.debug("save_-acbSaveOnClick.saveRealmEntity")
                 deleteOutputDirectory(p_platform_uuid, null)

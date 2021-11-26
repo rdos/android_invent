@@ -40,16 +40,5 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="@dimen/margin_16"
             />
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/apb_map_fragment__stop_work"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Stop worker"
-            android:paddingHorizontal="@dimen/margin_16"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="120dp"
-            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

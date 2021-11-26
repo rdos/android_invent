@@ -11,6 +11,7 @@ import okhttp3.Response
 import ru.smartro.inventory.URL_RPC_STAGE
 import ru.smartro.inventory.base.AbstractO
 import ru.smartro.inventory.base.RestClient
+import ru.smartro.inventory.database.ConfigEntityRealm
 import ru.smartro.inventory.database.PlatformEntityRealm
 import java.io.IOException
 
@@ -20,6 +21,7 @@ class PlatformRequestRPC(val p_RestClient: RestClient, val p_context: Context?):
 
     fun callAsyncRPC(rpcPlatformEntity: RPCPlatformEntity): MutableLiveData<List<PlatformEntityRealm>> {
         log.debug("callAsyncRPC.before" )
+
         val requestBody = rpcPlatformEntity.toRequestBody()
         val request = p_RestClient.newRequest(URL_RPC_STAGE).post(requestBody).build()
         p_RestClient.newCall(request, this)
@@ -45,7 +47,6 @@ class PlatformRequestRPC(val p_RestClient: RestClient, val p_context: Context?):
             responseO = Gson().fromJson(bodyString, ResponseO::class.java)
             //        val json = Gson().toJson(responseO.payload)
 //        val platformEntityRealms = Gson().fromJson<List<PlatformEntityRealm>>(json, typeToken)
-            log.info("onResponse responseO=${responseO}")
             db.save {
                 for(payload in responseO.payload) {
                     payload.coordinateLat = payload.coordinates?.lat!!
@@ -55,7 +56,8 @@ class PlatformRequestRPC(val p_RestClient: RestClient, val p_context: Context?):
                     db.insert(payload)
                 }
             }
-
+            val configEntityRealm = ConfigEntityRealm("is_allowed_inventory_get_platforms", false.toString())
+            db.saveConfig(configEntityRealm)
             result.postValue(responseO.payload)
         } catch (e: Exception) {
 //            p_context?.let {

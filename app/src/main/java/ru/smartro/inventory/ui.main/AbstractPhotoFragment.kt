@@ -32,6 +32,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.smartro.inventory.R
 import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.inventory.showErrorToast
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream
@@ -339,6 +340,10 @@ abstract class AbstractPhotoFragment(private val p_platform_uuid: String, privat
         // Listener for button used to capture photo
         val acibMakePhoto = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__make_photo)
         acibMakePhoto?.setOnClickListener {
+            if (getOutputFileCount(p_platform_uuid, p_container_uuid) > 3) {
+                showErrorToast("Максимальное кол-во фотографий = 3")
+                return@setOnClickListener
+            }
             // Get a stable reference of the modifiable image capture use case
             imageCapture?.let { imageCapture ->
 
@@ -397,6 +402,10 @@ abstract class AbstractPhotoFragment(private val p_platform_uuid: String, privat
 
         val acibNext = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__next)
         acibNext?.setOnClickListener {
+            if (getOutputFileCount(p_platform_uuid, p_container_uuid) <= 0) {
+                showErrorToast("Минимальное кол-во фотографий = 1")
+                return@setOnClickListener
+            }
             onNextClick()
         }
 

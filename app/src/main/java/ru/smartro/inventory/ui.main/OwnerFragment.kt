@@ -12,9 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.smartro.inventory.R
 import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.base.RestClient
+import ru.smartro.inventory.core.CatalogRequestRPC
 import ru.smartro.inventory.core.OwnerRequest
 import ru.smartro.inventory.database.ConfigEntityRealm
+import ru.smartro.inventory.database.OrganisationRealmEntity
 import ru.smartro.inventory.database.OwnerResponse
+import ru.smartro.inventory.showErrorToast
 
 //     android:background="?android:attr/selectableItemBackground">
 class OwnerFragment : AbstractFragment(){
@@ -40,14 +43,24 @@ class OwnerFragment : AbstractFragment(){
             viewLifecycleOwner,
             { ownerResponse ->
                 for (ownerEntity in ownerResponse.data.organisationRealmEntities) {
-                    log.info("AAA", ownerEntity.name)
+                    log.info("AAA ownerEntity.name=${ownerEntity.name}")
                 }
                 recyclerView.adapter = OwnerAdapter(ownerResponse)
+                if (ownerResponse.data.organisationRealmEntities.size == 1) {
+                    showNextFra(ownerResponse.data.organisationRealmEntities[0].id)
+                }
             }
         )
 
         // TODO: Use the ViewModel
 //        view.findViewById<AppCompatButton>(R.id.).setOnClickListener(this)
+
+//        errorLiveData.observe(
+//            viewLifecycleOwner,
+//            { errorText ->
+//                showErrorToast(errorText)
+//            }
+//        )
     }
 
     override fun onCreateView(
@@ -80,9 +93,7 @@ class OwnerFragment : AbstractFragment(){
             val organisationEntityRealms = p_ownerResponse.data.organisationRealmEntities[position]
             holder.tv.text = organisationEntityRealms.name
             holder.llc.rootView.setOnClickListener{
-                val config = ConfigEntityRealm(name="Owner", value=organisationEntityRealms.id.toString())
-                db().saveConfig(config)
-                showFragment(MapFragment.newInstance())
+               showNextFra(organisationEntityRealms.id)
             }
 //            holder.llc.animation =
 //                AnimationUtils.loadAnimation(holder.itemView.context, R.anim.slide_in_left)
@@ -90,6 +101,13 @@ class OwnerFragment : AbstractFragment(){
         }
 
         }
+
+    private fun showNextFra(ownerId: Int) {
+        val config = ConfigEntityRealm(name="Owner", value=ownerId.toString())
+        db().saveConfig(config)
+        CatalogRequestRPC().callAsyncRPC(ownerId)
+        showFragment(MapFragment.newInstance())
+    }
 
     class OwnerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val tv = itemView.findViewById<AppCompatTextView>(R.id.aptv_owner_fragment_rv__item)

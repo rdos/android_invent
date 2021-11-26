@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
-import androidx.work.WorkManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ru.smartro.inventory.R
 
@@ -60,6 +59,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         } catch (e: Exception) {
             showErrorToast("Что-то пошло не так :(")
         }
+
     }
 
     private fun gotoCreatePlatform() {
@@ -97,6 +97,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         val fabGotoMyLocation = view.findViewById<FloatingActionButton>(R.id.fab_map_fragment__goto_my_location)
         fabGotoMyLocation.setOnClickListener {
             gotoMyLocation()
+            sendPlatformRequest()
         }
 
         mApbAddPlatform = view.findViewById<AppCompatButton>(R.id.apb_map_fragment__add_platform)
@@ -118,47 +119,56 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
             }
             gotoCreatePlatform()
         }
-        mApbAddPlatform.simulateClick()
+
+
+        updateData()
         gotoMyLocation()
-        val platformEntity =  db().loadPlatformEntityS()
-        addPlatformToMap(platformEntity)
-
-        // TODO: 15.11.2021
-        val ownerId = db().loadConfig("Owner").toInt()
-        val rpcEntity = RPCProvider("inventory_get_platforms", getLastPoint()).getRPCEntity(ownerId)
-
-        val restClient = RestClient()
-        val conic = PlatformRequestRPC(restClient, requireContext()).callAsyncRPC(rpcEntity)
-        conic.observe(
-            viewLifecycleOwner,
-            { platforms ->
-                addPlatformToMap(platforms)
-            }
-        )
-
-
-        val errorLiveData = CatalogRequestRPC().callAsyncRPC(ownerId)
-        errorLiveData.observe(
-            viewLifecycleOwner,
-            { errorText ->
-                showErrorToast(errorText)
-            }
-        )
+        callPlatformRequest()
         mMapObjectCollection.addTapListener { mapObject, point ->
             log.info("mMapObjectCollection")
             true
         }
 
-        val apbStopWork = view.
-            findViewById<AppCompatButton>(R.id.apb_map_fragment__stop_work)
-        apbStopWork.setOnClickListener{
-            WorkManager.getInstance(requireContext()).
-                cancelUniqueWork("SynchroWorkerWorkName"
-                )
-        }
-        apbStopWork.simulateClick()
+        mApbAddPlatform.simulateClick()
     }
 
+    private fun callPlatformRequest() {
+        // TODO: 15.11.2021
+        val isAllowed = db().loadConfigBool("is_allowed_inventory_get_platforms")
+        if (isAllowed) {
+            log.info("callPlatformRequest.isAllowed=${isAllowed}")
+           sendPlatformRequest()
+        } else {
+            log.debug("callPlatformRequest.isAllowed=${isAllowed}")
+        }
+    }
+
+    private fun sendPlatformRequest() {
+        val ownerId = db().loadConfigInt("Owner")
+        val rpcEntity =
+            RPCProvider("inventory_get_platforms", getLastPoint()).getRPCEntity(ownerId)
+        val restClient = RestClient()
+        val conic = PlatformRequestRPC(restClient, requireContext()).callAsyncRPC(rpcEntity)
+        conic.observe(
+            viewLifecycleOwner,
+            { platforms ->
+                updateData()
+            }
+        )
+    }
+
+    private fun updateData() {
+        val platformSEntity =  db().loadPlatformEntityS()
+        platformSEntity.forEach { platform ->
+            try {
+                val point = Point(platform.coordinateLat, platform.coordinateLng)
+                mMapObjectCollection.addPlacemark(point, getIconViewProvider(platform.getIconDrawableResId()))
+            } catch (e: Exception) {
+                log.error("addPlatformToMap", e)
+                log.error("addPlatformToMap plaform.id= ${platform.id}")
+            }
+        }
+    }
 
 
     private fun getIconViewProvider(drawableResId: Int): ViewProvider {
@@ -170,15 +180,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
     }
 
     private fun addPlatformToMap(platforms: List<PlatformEntityRealm>) {
-        platforms.forEach {
-            try {
-                val point = Point(it.coordinateLat, it.coordinateLng)
-                mMapObjectCollection.addPlacemark(point, getIconViewProvider(it.getIconDrawableResId()))
-            } catch (e: Exception) {
-                log.error("addPlatformToMap", e)
-                log.error("addPlatformToMap platforms.id= ${it.id}")
-            }
-        }
+
     }
 
     override fun onStart() {

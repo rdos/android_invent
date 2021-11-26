@@ -21,12 +21,12 @@ class SynchroRequestRPC(): AbstractO(), Callback {
     fun callAsyncRPC(platformEntity: PlatformEntityRealm): MutableLiveData<Boolean> {
         log.debug("callAsyncRPC.before" )
         val synchroRequestEntity = SynchroRequestEntity()
-        val ownerId = db.loadConfig("Owner")
+        val ownerId = db.loadConfigInt("Owner")
 
-        platformEntity.is_synchro_start = true
+        platformEntity.setSynchroEnable()
         db.saveRealmEntity(platformEntity)
 
-        synchroRequestEntity.payload.organisation_id = ownerId.toInt()
+        synchroRequestEntity.payload.organisation_id = ownerId
         mPlatformUuid = platformEntity.uuid
         platformEntity.coordinates = CoordinatesRealmEntity(platformEntity.coordinateLat, platformEntity.coordinateLng)
 

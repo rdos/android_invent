@@ -65,14 +65,12 @@ class SynchroWorker(
         var platformEntityS = db.loadPlatformEntitySSynchro()
         for(platformEntity in platformEntityS) {
             Log.i(TAG, "save_-synchronizeData. platformEntity=${platformEntity.uuid}")
-
-
             SynchroRequestRPC().callAsyncRPC(platformEntity)
         }
         delayS(10000)
         platformEntityS = db.loadPlatformEntityS()
         for(platformEntity in platformEntityS) {
-            platformEntity.is_synchro_start = false
+            platformEntity.setSynchroDisable()
             db.saveRealmEntity(platformEntity)
         }
 

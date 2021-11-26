@@ -38,10 +38,42 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         }
     }
 
-    fun loadConfig(name: String): String {
-        mRealm.refresh()
-        val configEntity = mRealm.where(ConfigEntityRealm::class.java).equalTo("name", name.uppercase()).findFirst() ?: return Snull
-        return configEntity.value
+    fun loadConfig(name: String): String? {
+        try {
+            mRealm.refresh()
+        } catch (e: Exception) {
+            print(e)
+        }
+        var result: String? = null
+        try {
+          val configEntity = mRealm.where(ConfigEntityRealm::class.java).equalTo("name", name.uppercase()).findFirst() ?: return Snull
+            result = configEntity.value
+        } catch (e: Exception) {
+            print(e)
+        }
+        return result
+    }
+
+    fun loadConfigBool(name: String): Boolean {
+        val result = loadConfig(name)
+        if (result == null) return true
+        if (result == Snull) return true
+        try {
+            return result.toBoolean()
+        } catch (e: Exception) {
+            return true
+        }
+    }
+
+    fun loadConfigInt(name: String): Int {
+        val result = loadConfig(name)
+        if (result == null) return Inull
+        if (result == Snull) return Inull
+        try {
+            return result.toInt()
+        } catch (e: Exception) {
+            return Inull
+        }
     }
 
     fun save(block: () -> Unit) {
@@ -154,7 +186,7 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
 
     fun createPlatformEntity(platformUuid: String): PlatformEntityRealm {
 //        val result =  mRealm.createObject(PlatformEntityRealm::class.java, id)
-        val result = PlatformEntityRealm(platformUuid, is_synchro_start = false)
+        val result = PlatformEntityRealm(platformUuid, is_synchro_start = true)
         saveRealmEntity(result)
         return result
     }

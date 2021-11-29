@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">InventoryFact</string>
+    <string name="et_login_fragment__password">Введирте пароль</string>
+    <string name="login">Логин</string>
+    <string name="login_fragment__welcome_to_system">Вход в систему</string>
+    <string name="platform_fragment__save">Сохранить КП</string>
+    <string name="platform_fragment__add_containers">Добавить Контейнер</string>
+    <string name="platform_fragment__save_container">Сохранить Контейнер</string>
+    <string name="choose">asdas</string>
+
+    <string name="switch_camera_button_alt">switch</string>
+    <string name="capture_button_alt">capture</string>
+    <string name="owner_fragment__choose_owner">Выберите организацию</string>
+    <string name="delete_dialog">Удалить это фото?</string>
+    <string name="delete_title">Подтвердить</string>
 </resources>

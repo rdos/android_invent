@@ -13,8 +13,8 @@ data class LoginResponse(
 ) : AbstractEntity() {
 
     companion object {
-        fun from(response: Response): LoginResponse {
-            return Gson().fromJson(response.body?.string(), LoginResponse::class.java)
+        fun from(bodyString: String): LoginResponse {
+            return Gson().fromJson(bodyString, LoginResponse::class.java)
         }
     }
 }

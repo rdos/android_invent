@@ -14,6 +14,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import ru.smartro.inventory.*
 import ru.smartro.inventory.RealmRepo
+import ru.smartro.inventory.database.ConfigEntityRealm
+import ru.smartro.inventory.ui.main.LoginFragment
 import java.io.File
 
 abstract class AbstractFragment : Fragment() {
@@ -189,7 +191,6 @@ abstract class AbstractFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         log.debug("onViewCreated.before")
         setScreenOrientation(true)
-        hideKeyboard()
     }
 
     override fun onDestroyView() {
@@ -213,7 +214,11 @@ abstract class AbstractFragment : Fragment() {
         log.info("onCloseFragment.before")
     }
 
-
+    protected fun logOUT() {
+        log.info("logOUT")
+        db().deleteData()
+        showFragment(LoginFragment.newInstance())
+    }
 
 
     //    companion object {

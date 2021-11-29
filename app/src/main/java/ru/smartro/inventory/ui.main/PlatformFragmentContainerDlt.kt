@@ -54,10 +54,12 @@ class PlatformFragmentContainerDlt(val p_container_uuid: String) : AbstractFragm
 
         val acbSaveContainer = view.findViewById<AppCompatButton>(R.id.acb_platform_fragment_container_dtl__save_container)
         acbSaveContainer.setOnClickListener {
-            log.debug("acbSaveContainer.before")
+            log.debug("save_-acbSaveContainer.before")
             acbSaveContainer.isEnabled = false
             try {
                 if (isNotCheckedData(mTietNumber)) return@setOnClickListener
+                log.debug("save_-acbSaveContainer.after isCheckedData")
+                hideKeyboard()
                 mContainerEntityRealm.type = acsContainerType.selectedItem as ContainerTypeRealm?
                 mContainerEntityRealm.container_status_id = (acsContainerStatus.selectedItem as ContainerStatusRealm).id
                 mContainerEntityRealm.container_status_name = (acsContainerStatus.selectedItem as ContainerStatusRealm).name

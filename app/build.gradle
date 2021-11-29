@@ -55,7 +55,13 @@ android {
 
 
     buildTypes {
-        debug {
+        release {
+            //TODO: не используй!!!
+//            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        STAGE {
             applicationIdSuffix '.stage'
             versionNameSuffix '-STAGE'
             resValue "string", "app_name", "Inventory.STAGE"
@@ -63,20 +69,14 @@ android {
             debuggable true
         }
 
-        release {
-            //TODO: не используй!!!
-//            minifyEnabled false
-//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-
-        debugRC {
+        RC {
             applicationIdSuffix '.rc'
             versionNameSuffix '-RC'
             resValue "string", "app_name", "Inventory.RC"
             signingConfig signingConfigs.release
             debuggable true
         }
-        debugProd {
+        PROD {
             signingConfig signingConfigs.release
             resValue "string", "app_name", "Inventory"
             debuggable true

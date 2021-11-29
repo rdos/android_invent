@@ -84,6 +84,11 @@ open class PlatformEntityRealm(
             Base64.decode(encodedImage?.replace("data:image/png;base64,", ""), Base64.DEFAULT)
         return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
     }
+
+    fun setStatusAfterSync() {
+        this.status_id = 1
+        this.status_name = "Просто статус_RtextS"
+    }
 }
 
 open class CoordinatesRealmEntity(

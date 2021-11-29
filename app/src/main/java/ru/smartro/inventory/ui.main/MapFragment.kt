@@ -21,9 +21,11 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.ui_view.ViewProvider
+import ru.smartro.inventory.Snull
 import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.*
+import ru.smartro.inventory.database.ConfigEntityRealm
 import ru.smartro.inventory.database.PlatformEntityRealm
 import ru.smartro.inventory.showErrorToast
 import ru.smartro.worknote.extensions.simulateClick
@@ -37,7 +39,6 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         fun newInstance() = MapFragment()
     }
 
-    private lateinit var mApbAddPlatform: AppCompatButton
     private lateinit var mMapObjectCollection: MapObjectCollection
     private lateinit var mViewModel: MapViewModel
     private lateinit var mMapView: MapView
@@ -101,8 +102,12 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
             sendPlatformRequest()
         }
 
-        mApbAddPlatform = view.findViewById<AppCompatButton>(R.id.apb_map_fragment__add_platform)
-        mApbAddPlatform.setOnClickListener{
+        val apbLogout = view.findViewById<AppCompatButton>(R.id.apb_map_fragment__logout)
+        apbLogout.setOnClickListener {
+            logOUT()
+        }
+        val apbCreatePlatform = view.findViewById<AppCompatButton>(R.id.apb_map_fragment__add_platform)
+        apbCreatePlatform.setOnClickListener{
             val containerStatus = db().loadContainerStatus()
             if (containerStatus.isEmpty()) {
                 showErrorToast("containerStatus is Empty")
@@ -127,7 +132,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         callPlatformRequest()
         mMapObjectCollection.addTapListener(this)
 
-        mApbAddPlatform.simulateClick()
+        apbCreatePlatform.simulateClick()
     }
 
     private fun callPlatformRequest() {

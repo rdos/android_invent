@@ -9,6 +9,8 @@ import android.graphics.drawable.ColorDrawable
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,6 +20,7 @@ import android.webkit.MimeTypeMap
 import android.widget.ImageButton
 import androidx.annotation.Px
 import androidx.appcompat.widget.AppCompatImageButton
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -351,6 +354,11 @@ abstract class AbstractPhotoFragment(private val p_platform_uuid: String, privat
             onNextClick()
         }
 
+        val actvCount = mCameraUiFragment?.findViewById<AppCompatTextView>(R.id.actv_camera_fragment_ui__count)
+        val fileCount = getOutputFileCount(p_platform_uuid, p_container_uuid)
+        if (fileCount > 0) {
+            actvCount?.text = fileCount.toString()
+        }
         // Listener for button used to capture photo
         val acibMakePhoto = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__make_photo)
         acibMakePhoto?.setOnClickListener {
@@ -398,9 +406,12 @@ abstract class AbstractPhotoFragment(private val p_platform_uuid: String, privat
                         ) { _, uri ->
                             Log.d(TAG, "Image capture scanned into media store: $uri")
                         }
-                        (view as ViewGroup).post{
+
+                        val handler = Handler(Looper.getMainLooper())
+                        handler.post{
                             acibNext?.isEnabled = true
                             mAcibShow?.isEnabled = true
+                            actvCount?.text = getOutputFileCount(p_platform_uuid, p_container_uuid).toString()
                         }
                     }
                 })

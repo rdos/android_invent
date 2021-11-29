@@ -100,7 +100,7 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
             }
             val backgroundRealm = Realm.getDefaultInstance()
             val realmAsyncTask: Unit = backgroundRealm.executeTransaction {
-                val containerEntity = PlatformEntityRealm(platformUuid, is_synchro_start = false)
+                val containerEntity = PlatformEntityRealm(platformUuid)
                 backgroundRealm.insertOrUpdate(containerEntity)
             }
         }
@@ -154,7 +154,7 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         }
         var result = emptyList<PlatformEntityRealm>()
         try {
-            val realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("status_id", Inull).notEqualTo("is_synchro_start", true).findAll()
+            val realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("status_id", Inull).equalTo("is_synchro_start", true).findAll()
             result = mRealm.copyFromRealm(realmResults!!)
         } catch (e: Exception) {
             print(e)
@@ -186,7 +186,7 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
 
     fun createPlatformEntity(platformUuid: String): PlatformEntityRealm {
 //        val result =  mRealm.createObject(PlatformEntityRealm::class.java, id)
-        val result = PlatformEntityRealm(platformUuid, is_synchro_start = true)
+        val result = PlatformEntityRealm(platformUuid)
         saveRealmEntity(result)
         return result
     }
@@ -232,8 +232,10 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         return resMList
     }
 
-    fun clearData() {
-        mRealm.deleteAll()
+    fun deleteData() {
+        execInTransaction { p_realm ->
+            mRealm.deleteAll()
+        }
     }
 
 

@@ -50,28 +50,23 @@ class SynchroWorker(
 
         while (true) {
             synchronizeData(db)
-            delayS(6000)
+            delayS(16000)
         }
         Result.success()
     }
 
     private suspend fun delayS(timeMillis: Long) {
-//        Log.d(TAG, "save_-synchronizeData.start delay")
+        Log.d(TAG, "save_-delayS.before start")
         delay(timeMillis)
-//        Log.d(TAG, "save_-synchronizeData.stop delay")
+        Log.d(TAG, "save_-delayS.after stop")
     }
     private suspend fun synchronizeData(db: RealmRepo) {
         Log.w(TAG, "save_-synchronizeData.before thread_id=${Thread.currentThread().id}")
-        var platformEntityS = db.loadPlatformEntitySSynchro()
+        val platformEntityS = db.loadPlatformEntitySSynchro()
         for(platformEntity in platformEntityS) {
+
             Log.i(TAG, "save_-synchronizeData. platformEntity=${platformEntity.uuid}")
             SynchroRequestRPC().callAsyncRPC(platformEntity)
-        }
-        delayS(10000)
-        platformEntityS = db.loadPlatformEntityS()
-        for(platformEntity in platformEntityS) {
-            platformEntity.setSynchroDisable()
-            db.saveRealmEntity(platformEntity)
         }
 
 

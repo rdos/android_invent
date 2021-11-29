@@ -14,6 +14,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/apb_map_fragment__logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Выйти"
+            android:backgroundTint="@color/purple_200"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_map_fragment__goto_my_location"

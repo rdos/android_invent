@@ -79,11 +79,12 @@
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/auth_appversion"
+        android:id="@+id/actv_login_fragment__version"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="@dimen/margin_min"
         tools:text="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

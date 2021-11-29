@@ -10,12 +10,15 @@ import ru.smartro.inventory.core.LoginEntity
 import ru.smartro.inventory.R
 
 import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.ViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import ru.smartro.inventory.BuildConfig
 import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.LoginRequest
+import ru.smartro.inventory.showErrorToast
 
 
 class LoginFragment : AbstractFragment(){
@@ -52,7 +55,8 @@ class LoginFragment : AbstractFragment(){
         val tilPassword = view.findViewById<TextInputLayout>(R.id.til_login_fragment__password)
         val tietPassword = view.findViewById<TextInputEditText>(R.id.tiet_login_fragment__password)
 
-
+        val actvVersion = view.findViewById<AppCompatTextView>(R.id.actv_login_fragment__version)
+        actvVersion.text = BuildConfig.VERSION_NAME
 
         val acbLogin = view.findViewById<AppCompatButton>(R.id.acb_login_fragment)
         acbLogin.setOnClickListener{
@@ -62,6 +66,7 @@ class LoginFragment : AbstractFragment(){
                 if (isNotCheckedData(tietLogin)) return@setOnClickListener
                 if (isNotCheckedData(tietPassword)) return@setOnClickListener
                 log.debug("acbLogin.after isCheckedData")
+                hideKeyboard()
                 val loginEntity =
                     LoginEntity(tietLogin.text.toString(), tietPassword.text.toString())
                 val restClient = RestClient()
@@ -69,13 +74,12 @@ class LoginFragment : AbstractFragment(){
                 val con = loginRequest.callAsync(loginEntity)
                 con.observe(
                     viewLifecycleOwner,
-                    { configEntity ->
-                        //                cats?.let {
-                        //                    Log.d(TAG, "mafka: 0)ne ${it.size}")
-                        //                    photoRecyclerView.adapter = PhotoAdapter(it, context)
-                        //                }
-                        log.info(configEntity.toString())
-                        showFragment(OwnerFragment.newInstance())
+                    { resultBoolean ->
+                        if (resultBoolean) {
+                            showFragment(OwnerFragment.newInstance())
+                        } else {
+                            showErrorToast("Ошибка авторизации")
+                        }
                     }
                 )
             } finally {

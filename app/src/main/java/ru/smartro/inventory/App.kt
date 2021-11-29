@@ -1,12 +1,12 @@
 package ru.smartro.inventory
 
 import android.app.Application
-import android.media.MediaScannerConnection
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.yandex.mapkit.MapKitFactory
 import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.inventory.base.AbstractO
 import ru.smartro.worknote.extensions.showImmersive
 
 /**HELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIRE
@@ -36,14 +36,46 @@ class App : Application(){
     }
 }
 
-const val AUTH_STAGE = "https://auth.stage.smartro.ru/api"
-const val URL_RPC_STAGE = "https://worknote-back.stage.smartro.ru/api/rpc"
+
+
 const val Snull = "rNull"
 const val Inull = -111
 const val Lnull = -111222333 as Long
 const val Fnull = -111.01
 const val Dnull = -110.1
 const val ErrorsE = "ErrorsE"
+
+fun getAUTHurl(dirPath: String): String {
+    return when (BuildConfig.BUILD_TYPE) {
+        "STAGE" -> URL_AUTH_STAGE + "/${dirPath}"
+        "RC" -> URL_AUTH_RC + "/${dirPath}"
+        "PROD" -> URL_AUTH_PROD + "/${dirPath}"
+        else -> {
+            Log.e("aA1", "Используй build type !!!")
+             URL_AUTH_STAGE
+        }
+    }
+}
+
+fun AbstractO.getRpcUrl(): String {
+    return when (BuildConfig.BUILD_TYPE) {
+        "STAGE" -> URL_RPC_STAGE
+        "RC" -> URL_RPC_RC
+        "PROD" -> URL_RPC_PROD
+        else -> {
+            Log.e("Aa1", "Используй build type !!!")
+            URL_RPC_STAGE
+        }
+    }
+}
+
+private const val URL_AUTH_STAGE = "https://auth.stage.smartro.ru/api"
+private const val URL_AUTH_RC = "https://auth.rc.smartro.ru/api"
+private const val URL_AUTH_PROD = "https://auth.smartro.ru/api"
+private const val URL_RPC_STAGE = "https://worknote-back.stage.smartro.ru/api/rpc"
+private const val URL_RPC_RC = "https://worknote-back.rc.smartro.ru/api/rpc"
+private const val URL_RPC_PROD = "https://wn-api.smartro.ru/api/rpc"
+
 fun AbstractFragment.showErrorToast(text: String? = "") {
     try {
         Toast.makeText(this.context, text, Toast.LENGTH_SHORT).show()

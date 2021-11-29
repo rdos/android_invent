@@ -28,6 +28,7 @@ class Activity : AbstractAct() , LocationListener {
     private lateinit var mLocationManager: LocationManager
     private lateinit var mMapKit: MapKit
     private var mLastShowFragment: AbstractFragment? = null
+
     val db: RealmRepo by lazy {
         //Remember to call close() on all Realm instances.
         initRealm()
@@ -48,7 +49,6 @@ class Activity : AbstractAct() , LocationListener {
         log.info("onCreate", location?.position.toString())
 
         // TODO: 12.11.2021 место!))
-
         if (savedInstanceState == null) {
             val configEntityRealm = ConfigEntityRealm("is_allowed_inventory_get_platforms", true.toString())
             db.saveConfig(configEntityRealm)
@@ -59,6 +59,7 @@ class Activity : AbstractAct() , LocationListener {
             }
             checkPermission(PERMISSIONS)
         }
+        startSynchronizeData()
     }
 
     private fun stopSynchronizeData() {
@@ -127,14 +128,13 @@ class Activity : AbstractAct() , LocationListener {
 
     override fun onResume() {
         super.onResume()
-        startSynchronizeData()
+
     }
 
     override fun onStop() {
         super.onStop()
         // Activity onStop call must be passed to both MapView and MapKit instance.
         MapKitFactory.getInstance().onStop()
-        stopSynchronizeData()
     }
 
     private fun initRealm(): RealmRepo {
@@ -142,12 +142,16 @@ class Activity : AbstractAct() , LocationListener {
 //        if (!AppPreferences.isHasTask) {
 //            Realm.deleteRealm(Realm.getDefaultConfiguration()!!)
 //        }
+        Realm.setDefaultConfiguration(getRealmConfig())
+        return RealmRepo(Realm.getDefaultInstance())
+    }
+
+    private fun getRealmConfig(): RealmConfiguration {
         val realmConfigBuilder = RealmConfiguration.Builder()
         realmConfigBuilder.allowWritesOnUiThread(true) //!!
         realmConfigBuilder.name("INVENTORY.realm")
         realmConfigBuilder.deleteRealmIfMigrationNeeded()
-        Realm.setDefaultConfiguration(realmConfigBuilder.build())
-        return RealmRepo(Realm.getDefaultInstance())
+        return realmConfigBuilder.build()
     }
 
     fun showFragment(fragment: AbstractFragment) {
@@ -203,6 +207,7 @@ class Activity : AbstractAct() , LocationListener {
 
     override fun onDestroy() {
         mLocationManager.unsubscribe(this)
+        stopSynchronizeData()
         super.onDestroy()
     }
 

@@ -8,11 +8,11 @@ import io.realm.RealmList
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
-import ru.smartro.inventory.URL_RPC_STAGE
 import ru.smartro.inventory.base.AbstractO
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.database.ConfigEntityRealm
 import ru.smartro.inventory.database.PlatformEntityRealm
+import ru.smartro.inventory.getRpcUrl
 import java.io.IOException
 
 
@@ -23,7 +23,7 @@ class PlatformRequestRPC(val p_RestClient: RestClient, val p_context: Context?):
         log.debug("callAsyncRPC.before" )
 
         val requestBody = rpcPlatformEntity.toRequestBody()
-        val request = p_RestClient.newRequest(URL_RPC_STAGE).post(requestBody).build()
+        val request = p_RestClient.newRequest(getRpcUrl()).post(requestBody).build()
         p_RestClient.newCall(request, this)
         return result
     }

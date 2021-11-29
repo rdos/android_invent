@@ -7,11 +7,11 @@ import io.realm.RealmList
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
-import ru.smartro.inventory.URL_RPC_STAGE
 import ru.smartro.inventory.base.AbstractO
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.database.CoordinatesRealmEntity
 import ru.smartro.inventory.database.PlatformEntityRealm
+import ru.smartro.inventory.getRpcUrl
 import java.io.IOException
 
 class SynchroRequestRPC(): AbstractO(), Callback {
@@ -23,9 +23,6 @@ class SynchroRequestRPC(): AbstractO(), Callback {
         val synchroRequestEntity = SynchroRequestEntity()
         val ownerId = db.loadConfigInt("Owner")
 
-        platformEntity.setSynchroEnable()
-        db.saveRealmEntity(platformEntity)
-
         synchroRequestEntity.payload.organisation_id = ownerId
         mPlatformUuid = platformEntity.uuid
         platformEntity.coordinates = CoordinatesRealmEntity(platformEntity.coordinateLat, platformEntity.coordinateLng)
@@ -33,7 +30,7 @@ class SynchroRequestRPC(): AbstractO(), Callback {
         synchroRequestEntity.payload.data.add(platformEntity)
         val requestBody = synchroRequestEntity.toRequestBody()
         val restClient = RestClient()
-        val request = restClient.newRequest(URL_RPC_STAGE).post(requestBody).build()
+        val request = restClient.newRequest(getRpcUrl()).post(requestBody).build()
         restClient.newCall(request, this)
         return result
     }
@@ -55,10 +52,10 @@ class SynchroRequestRPC(): AbstractO(), Callback {
 //            throw IOException("Error response $response")
         }
         val platformEntity = db().loadPlatformEntity(mPlatformUuid)
-        platformEntity.status_id = 1
-        platformEntity.status_name = "Просто статус_RtextS"
+        platformEntity.setStatusAfterSync()
         log.debug("save_-onResponse. saveRealmEntity status_id=${platformEntity.status_name}")
         log.debug("save_-onResponse. saveRealmEntity status_name=${platformEntity.status_id}")
+        platformEntity.setSynchroDisable()
         db().saveRealmEntity(platformEntity)
         log.debug("save_-onResponse. saveRealmEntity.after")
         result.postValue(true)

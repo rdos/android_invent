@@ -41,12 +41,25 @@
         android:layout_height="@dimen/round_button_medium"
         android:layout_marginBottom="@dimen/margin_xlarge"
         android:layout_marginEnd="@dimen/margin_small"
-        android:padding="@dimen/spacing_large"
+        android:padding="@dimen/margin_16"
+        android:layout_marginStart="@dimen/margin_32"
         android:scaleType="fitCenter"
         android:background="@drawable/ic_outer_circle"
         app:srcCompat="@drawable/ic_photo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/actv_camera_fragment_ui__count"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:textColor="@color/purple_200"
+        android:textSize="21sp"
+        app:layout_constraintBottom_toBottomOf="@id/acib_camera_fragment_ui__show_photo"
+        app:layout_constraintEnd_toEndOf="@id/acib_camera_fragment_ui__show_photo"
+        app:layout_constraintStart_toStartOf="@id/acib_camera_fragment_ui__show_photo"
+        app:layout_constraintTop_toTopOf="@id/acib_camera_fragment_ui__show_photo" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/acib_camera_fragment_ui__next"
@@ -54,7 +67,7 @@
         android:layout_height="@dimen/round_button_medium"
         android:layout_marginBottom="@dimen/margin_xlarge"
         android:layout_marginEnd="@dimen/margin_small"
-        android:padding="@dimen/spacing_large"
+        android:padding="@dimen/margin_16"
         android:scaleType="fitCenter"
         android:background="@drawable/ic_outer_circle"
         app:srcCompat="@drawable/ic_camera_fragment_ui__next"

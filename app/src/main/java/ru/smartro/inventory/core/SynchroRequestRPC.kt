@@ -37,28 +37,33 @@ class SynchroRequestRPC(): AbstractO(), Callback {
 
     override fun onFailure(call: Call, e: IOException) {
 //        throw IOException("Error response ${e}")
+        log.error("onFailure", e)
         result.postValue(false)
-
     }
 
     override fun onResponse(call: Call, response: Response) {
         log.debug("onResponse.before")
-
-        val bodyString = response.body?.string()
-        log.debug("onResponse. responseBody=${bodyString}")
-        if (!response.isSuccessful) {
-            result.postValue(false)
-
+        try {
+            val bodyString = response.body?.string()
+            log.debug("onResponse. bodyString=${bodyString}")
+            if (!response.isSuccessful) {
+                result.postValue(false)
+                return
 //            throw IOException("Error response $response")
+            }
+            val platformEntity = db().loadPlatformEntity(mPlatformUuid)
+            platformEntity.setStatusAfterSync()
+            log.debug("save_-onResponse. saveRealmEntity status_id=${platformEntity.status_name}")
+            log.debug("save_-onResponse. saveRealmEntity status_name=${platformEntity.status_id}")
+            platformEntity.setSynchroDisable()
+            db().saveRealmEntity(platformEntity)
+            log.debug("save_-onResponse. saveRealmEntity.after")
+            result.postValue(true)
+        } catch (e: Exception) {
+            log.error("onResponse", e)
+            result.postValue(false)
         }
-        val platformEntity = db().loadPlatformEntity(mPlatformUuid)
-        platformEntity.setStatusAfterSync()
-        log.debug("save_-onResponse. saveRealmEntity status_id=${platformEntity.status_name}")
-        log.debug("save_-onResponse. saveRealmEntity status_name=${platformEntity.status_id}")
-        platformEntity.setSynchroDisable()
-        db().saveRealmEntity(platformEntity)
-        log.debug("save_-onResponse. saveRealmEntity.after")
-        result.postValue(true)
+
 //        result.postValue(responseO.payload)
     }
 }

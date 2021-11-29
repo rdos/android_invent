@@ -7,6 +7,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.location.Location
 import com.yandex.mapkit.location.LocationManagerUtils
@@ -25,12 +26,19 @@ abstract class AbstractFragment : Fragment() {
         activity as Activity
     }
 
-    protected fun isNotCheckedData(tiet: TextInputEditText): Boolean {
-        return !isCheckedData(tiet)
+    protected fun isNotCheckedData(tiet: TextInputEditText, til: TextInputLayout? = null): Boolean {
+        return !isCheckedData(tiet, til)
     }
-    private fun isCheckedData(tiet: TextInputEditText): Boolean {
+
+    private fun isCheckedData(tiet: TextInputEditText, til: TextInputLayout?): Boolean {
+        val errorText = "Поле обязательно для заполнения"
         if (tiet.text.isNullOrBlank()) {
-            tiet.error = "Поле обязательно для заполнения"
+            if (til == null) {
+                tiet.error = errorText
+            } else {
+                til.error = errorText
+            }
+
             return false
         }
         return true

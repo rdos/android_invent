@@ -63,8 +63,8 @@ class LoginFragment : AbstractFragment(){
             log.debug("acbLogin.before")
             acbLogin.isEnabled = false
             try {
-                if (isNotCheckedData(tietLogin)) return@setOnClickListener
-                if (isNotCheckedData(tietPassword)) return@setOnClickListener
+                if (isNotCheckedData(tietLogin, tilLogin)) return@setOnClickListener
+                if (isNotCheckedData(tietPassword, tilPassword)) return@setOnClickListener
                 log.debug("acbLogin.after isCheckedData")
                 hideKeyboard()
                 val loginEntity =
@@ -88,11 +88,10 @@ class LoginFragment : AbstractFragment(){
         }
         acbLogin.setOnLongClickListener {
             log.debug("acbLogin.setOnLongClickListener")
-            Log.w("AAA", "acbLogin")
-            tietLogin.setText("alexander.rdos@gmail.com")
-            tietPassword.setText("Ww123456")
-            //        tietPassword.setText("xot1ieG5ro~hoa,ng4Sh")
-            //        tietLogin.setText("admin@smartro.ru")
+            tietLogin.setText("xot1ieG5ro~hoa,ng4Sh")
+            tietPassword.setText("admin@smartro.ru")
+            //        tietPassword.setText("")
+            //        tietLogin.setText("")
             true
         }
     }

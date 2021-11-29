@@ -2,6 +2,7 @@ package ru.smartro.inventory.ui.main
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,30 +48,48 @@ class LoginFragment : AbstractFragment(){
 //        }
         val tilLogin = view.findViewById<TextInputLayout>(R.id.til_login_fragment__login)
         val tietLogin = view.findViewById<TextInputEditText>(R.id.tiet_login_fragment__login)
-//        tietLogin.setText("admin@smartro.ru")
 
-        tietLogin.setText("alexander.rdos@gmail.com")
         val tilPassword = view.findViewById<TextInputLayout>(R.id.til_login_fragment__password)
         val tietPassword = view.findViewById<TextInputEditText>(R.id.tiet_login_fragment__password)
-//        tietPassword.setText("xot1ieG5ro~hoa,ng4Sh")
-        tietPassword.setText("Ww123456")
 
-        view.findViewById<AppCompatButton>(R.id.acb_login_fragment).setOnClickListener{
-            val loginEntity = LoginEntity(tietLogin.text.toString(), tietPassword.text.toString())
-            val restClient = RestClient()
-            val loginRequest = LoginRequest(restClient)
-            val con = loginRequest.callAsync(loginEntity)
-            con.observe(
-                viewLifecycleOwner,
-                { configEntity ->
-//                cats?.let {
-//                    Log.d(TAG, "mafka: 0)ne ${it.size}")
-//                    photoRecyclerView.adapter = PhotoAdapter(it, context)
-//                }
-                    log.info(configEntity.toString())
-                    showFragment(OwnerFragment.newInstance())
-                }
-            )
+
+
+        val acbLogin = view.findViewById<AppCompatButton>(R.id.acb_login_fragment)
+        acbLogin.setOnClickListener{
+            log.debug("acbLogin.before")
+            acbLogin.isEnabled = false
+            try {
+                if (isNotCheckedData(tietLogin)) return@setOnClickListener
+                if (isNotCheckedData(tietPassword)) return@setOnClickListener
+                log.debug("acbLogin.after isCheckedData")
+                val loginEntity =
+                    LoginEntity(tietLogin.text.toString(), tietPassword.text.toString())
+                val restClient = RestClient()
+                val loginRequest = LoginRequest(restClient)
+                val con = loginRequest.callAsync(loginEntity)
+                con.observe(
+                    viewLifecycleOwner,
+                    { configEntity ->
+                        //                cats?.let {
+                        //                    Log.d(TAG, "mafka: 0)ne ${it.size}")
+                        //                    photoRecyclerView.adapter = PhotoAdapter(it, context)
+                        //                }
+                        log.info(configEntity.toString())
+                        showFragment(OwnerFragment.newInstance())
+                    }
+                )
+            } finally {
+                acbLogin.isEnabled = true
+            }
+        }
+        acbLogin.setOnLongClickListener {
+            log.debug("acbLogin.setOnLongClickListener")
+            Log.w("AAA", "acbLogin")
+            tietLogin.setText("alexander.rdos@gmail.com")
+            tietPassword.setText("Ww123456")
+            //        tietPassword.setText("xot1ieG5ro~hoa,ng4Sh")
+            //        tietLogin.setText("admin@smartro.ru")
+            true
         }
     }
 

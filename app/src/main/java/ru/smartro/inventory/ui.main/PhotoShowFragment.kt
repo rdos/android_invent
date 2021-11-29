@@ -43,15 +43,14 @@ class PhotoShowFragment(val p_platform_uuid: String, val p_container_uuid: Strin
         fun newInstance(platformUuid: String, containerUuid: String?) = PhotoShowFragment(platformUuid, containerUuid)
     }
 
-    private var mAptvNumOfCount: AppCompatTextView? = null
     private lateinit var mediaList: MutableList<File>
 
     /** Adapter class used to present a fragment containing one photo or video as a page */
     inner class MediaAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
         override fun getCount(): Int = mediaList.size
         override fun getItem(position: Int): Fragment  {
-            mAptvNumOfCount?.text = "${position+1} из ${getCount()}"
-            return MediaAdapterFragment.create(mediaList[position])
+            val textNumOfCount = "${position+1} из $count"
+            return MediaAdapterFragment.create(mediaList[position], textNumOfCount)
         }
         override fun getItemPosition(obj: Any): Int = POSITION_NONE
     }
@@ -91,8 +90,6 @@ class PhotoShowFragment(val p_platform_uuid: String, val p_container_uuid: Strin
         apibBack.setOnClickListener {
             callOnBackPressed()
         }
-        mAptvNumOfCount = view.findViewById<AppCompatTextView>(R.id.aptv_photo_show_fragment__num_of_count)
-
 
         //Checking media files list
         if (mediaList.isEmpty()) {

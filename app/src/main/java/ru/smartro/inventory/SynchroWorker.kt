@@ -56,9 +56,9 @@ class SynchroWorker(
     }
 
     private suspend fun delayS(timeMillis: Long) {
-        Log.d(TAG, "save_-synchronizeData.start delay")
+//        Log.d(TAG, "save_-synchronizeData.start delay")
         delay(timeMillis)
-        Log.d(TAG, "save_-synchronizeData.stop delay")
+//        Log.d(TAG, "save_-synchronizeData.stop delay")
     }
     private suspend fun synchronizeData(db: RealmRepo) {
         Log.w(TAG, "save_-synchronizeData.before thread_id=${Thread.currentThread().id}")

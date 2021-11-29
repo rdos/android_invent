@@ -4,7 +4,9 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
+import com.google.android.material.textfield.TextInputEditText
 import com.yandex.mapkit.geometry.Point
 import com.yandex.mapkit.location.Location
 import com.yandex.mapkit.location.LocationManagerUtils
@@ -19,6 +21,29 @@ abstract class AbstractFragment : Fragment() {
     var lastFragmentClazz: String? = null
     private val mActivity: Activity by lazy {
         activity as Activity
+    }
+
+    protected fun isNotCheckedData(tiet: TextInputEditText): Boolean {
+        return !isCheckedData(tiet)
+    }
+    private fun isCheckedData(tiet: TextInputEditText): Boolean {
+        if (tiet.text.isNullOrBlank()) {
+            tiet.error = "Поле обязательно для заполнения"
+            return false
+        }
+        return true
+    }
+
+    fun hideKeyboard() {
+        val imm: InputMethodManager =
+            mActivity.getSystemService(android.app.Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        //Find the currently focused view, so we can grab the correct window token from it.
+        var view: View? = mActivity.currentFocus
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = View(activity)
+        }
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     fun getDeviceName(): String? {
@@ -36,7 +61,7 @@ abstract class AbstractFragment : Fragment() {
 
         val manufacturer = Build.MANUFACTURER
         val model = Build.MODEL
-        return if (model.toLowerCase().startsWith(manufacturer.toLowerCase())) {
+        return if (model.lowercase().startsWith(manufacturer.lowercase())) {
             capitalize(model)
         } else {
             capitalize(manufacturer).toString() + " " + model
@@ -104,12 +129,10 @@ abstract class AbstractFragment : Fragment() {
 
     protected fun showFragment(container: Int, fragment: AbstractFragment) {
         mActivity.showFragment(container, fragment)
-
     }
 
     protected fun showFragment(fragment: AbstractFragment, ) {
         mActivity.showFragment(fragment,)
-
     }
 
     protected fun showNextFragment(fragment: AbstractFragment) {
@@ -166,6 +189,7 @@ abstract class AbstractFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         log.debug("onViewCreated.before")
         setScreenOrientation(true)
+        hideKeyboard()
     }
 
     override fun onDestroyView() {

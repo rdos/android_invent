@@ -337,13 +337,29 @@ abstract class AbstractPhotoFragment(private val p_platform_uuid: String, privat
             }
         }
 
+        mAcibShow = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__show_photo)
+        mAcibShow?.setOnClickListener {
+            showNextFragment(PhotoShowFragment.newInstance(p_platform_uuid, p_container_uuid))
+        }
+
+        val acibNext = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__next)
+        acibNext?.setOnClickListener {
+            if (getOutputFileCount(p_platform_uuid, p_container_uuid) <= 0) {
+                showErrorToast("Минимальное кол-во фотографий = 1")
+                return@setOnClickListener
+            }
+            onNextClick()
+        }
+
         // Listener for button used to capture photo
         val acibMakePhoto = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__make_photo)
         acibMakePhoto?.setOnClickListener {
-            if (getOutputFileCount(p_platform_uuid, p_container_uuid) > 3) {
+            if (getOutputFileCount(p_platform_uuid, p_container_uuid) >= 3) {
                 showErrorToast("Максимальное кол-во фотографий = 3")
                 return@setOnClickListener
             }
+            acibNext?.isEnabled = false
+            mAcibShow?.isEnabled = false
             // Get a stable reference of the modifiable image capture use case
             imageCapture?.let { imageCapture ->
 
@@ -382,6 +398,10 @@ abstract class AbstractPhotoFragment(private val p_platform_uuid: String, privat
                         ) { _, uri ->
                             Log.d(TAG, "Image capture scanned into media store: $uri")
                         }
+                        (view as ViewGroup).post{
+                            acibNext?.isEnabled = true
+                            mAcibShow?.isEnabled = true
+                        }
                     }
                 })
 
@@ -394,20 +414,6 @@ abstract class AbstractPhotoFragment(private val p_platform_uuid: String, privat
             }
         }
 
-
-        mAcibShow = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__show_photo)
-        mAcibShow?.setOnClickListener {
-            showNextFragment(PhotoShowFragment.newInstance(p_platform_uuid, p_container_uuid))
-        }
-
-        val acibNext = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__next)
-        acibNext?.setOnClickListener {
-            if (getOutputFileCount(p_platform_uuid, p_container_uuid) <= 0) {
-                showErrorToast("Минимальное кол-во фотографий = 1")
-                return@setOnClickListener
-            }
-            onNextClick()
-        }
 
     }
 

@@ -30,7 +30,6 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
         fun newInstance(platformUuid: String) = PlatformFragment(platformUuid)
     }
 
-    private lateinit var mTietLength: TextInputEditText
     private lateinit var mIn: LayoutInflater
     private lateinit var viewModel: PlatformViewModel
 
@@ -72,7 +71,7 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
 
         val tietComment = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment__comment)
 
-        mTietLength = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment__length)
+        val tietLength = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment__length)
         val tietWidth = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment__width)
         val accbHasBase = view.findViewById<AppCompatCheckBox>(R.id.accb_platform_fragment__has_base)
         val accbHasFence = view.findViewById<AppCompatCheckBox>(R.id.accb_platform_fragment__has_fence)
@@ -82,8 +81,8 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
             log.debug("save_-acbSaveOnClick.before")
             acbSave.isEnabled = false
             try {
-                if (!isCheckedData(mTietLength)) return@setOnClickListener
-                if (!isCheckedData(tietWidth)) return@setOnClickListener
+                if (isNotCheckedData(tietLength)) return@setOnClickListener
+                if (isNotCheckedData(tietWidth)) return@setOnClickListener
 
                 platformEntity.datetime = currentTime()
                 platformEntity.is_open =
@@ -95,7 +94,7 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
                 platformEntity.type = acsType.selectedItem as PlatformTypeRealm
 
 
-                platformEntity.length = mTietLength.text.toString().toInt()
+                platformEntity.length = tietLength.text.toString().toInt()
                 platformEntity.width = tietWidth.text.toString().toInt()
                 platformEntity.comment = tietComment.text.toString()
 
@@ -151,14 +150,7 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
     }
 
 
-    private fun isCheckedData(mTietHeight: TextInputEditText): Boolean {
-        var result = false
-        if (mTietHeight.text.isNullOrBlank()) {
-            mTietHeight.error = "Поле обязательно для заполнения"
-            return result
-        }
-        return true
-    }
+
 
     class TypeAdapter(context: Context,
                                platformType: List<PlatformTypeRealm>)

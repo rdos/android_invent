@@ -54,20 +54,21 @@ class PlatformFragmentContainerDlt(val p_container_uuid: String) : AbstractFragm
 
         val acbSaveContainer = view.findViewById<AppCompatButton>(R.id.acb_platform_fragment_container_dtl__save_container)
         acbSaveContainer.setOnClickListener {
+            log.debug("acbSaveContainer.before")
+            acbSaveContainer.isEnabled = false
             try {
-                acbSaveContainer.isEnabled = false
-                if (checkData()) {
-                    mContainerEntityRealm.type = acsContainerType.selectedItem as ContainerTypeRealm?
-                    mContainerEntityRealm.container_status_id = (acsContainerStatus.selectedItem as ContainerStatusRealm).id
-                    mContainerEntityRealm.container_status_name = (acsContainerStatus.selectedItem as ContainerStatusRealm).name
-                    mContainerEntityRealm.has_pedal = if(accbPedal.isChecked) 1 else 0
-                    mContainerEntityRealm.number = mTietNumber.text.toString()
-                    mContainerEntityRealm.comment = tietComment.text.toString()
-                    db().saveRealmEntity(mContainerEntityRealm)
-                    // TODO: 22.11.2021 !!!
-                    callOnBackPressed(false)
-                    callOnBackPressed(false)
-                }
+                if (isNotCheckedData(mTietNumber)) return@setOnClickListener
+                mContainerEntityRealm.type = acsContainerType.selectedItem as ContainerTypeRealm?
+                mContainerEntityRealm.container_status_id = (acsContainerStatus.selectedItem as ContainerStatusRealm).id
+                mContainerEntityRealm.container_status_name = (acsContainerStatus.selectedItem as ContainerStatusRealm).name
+                mContainerEntityRealm.has_pedal = if(accbPedal.isChecked) 1 else 0
+                mContainerEntityRealm.number = mTietNumber.text.toString()
+                mContainerEntityRealm.comment = tietComment.text.toString()
+                db().saveRealmEntity(mContainerEntityRealm)
+                // TODO: 22.11.2021 !!!
+                callOnBackPressed(false)
+                callOnBackPressed(false)
+
             } catch (e: Exception) {
                 showErrorToast(e.message)
             } finally {
@@ -91,15 +92,6 @@ class PlatformFragmentContainerDlt(val p_container_uuid: String) : AbstractFragm
                 }
         }
         accbPedal.isChecked = mContainerEntityRealm.has_pedal == 1
-    }
-
-    private fun checkData(): Boolean {
-        var result = false
-        if (mTietNumber.text.isNullOrBlank()) {
-            mTietNumber.error = "Поле обязательно для заполнения"
-            return result
-        }
-        return true
     }
 
     override fun onCreateView(

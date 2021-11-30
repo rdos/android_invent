@@ -49,11 +49,12 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
         setActionBarTitle("Данные по КП" + currentTime())
         val platformEntity = db().loadPlatformEntity(p_platform_uuid)
 
+        val lastPoint = getLastPoint()
         val actvCoordinateLat = view.findViewById<AppCompatTextView>(R.id.actv_platform_fragment__coordinate_lat)
-        actvCoordinateLat.text = String.format("%.6f", getLastPoint().latitude)
+        actvCoordinateLat.text = String.format("%.6f", lastPoint.latitude)
 
-        val actvCoordinateLng = view.findViewById<AppCompatTextView>(R.id.actv_platform_fragment__coordinate_lng)
-        actvCoordinateLng.text = String.format("%.6f", getLastPoint().longitude)
+        val tietCoordinateLng = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment__coordinate_lng)
+        tietCoordinateLng.setText(String.format("%.6f", lastPoint.longitude))
 
         val acsVid = view.findViewById<AppCompatSpinner>(R.id.acs_platform_fragment__vid)
         val vidAdapter: ArrayAdapter<*> = ArrayAdapter.createFromResource(
@@ -90,8 +91,8 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
                     if (acsVid.selectedItem.toString() == "Открытая") 1 else 0
                 platformEntity.has_base = if (accbHasBase.isChecked) 1 else 0
                 platformEntity.has_fence = if (accbHasFence.isChecked) 1 else 0
-                platformEntity.coordinateLat = getLastPoint().latitude
-                platformEntity.coordinateLng = getLastPoint().longitude
+                platformEntity.coordinateLat = actvCoordinateLat.text.toString().toDouble()
+                platformEntity.coordinateLng = tietCoordinateLng.text.toString().toDouble()
                 platformEntity.type = acsType.selectedItem as PlatformTypeRealm
 
 
@@ -146,7 +147,7 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
         }
 
         childFragmentManager.beginTransaction()
-            .replace(R.id.fl_platform_fragment, PlatformFragmentContainer.newInstance(p_platform_uuid))
+            .replace(R.id.fl_platform_fragment, PlatformFragmentContainerS.newInstance(p_platform_uuid))
             .commitNow()
     }
 

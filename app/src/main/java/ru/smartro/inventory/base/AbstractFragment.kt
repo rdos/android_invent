@@ -1,10 +1,15 @@
 package ru.smartro.inventory.base
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -20,7 +25,8 @@ import ru.smartro.inventory.ui.main.LoginFragment
 import java.io.File
 
 abstract class AbstractFragment : Fragment() {
-    private val TARGET_LOCATION = Point(-80.243123, 25.107800)
+//    private lateinit var mLocation: android.location.Location
+
     var lastFragmentClazz: String? = null
     private val mActivity: Activity by lazy {
         activity as Activity
@@ -92,6 +98,10 @@ abstract class AbstractFragment : Fragment() {
 //        return userLocation.distanceTo(checkPointLocation).toInt()
 //    }
 
+    protected fun isNotActualLocation(): Boolean {
+        return !mActivity.isLastLocation()
+    }
+
 
     fun getCurrentTimeStamp(): Long {
 //        return System.currentTimeMillis() / 1000L
@@ -100,11 +110,49 @@ abstract class AbstractFragment : Fragment() {
 
 
     fun getLastPoint(): Point {
-        val location: Location? = LocationManagerUtils.getLastKnownLocation()
-        val position = location?.position?: TARGET_LOCATION
+        val result = mActivity.getLastKnowLocation()
+
         // TODO: 15.11.2021 !!
 //        Point(54.881347, 55.44919)
-        return position
+        return result
+    }
+
+    fun startLLastLocation() {
+
+//        val locationManager =
+//            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+//
+//
+//        if (ActivityCompat.checkSelfPermission(
+//                requireContext(),
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+//                requireContext(),
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return
+//        }
+//        locationManager.requestLocationUpdates(
+//            LocationManager.GPS_PROVIDER,
+//            5000,
+//            10F,
+//            this
+//        ) // здесь можно указать другие более подходящие вам параметры
+//
+////        imHere = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+////
+//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+//            900000, 0, locationListener);
+//        locationManager.requestLocationUpdates(
+//            LocationManager.NETWORK_PROVIDER, 900000, 0f, this);
     }
 
 //    fun hasLastPoint(): Boolean {
@@ -141,8 +189,8 @@ abstract class AbstractFragment : Fragment() {
         mActivity.showFragment(container, fragment)
     }
 
-    protected fun showFragment(fragment: AbstractFragment, ) {
-        mActivity.showFragment(fragment,)
+    protected fun showFragment(fragment: AbstractFragment) {
+        mActivity.showFragment(fragment)
     }
 
     protected fun showNextFragment(fragment: AbstractFragment) {
@@ -227,6 +275,20 @@ abstract class AbstractFragment : Fragment() {
         db().deleteData()
         showFragment(LoginFragment.newInstance())
     }
+
+    protected open fun onLocationChange() {
+        log.info("onLocationUpdate")
+    }
+
+    fun onLocationUpdate() {
+        log.info("onLocationUpdate")
+        onLocationChange()
+    }
+
+//    override fun onLocationChanged(location: android.location.Location) {
+//        log.warn("onLocationChanged.before")
+//        mLocation = location
+//    }
 
 
     //    companion object {

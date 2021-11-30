@@ -1,8 +1,13 @@
 package ru.smartro.inventory
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import androidx.core.app.ActivityCompat
@@ -11,7 +16,10 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.yandex.mapkit.MapKit
 import com.yandex.mapkit.MapKitFactory
-import com.yandex.mapkit.location.*
+import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.location.FilteringMode
+import com.yandex.mapkit.location.LocationManagerUtils
+import com.yandex.mapkit.location.LocationStatus
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import ru.smartro.inventory.base.AbstractAct
@@ -19,13 +27,15 @@ import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.database.ConfigEntityRealm
 import ru.smartro.inventory.ui.main.LoginFragment
 import ru.smartro.inventory.ui.main.MapFragment
-
 import java.io.File
 import java.util.concurrent.TimeUnit
 
 class Activity : AbstractAct() , LocationListener {
-    private var mIsCallonBackPressed: Boolean = true
+//    private lateinit var mYandexLocationManager: com.yandex.mapkit.location.LocationManager
+    private var mLocationNETWORK: Location? = null
     private lateinit var mLocationManager: LocationManager
+    private var mIsCallonBackPressed: Boolean = true
+//    private lateinit var mLocationManager: LocationManager
     private lateinit var mMapKit: MapKit
     private var mLastShowFragment: AbstractFragment? = null
 
@@ -40,14 +50,6 @@ class Activity : AbstractAct() , LocationListener {
 // TODO: 18.11.2021 Initializing in the Application.onCreate method may lead to extra calls and increased battery use.
         MapKitFactory.initialize(this)
 
-        mMapKit = MapKitFactory.getInstance()
-        mLocationManager = mMapKit.createLocationManager()
-
-        mLocationManager.subscribeForLocationUpdates(0.0, 500, 0.0, true, FilteringMode.OFF, this)
-
-        val location: Location? = LocationManagerUtils.getLastKnownLocation()
-        log.info("onCreate", location?.position.toString())
-
         // TODO: 12.11.2021 место!))
         if (savedInstanceState == null) {
             val configEntityRealm = ConfigEntityRealm("is_allowed_inventory_get_platforms", true.toString())
@@ -59,7 +61,115 @@ class Activity : AbstractAct() , LocationListener {
             }
             checkPermission(PERMISSIONS)
         }
+
+        mMapKit = MapKitFactory.getInstance()
+//        mYandexLocationManager = mMapKit.createLocationManager()
+
+
+        mLocationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        mLocationManager.requestLocationUpdates(
+            LocationManager.GPS_PROVIDER,
+            5000,
+            10F,
+            this
+        ) // здесь можно указать другие более подходящие вам параметры
+
+//        mLocationManager.requestLocationUpdates(
+//            LocationManager.NETWORK_PROVIDER, 900000, 0f, MyListener());
+//
+
+
+//        mYandexLocationManager.subscribeForLocationUpdates(0.0, 500, 0.0, true, FilteringMode.OFF, this)
+
+//        val location: Location? = LocationManagerUtils.getLastKnownLocation()
+//        log.info("onCreate", location?.position.toString())
+
+
         startSynchronizeData()
+    }
+
+    inner class MyListener : LocationListener {
+        override fun onLocationChanged(location: Location) {
+            mLocationNETWORK = location
+            log.info("MyListener.onLocationChanged")
+        }
+
+    }
+
+    private val TARGET_LOCATION = Point(-80.243123, 25.107800)
+
+    fun getLastKnowLocation(): Point {
+        val result = TARGET_LOCATION
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return result
+        }
+        val imHere = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+//        val imHereNetwork = LocationManagerUtils.getLastKnownLocation()
+
+        if (imHere == null) {
+            return result
+        }
+//        if (imHere.time <= )
+//        if (imHere == null) {
+//            if (imHereNetwork == null) {
+//                return result
+//            } else {
+//                return Point(imHereNetwork.position.latitude, imHereNetwork.position.longitude)
+//            }
+//
+//        }
+//        imHereNetwork?.let{
+//            if (imHere.time + 20000 <= imHereNetwork.absoluteTimestamp) {
+//                return Point(imHereNetwork.position.latitude, imHereNetwork.position.longitude)
+//            }
+//            else return Point(imHere.latitude, imHere.longitude)
+//        }
+
+        return Point(imHere.latitude, imHere.longitude)
+    }
+
+    @SuppressLint("MissingPermission")
+    fun isLastLocation(): Boolean {
+        val imHere = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        if (imHere == null) {
+            return false
+        }
+        val diff = System.currentTimeMillis() - imHere.time
+        log.warn("diff=${diff}")
+        return diff <= 33840
     }
 
     private fun stopSynchronizeData() {
@@ -206,7 +316,7 @@ class Activity : AbstractAct() , LocationListener {
 
 
     override fun onDestroy() {
-        mLocationManager.unsubscribe(this)
+//        mLocationManager.unsubscribe(this)
         stopSynchronizeData()
         super.onDestroy()
     }
@@ -218,17 +328,18 @@ class Activity : AbstractAct() , LocationListener {
 
 
 
-    override fun onLocationUpdated(p0: Location) {
-//        log.debug("latitude=${p0.position.latitude},latitude=${p0.position.longitude}")
-//        log.debug("heading=${p0.heading}")
-    }
-
-    override fun onLocationStatusUpdated(p0: LocationStatus) {
-//        TODO("Not yet implemented")
-//        val log: Logger = LoggerFactory.getLogger(MainActivity::class.java)
-//        log.warn("p0=$p0")
-
-    }
+//    override fun onLocationUpdated(p0: Location) {
+//        log.warn("onLocationUpdated")
+////        log.debug("latitude=${p0.position.latitude},latitude=${p0.position.longitude}")
+////        log.debug("heading=${p0.heading}")
+//    }
+//
+//    override fun onLocationStatusUpdated(p0: LocationStatus) {
+////        TODO("Not yet implemented")
+////        val log: Logger = LoggerFactory.getLogger(MainActivity::class.java)
+////        log.warn("p0=$p0")
+//
+//    }
 
     fun deleteOutputDirectory(platformUuid: String, containerUuid: String?) {
         try {
@@ -262,6 +373,10 @@ class Activity : AbstractAct() , LocationListener {
             }
         }
         return result
+    }
+
+    override fun onLocationChanged(location: Location) {
+        mLastShowFragment?.onLocationUpdate()
     }
 
 }

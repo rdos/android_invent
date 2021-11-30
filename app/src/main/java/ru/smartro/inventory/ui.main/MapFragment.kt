@@ -51,11 +51,13 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         return view
     }
 
+
     private fun gotoMyLocation() {
         log.debug("gotoMyLocation.before")
         try {
-            log.info("gotoMyLocation", getLastPoint().toString())
-            val cameraPosition = CameraPosition(getLastPoint(), 15.0f, 0.0f, 0.0f)
+            val lastPoint = getLastPoint()
+            log.info("gotoMyLocation", lastPoint.toString())
+            val cameraPosition = CameraPosition(lastPoint, 24.0f, 0.0f, 0.0f)
             val cameraAnimation = Animation(Animation.Type.SMOOTH, 1F)
             mMapView.map.move(cameraPosition, cameraAnimation, this)
         } catch (e: Exception) {
@@ -77,6 +79,11 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
 //        showNextFragment(PlatformPhotoFragment.newInstance(platformEntity.id))
     }
 
+    override fun onLocationChange() {
+        super.onLocationChange()
+        showErrorToast("onLocationChange")
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setScreenOrientation(false)
@@ -87,6 +94,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
 
         mMapView = view.findViewById<View>(R.id.mapview) as MapView
         mMapObjectCollection = mMapView.map.mapObjects
+
         showHideActionBar(true)
 
         val mMapKit = MapKitFactory.getInstance()
@@ -123,6 +131,10 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
                 showErrorToast("platformType is Empty")
                 return@setOnClickListener
             }
+            if (isNotActualLocation()) {
+                showErrorToast("Нет актуальных координат. Ждём GPS...")
+                return@setOnClickListener
+            }
             gotoCreatePlatform()
         }
 
@@ -134,6 +146,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
 
         apbCreatePlatform.simulateClick()
     }
+
 
     private fun callPlatformRequest() {
         // TODO: 15.11.2021

@@ -103,6 +103,22 @@ abstract class AbstractFragment : Fragment() {
     }
 
 
+    private fun isLastLocation(): Boolean {
+        val imHere = LocationManagerUtils.getLastKnownLocation()
+        if (imHere == null) {
+            return false
+        }
+        val diff = System.currentTimeMillis() - imHere.absoluteTimestamp
+        log.warn("diff=${diff}")
+        return diff <= 33840
+    }
+
+
+    protected fun isNotActualLocation(): Boolean {
+        return !isLastLocation()
+    }
+
+
     fun getCurrentTimeStamp(): Long {
 //        return System.currentTimeMillis() / 1000L
         return System.currentTimeMillis()
@@ -292,15 +308,15 @@ abstract class AbstractFragment : Fragment() {
 
 
     //    companion object {
-                                    //        private const val TAG = "CameraXBasic"
-                                    //        private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
-                                    //        private const val PHOTO_EXTENSION = ".jpg"
-                                    //        private const val RATIO_4_3_VALUE = 4.0 / 3.0
-                                    //        private const val RATIO_16_9_VALUE = 16.0 / 9.0
-                                    //
-                                    //        private fun createFile(baseFolder: File, format: String, extension: String) =
-                                    //            File(baseFolder, SimpleDateFormat(format, Locale.US).format(System.currentTimeMillis()) + extension)
-                                    //    }
+    //        private const val TAG = "CameraXBasic"
+    //        private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
+    //        private const val PHOTO_EXTENSION = ".jpg"
+    //        private const val RATIO_4_3_VALUE = 4.0 / 3.0
+    //        private const val RATIO_16_9_VALUE = 16.0 / 9.0
+    //
+    //        private fun createFile(baseFolder: File, format: String, extension: String) =
+    //            File(baseFolder, SimpleDateFormat(format, Locale.US).format(System.currentTimeMillis()) + extension)
+    //    }
 
 
 }

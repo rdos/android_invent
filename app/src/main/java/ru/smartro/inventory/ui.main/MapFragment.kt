@@ -70,7 +70,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
 //        val nextId = Realm.getDefaultInstance().where(PlatformEntityRealm::class.java).max("id")?.toInt()?.plus(1)?: Inull
         val platformEntity: PlatformEntityRealm = db().createPlatformEntity(UUID.randomUUID().toString())
 //        if (platformEntity.isOnull()) {
-            showNextFragment(PhotoPlatformFragment.newInstance(platformEntity.uuid))
+        showNextFragment(PhotoPlatformFragment.newInstance(platformEntity.uuid))
 //        }
 //        val platformEntity = PlatformEntityRealm((0..2002).random())
 //        db().save {
@@ -131,10 +131,10 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
                 showErrorToast("platformType is Empty")
                 return@setOnClickListener
             }
-            if (isNotActualLocation()) {
-                showErrorToast("Нет актуальных координат. Ждём GPS...")
-                return@setOnClickListener
-            }
+//            if (isNotActualLocation()) {
+//                showErrorToast("Нет актуальных координат. Ждём GPS...")
+//                return@setOnClickListener
+//            }
             gotoCreatePlatform()
         }
 
@@ -153,7 +153,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         val isAllowed = db().loadConfigBool("is_allowed_inventory_get_platforms")
         if (isAllowed) {
             log.info("callPlatformRequest.isAllowed=${isAllowed}")
-           sendPlatformRequest()
+            sendPlatformRequest()
         } else {
             log.debug("callPlatformRequest.isAllowed=${isAllowed}")
         }

@@ -88,8 +88,8 @@ class LoginFragment : AbstractFragment(){
         }
         acbLogin.setOnLongClickListener {
             log.debug("acbLogin.setOnLongClickListener")
-            tietLogin.setText("xot1ieG5ro~hoa,ng4Sh")
-            tietPassword.setText("admin@smartro.ru")
+            tietLogin.setText("admin@smartro.ru")
+            tietPassword.setText("xot1ieG5ro~hoa,ng4Sh")
             //        tietPassword.setText("")
             //        tietLogin.setText("")
             true

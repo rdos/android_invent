@@ -16,6 +16,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.appcompat.widget.AppCompatTextView
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import ru.smartro.inventory.core.*
 import ru.smartro.inventory.database.ContainerEntityRealm
 import ru.smartro.inventory.database.PlatformTypeRealm
@@ -46,19 +47,24 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
         super.onViewCreated(view, savedInstanceState)
 
 //        setActionBarTitle(R.string.platform_fragment__welcome_to_system)
-        setActionBarTitle("Данные по КП" + currentTime())
+        setActionBarTitle("КП " + currentTime())
         val platformEntity = db().loadPlatformEntity(p_platform_uuid)
 
-        val actvCoordinateLat = view.findViewById<AppCompatTextView>(R.id.actv_platform_fragment__coordinate_lat)
-        actvCoordinateLat.text = String.format("%.6f", getLastPoint().latitude)
+        val lastPoint = getLastPoint()
+//        val actvCoordinateLat = view.findViewById<AppCompatTextView>(R.id.actv_platform_fragment__coordinate_lat)
+//        actvCoordinateLat.text =
 
-        val actvCoordinateLng = view.findViewById<AppCompatTextView>(R.id.actv_platform_fragment__coordinate_lng)
-        actvCoordinateLng.text = String.format("%.6f", getLastPoint().longitude)
+        if (isNotActualLocation()) {
+            val tilCoordinate = view.findViewById<TextInputLayout>(R.id.til_platform_fragment__coordinate)
+            tilCoordinate.error = "Координаты неактульны"
+        }
+        val tietCoordinate = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment__coordinate)
+        tietCoordinate.setText(String.format("%.6f", lastPoint.longitude) + " "+ String.format("%.6f", lastPoint.latitude))
 
         val acsVid = view.findViewById<AppCompatSpinner>(R.id.acs_platform_fragment__vid)
         val vidAdapter: ArrayAdapter<*> = ArrayAdapter.createFromResource(
             requireContext(), R.array.PlatformVid,
-          R.layout.platform_fragment_acs_vid__item
+            R.layout.platform_fragment_acs_vid__item
         )
         vidAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         acsVid.setAdapter(vidAdapter)
@@ -90,10 +96,18 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
                     if (acsVid.selectedItem.toString() == "Открытая") 1 else 0
                 platformEntity.has_base = if (accbHasBase.isChecked) 1 else 0
                 platformEntity.has_fence = if (accbHasFence.isChecked) 1 else 0
-                platformEntity.coordinateLat = getLastPoint().latitude
-                platformEntity.coordinateLng = getLastPoint().longitude
-                platformEntity.type = acsType.selectedItem as PlatformTypeRealm
 
+                try {
+                    val splitCoodiate = tietCoordinate.text.toString().trim().split(" ")
+                    platformEntity.coordinateLat = splitCoodiate[0].toDouble()
+                    platformEntity.coordinateLng = splitCoodiate[1].toDouble()
+                } catch (e: Exception) {
+                    log.error("TODOSTODO", e)
+                    showErrorToast("Неверный формат координат")
+                    return@setOnClickListener
+                }
+
+                platformEntity.type = acsType.selectedItem as PlatformTypeRealm
 
                 platformEntity.length = tietLength.text.toString().toInt()
                 platformEntity.width = tietWidth.text.toString().toInt()
@@ -146,7 +160,7 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
         }
 
         childFragmentManager.beginTransaction()
-            .replace(R.id.fl_platform_fragment, PlatformFragmentContainer.newInstance(p_platform_uuid))
+            .replace(R.id.fl_platform_fragment, PlatformFragmentContainerS.newInstance(p_platform_uuid))
             .commitNow()
     }
 
@@ -154,7 +168,7 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
 
 
     class TypeAdapter(context: Context,
-                               platformType: List<PlatformTypeRealm>)
+                      platformType: List<PlatformTypeRealm>)
         : ArrayAdapter<PlatformTypeRealm>(context, 0, platformType) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {

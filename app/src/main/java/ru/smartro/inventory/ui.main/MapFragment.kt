@@ -51,11 +51,13 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         return view
     }
 
+
     private fun gotoMyLocation() {
         log.debug("gotoMyLocation.before")
         try {
-            log.info("gotoMyLocation", getLastPoint().toString())
-            val cameraPosition = CameraPosition(getLastPoint(), 15.0f, 0.0f, 0.0f)
+            val lastPoint = getLastPoint()
+            log.info("gotoMyLocation", lastPoint.toString())
+            val cameraPosition = CameraPosition(lastPoint, 24.0f, 0.0f, 0.0f)
             val cameraAnimation = Animation(Animation.Type.SMOOTH, 1F)
             mMapView.map.move(cameraPosition, cameraAnimation, this)
         } catch (e: Exception) {
@@ -68,7 +70,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
 //        val nextId = Realm.getDefaultInstance().where(PlatformEntityRealm::class.java).max("id")?.toInt()?.plus(1)?: Inull
         val platformEntity: PlatformEntityRealm = db().createPlatformEntity(UUID.randomUUID().toString())
 //        if (platformEntity.isOnull()) {
-            showNextFragment(PhotoPlatformFragment.newInstance(platformEntity.uuid))
+        showNextFragment(PhotoPlatformFragment.newInstance(platformEntity.uuid))
 //        }
 //        val platformEntity = PlatformEntityRealm((0..2002).random())
 //        db().save {
@@ -87,6 +89,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
 
         mMapView = view.findViewById<View>(R.id.mapview) as MapView
         mMapObjectCollection = mMapView.map.mapObjects
+
         showHideActionBar(true)
 
         val mMapKit = MapKitFactory.getInstance()
@@ -123,6 +126,10 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
                 showErrorToast("platformType is Empty")
                 return@setOnClickListener
             }
+//            if (isNotActualLocation()) {
+//                showErrorToast("Нет актуальных координат. Ждём GPS...")
+//                return@setOnClickListener
+//            }
             gotoCreatePlatform()
         }
 
@@ -135,12 +142,13 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         apbCreatePlatform.simulateClick()
     }
 
+
     private fun callPlatformRequest() {
         // TODO: 15.11.2021
         val isAllowed = db().loadConfigBool("is_allowed_inventory_get_platforms")
         if (isAllowed) {
             log.info("callPlatformRequest.isAllowed=${isAllowed}")
-           sendPlatformRequest()
+            sendPlatformRequest()
         } else {
             log.debug("callPlatformRequest.isAllowed=${isAllowed}")
         }

@@ -1,10 +1,15 @@
 package ru.smartro.inventory.base
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -20,7 +25,9 @@ import ru.smartro.inventory.ui.main.LoginFragment
 import java.io.File
 
 abstract class AbstractFragment : Fragment() {
+//    private lateinit var mLocation: android.location.Location
     private val TARGET_LOCATION = Point(-80.243123, 25.107800)
+
     var lastFragmentClazz: String? = null
     private val mActivity: Activity by lazy {
         activity as Activity
@@ -93,6 +100,22 @@ abstract class AbstractFragment : Fragment() {
 //    }
 
 
+    private fun isLastLocation(): Boolean {
+        val imHere = LocationManagerUtils.getLastKnownLocation()
+        if (imHere == null) {
+            return false
+        }
+        val diff = System.currentTimeMillis() - imHere.absoluteTimestamp
+        log.warn("diff=${diff}")
+        return diff <= 33840
+    }
+
+
+    protected fun isNotActualLocation(): Boolean {
+        return !isLastLocation()
+    }
+
+
     fun getCurrentTimeStamp(): Long {
 //        return System.currentTimeMillis() / 1000L
         return System.currentTimeMillis()
@@ -101,10 +124,48 @@ abstract class AbstractFragment : Fragment() {
 
     fun getLastPoint(): Point {
         val location: Location? = LocationManagerUtils.getLastKnownLocation()
-        val position = location?.position?: TARGET_LOCATION
+        val result = location?.position?: TARGET_LOCATION
         // TODO: 15.11.2021 !!
 //        Point(54.881347, 55.44919)
-        return position
+        return result
+    }
+
+    fun startLLastLocation() {
+
+//        val locationManager =
+//            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+//
+//
+//        if (ActivityCompat.checkSelfPermission(
+//                requireContext(),
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+//                requireContext(),
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return
+//        }
+//        locationManager.requestLocationUpdates(
+//            LocationManager.GPS_PROVIDER,
+//            5000,
+//            10F,
+//            this
+//        ) // здесь можно указать другие более подходящие вам параметры
+//
+////        imHere = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+////
+//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+//            900000, 0, locationListener);
+//        locationManager.requestLocationUpdates(
+//            LocationManager.NETWORK_PROVIDER, 900000, 0f, this);
     }
 
 //    fun hasLastPoint(): Boolean {
@@ -141,8 +202,8 @@ abstract class AbstractFragment : Fragment() {
         mActivity.showFragment(container, fragment)
     }
 
-    protected fun showFragment(fragment: AbstractFragment, ) {
-        mActivity.showFragment(fragment,)
+    protected fun showFragment(fragment: AbstractFragment) {
+        mActivity.showFragment(fragment)
     }
 
     protected fun showNextFragment(fragment: AbstractFragment) {
@@ -228,17 +289,22 @@ abstract class AbstractFragment : Fragment() {
         showFragment(LoginFragment.newInstance())
     }
 
+//    override fun onLocationChanged(location: android.location.Location) {
+//        log.warn("onLocationChanged.before")
+//        mLocation = location
+//    }
+
 
     //    companion object {
-                                    //        private const val TAG = "CameraXBasic"
-                                    //        private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
-                                    //        private const val PHOTO_EXTENSION = ".jpg"
-                                    //        private const val RATIO_4_3_VALUE = 4.0 / 3.0
-                                    //        private const val RATIO_16_9_VALUE = 16.0 / 9.0
-                                    //
-                                    //        private fun createFile(baseFolder: File, format: String, extension: String) =
-                                    //            File(baseFolder, SimpleDateFormat(format, Locale.US).format(System.currentTimeMillis()) + extension)
-                                    //    }
+    //        private const val TAG = "CameraXBasic"
+    //        private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
+    //        private const val PHOTO_EXTENSION = ".jpg"
+    //        private const val RATIO_4_3_VALUE = 4.0 / 3.0
+    //        private const val RATIO_16_9_VALUE = 16.0 / 9.0
+    //
+    //        private fun createFile(baseFolder: File, format: String, extension: String) =
+    //            File(baseFolder, SimpleDateFormat(format, Locale.US).format(System.currentTimeMillis()) + extension)
+    //    }
 
 
 }

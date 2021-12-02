@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -21,11 +22,10 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.ui_view.ViewProvider
-import ru.smartro.inventory.Snull
 import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.*
-import ru.smartro.inventory.database.ConfigEntityRealm
+import ru.smartro.inventory.database.Config
 import ru.smartro.inventory.database.PlatformEntityRealm
 import ru.smartro.inventory.showErrorToast
 import ru.smartro.worknote.extensions.simulateClick
@@ -103,6 +103,10 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         fabGotoMyLocation.setOnClickListener {
             gotoMyLocation()
             sendPlatformRequest()
+            if (isNotActualLocation()) {
+                showErrorToast("Нет актуальных координат...")
+                return@setOnClickListener
+            }
         }
 
         val apbLogout = view.findViewById<AppCompatButton>(R.id.apb_map_fragment__logout)
@@ -126,14 +130,16 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
                 showErrorToast("platformType is Empty")
                 return@setOnClickListener
             }
-//            if (isNotActualLocation()) {
-//                showErrorToast("Нет актуальных координат. Ждём GPS...")
-//                return@setOnClickListener
-//            }
             gotoCreatePlatform()
         }
 
-
+        val accbIsGPSMode = view.findViewById<AppCompatCheckBox>(R.id.accb_map_fragment__is_gps_mode)
+        accbIsGPSMode.isChecked = !db().loadConfigBool("is_yandex_location_service")
+        accbIsGPSMode.setOnCheckedChangeListener { compoundButton, b ->
+            val config = Config("is_yandex_location_service", (!b).toString())
+            db().saveConfig(config)
+            setLocationService()
+        }
         updateData()
         gotoMyLocation()
         callPlatformRequest()

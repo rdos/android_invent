@@ -6,7 +6,7 @@ import okhttp3.Callback
 import okhttp3.Response
 import ru.smartro.inventory.base.AbstractO
 import ru.smartro.inventory.base.RestClient
-import ru.smartro.inventory.database.ConfigEntityRealm
+import ru.smartro.inventory.database.Config
 import ru.smartro.inventory.database.LoginResponse
 import ru.smartro.inventory.getAUTHurl
 import java.io.IOException
@@ -45,7 +45,7 @@ class LoginRequest(val p_RestClient: RestClient): AbstractO(), Callback {
             return
         } else {
             val loginResponse = LoginResponse.from(bodyString)
-            val config = ConfigEntityRealm(name="Token", value=loginResponse.data.token)
+            val config = Config(name="Token", value=loginResponse.data.token)
             db.saveConfig(config)
             result.postValue(true)
 //        AppDatabase.get().start(Setting("token", loginResponse.data.token))

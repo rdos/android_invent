@@ -19,7 +19,7 @@ import java.util.concurrent.Executors
 class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
     private val TAG : String = "RealmRepository--AAA"
 
-    fun saveConfig(configEntity: ConfigEntityRealm) {
+    fun saveConfig(configEntity: Config) {
         configEntity.name = configEntity.name.uppercase()
         mRealm.executeTransaction { realm ->
             realm.insertOrUpdate(configEntity)
@@ -46,7 +46,7 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         }
         var result: String? = null
         try {
-          val configEntity = mRealm.where(ConfigEntityRealm::class.java).equalTo("name", name.uppercase()).findFirst() ?: return Snull
+          val configEntity = mRealm.where(Config::class.java).equalTo("name", name.uppercase()).findFirst() ?: return Snull
             result = configEntity.value
         } catch (e: Exception) {
             print(e)

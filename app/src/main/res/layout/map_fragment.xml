@@ -24,6 +24,18 @@
             app:layout_constraintTop_toTopOf="parent"
             />
 
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/accb_map_fragment__is_gps_mode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Только GPS"
+            android:button="@null"
+            android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/fab_map_fragment__goto_my_location"
+            android:layout_marginBottom="@dimen/margin_5"
+            />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_map_fragment__goto_my_location"

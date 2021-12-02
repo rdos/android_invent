@@ -14,10 +14,8 @@ import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.CatalogRequestRPC
 import ru.smartro.inventory.core.OwnerRequest
-import ru.smartro.inventory.database.ConfigEntityRealm
-import ru.smartro.inventory.database.OrganisationRealmEntity
+import ru.smartro.inventory.database.Config
 import ru.smartro.inventory.database.OwnerResponse
-import ru.smartro.inventory.showErrorToast
 
 //     android:background="?android:attr/selectableItemBackground">
 class OwnerFragment : AbstractFragment(){
@@ -103,7 +101,7 @@ class OwnerFragment : AbstractFragment(){
         }
 
     private fun showNextFra(ownerId: Int) {
-        val config = ConfigEntityRealm(name="Owner", value=ownerId.toString())
+        val config = Config(name="Owner", value=ownerId.toString())
         db().saveConfig(config)
         CatalogRequestRPC().callAsyncRPC(ownerId)
         showFragment(MapFragment.newInstance())

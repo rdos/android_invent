@@ -1,15 +1,9 @@
 package ru.smartro.inventory.base
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
-import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -20,12 +14,13 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import ru.smartro.inventory.*
 import ru.smartro.inventory.RealmRepo
-import ru.smartro.inventory.database.ConfigEntityRealm
 import ru.smartro.inventory.ui.main.LoginFragment
 import java.io.File
 
 abstract class AbstractFragment : Fragment() {
-//    private lateinit var mLocation: android.location.Location
+    private var mLastLocationGPS: android.location.Location? = null
+    private var mLastLocationYandex: Location? = null
+    //    private lateinit var mLocation: android.location.Location
     private val TARGET_LOCATION = Point(-80.243123, 25.107800)
 
     var lastFragmentClazz: String? = null
@@ -101,11 +96,22 @@ abstract class AbstractFragment : Fragment() {
 
 
     private fun isLastLocation(): Boolean {
-        val imHere = LocationManagerUtils.getLastKnownLocation()
-        if (imHere == null) {
-            return false
+        val isYandexLocationService = db().loadConfigBool("is_yandex_location_service")
+        var lastTime: Long = 0
+        if (isYandexLocationService) {
+            if (mLastLocationYandex == null) {
+                return false
+            }
+            lastTime = mLastLocationYandex!!.absoluteTimestamp
+
+        } else {
+            if (mLastLocationGPS == null) {
+                return false
+            }
+            lastTime = mLastLocationGPS!!.time
         }
-        val diff = System.currentTimeMillis() - imHere.absoluteTimestamp
+
+        val diff = System.currentTimeMillis() - lastTime
         log.warn("diff=${diff}")
         return diff <= 33840
     }
@@ -123,80 +129,23 @@ abstract class AbstractFragment : Fragment() {
 
 
     fun getLastPoint(): Point {
-        val location: Location? = LocationManagerUtils.getLastKnownLocation()
-        val result = location?.position?: TARGET_LOCATION
+        val isYandexLocationService = db().loadConfigBool("is_yandex_location_service")
+        var postion = TARGET_LOCATION
+        if (isYandexLocationService) {
+            mLastLocationGPS = null
+            mLastLocationYandex = LocationManagerUtils.getLastKnownLocation()
+            postion = mLastLocationYandex?.position?: TARGET_LOCATION
+        } else {
+            mLastLocationYandex = null
+            mLastLocationGPS = mActivity.getLastKnowLocation()
+            mLastLocationGPS?.let {
+                postion = Point(mLastLocationGPS!!.latitude, mLastLocationGPS!!.longitude)
+            }
+        }
         // TODO: 15.11.2021 !!
 //        Point(54.881347, 55.44919)
-        return result
+        return postion
     }
-
-    fun startLLastLocation() {
-
-//        val locationManager =
-//            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-//
-//
-//        if (ActivityCompat.checkSelfPermission(
-//                requireContext(),
-//                Manifest.permission.ACCESS_FINE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-//                requireContext(),
-//                Manifest.permission.ACCESS_COARSE_LOCATION
-//            ) != PackageManager.PERMISSION_GRANTED
-//        ) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return
-//        }
-//        locationManager.requestLocationUpdates(
-//            LocationManager.GPS_PROVIDER,
-//            5000,
-//            10F,
-//            this
-//        ) // здесь можно указать другие более подходящие вам параметры
-//
-////        imHere = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-////
-//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-//            900000, 0, locationListener);
-//        locationManager.requestLocationUpdates(
-//            LocationManager.NETWORK_PROVIDER, 900000, 0f, this);
-    }
-
-//    fun hasLastPoint(): Boolean {
-//        val result = getLastKnownLocation() == null
-//        log.debug("hasLastPoint.result=${result}")
-//        return result
-//    }
-//
-//    private fun getLastKnownLocation(): Location? {
-//        log.debug("getLastPoint.before")
-//        val lastKnownLocation: Location? = LocationManagerUtils.getLastKnownLocation()
-//        var subtraction = Lnull
-//        lastKnownLocation?.apply {
-//            subtraction  = getCurrentTimeStamp() - absoluteTimestamp
-//        }
-//
-//        var result = lastKnownLocation
-//        // TODO: 23.11.2021 100?wtf!
-//        if (subtraction < 100) {
-//            result = null
-//        }
-//        log.debug("hasLastPoint.result=${result}")
-//        return result
-//    }
-/// TODO: 18.11.2021 !!!
-//    fun getLastPoint(): Point {
-//        val location: Location? = LocationManagerUtils.getLastKnownLocation()
-//        val position = location?.position?: TARGET_LOCATION
-//        // TODO: 15.11.2021 !!
-//        return Point(54.881347, 55.44919)
-//    }
 
     protected fun showFragment(container: Int, fragment: AbstractFragment) {
         mActivity.showFragment(container, fragment)
@@ -287,6 +236,10 @@ abstract class AbstractFragment : Fragment() {
         log.info("logOUT")
         db().deleteData()
         showFragment(LoginFragment.newInstance())
+    }
+
+    fun setLocationService() {
+        mActivity.setLocationService()
     }
 
 //    override fun onLocationChanged(location: android.location.Location) {

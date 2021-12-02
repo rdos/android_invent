@@ -1,6 +1,8 @@
 package ru.smartro.inventory
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -16,16 +18,17 @@ import io.realm.Realm
 import io.realm.RealmConfiguration
 import ru.smartro.inventory.base.AbstractAct
 import ru.smartro.inventory.base.AbstractFragment
-import ru.smartro.inventory.database.ConfigEntityRealm
+import ru.smartro.inventory.database.Config
 import ru.smartro.inventory.ui.main.LoginFragment
 import ru.smartro.inventory.ui.main.MapFragment
 
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-class Activity : AbstractAct() , LocationListener {
+class Activity : AbstractAct() , LocationListener, android.location.LocationListener {
+    private var mLocationManagerSystem: android.location.LocationManager? = null
     private var mIsCallonBackPressed: Boolean = true
-    private lateinit var mLocationManager: LocationManager
+    private var mLocationManager: LocationManager? = null
     private lateinit var mMapKit: MapKit
     private var mLastShowFragment: AbstractFragment? = null
 
@@ -39,27 +42,49 @@ class Activity : AbstractAct() , LocationListener {
         setContentView(R.layout.activity)
 // TODO: 18.11.2021 Initializing in the Application.onCreate method may lead to extra calls and increased battery use.
         MapKitFactory.initialize(this)
-
         mMapKit = MapKitFactory.getInstance()
-        mLocationManager = mMapKit.createLocationManager()
-
-        mLocationManager.subscribeForLocationUpdates(0.0, 500, 0.0, true, FilteringMode.OFF, this)
-
-        val location: Location? = LocationManagerUtils.getLastKnownLocation()
-        log.info("onCreate", location?.position.toString())
 
         // TODO: 12.11.2021 место!))
         if (savedInstanceState == null) {
-            val configEntityRealm = ConfigEntityRealm("is_allowed_inventory_get_platforms", true.toString())
+            val configEntityRealm = Config("is_allowed_inventory_get_platforms", true.toString())
             db.saveConfig(configEntityRealm)
             if (Snull == db.loadConfig("Owner")) {
                 showFragment(LoginFragment.newInstance())
             } else {
                 showFragment(MapFragment.newInstance())
             }
-            checkPermission(PERMISSIONS)
         }
+        checkPermission(PERMISSIONS)
+
+
+        setLocationService()
         startSynchronizeData()
+    }
+
+    @SuppressLint("MissingPermission")
+    fun setLocationService() {
+        stopLocationService()
+        val isYandexLocationService = db.loadConfigBool("is_yandex_location_service")
+        if (isYandexLocationService) {
+            mLocationManager = mMapKit.createLocationManager()
+            mLocationManager?.subscribeForLocationUpdates(0.0, 500, 0.0, true, FilteringMode.OFF, this)
+        } else {
+            mLocationManagerSystem =
+                this.getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
+            mLocationManagerSystem?.requestLocationUpdates(
+                android.location.LocationManager.GPS_PROVIDER,
+                5000,
+                10F,
+                this
+            ) // здесь можно указать другие более подходящие вам параметры
+        }
+    }
+
+    private fun stopLocationService() {
+        mLocationManager?.unsubscribe(this)
+        mLocationManager = null
+        mLocationManagerSystem?.removeUpdates(this)
+        mLocationManagerSystem = null
     }
 
     private fun stopSynchronizeData() {
@@ -130,6 +155,7 @@ class Activity : AbstractAct() , LocationListener {
         super.onResume()
 
     }
+
 
     override fun onStop() {
         super.onStop()
@@ -206,8 +232,8 @@ class Activity : AbstractAct() , LocationListener {
 
 
     override fun onDestroy() {
-        mLocationManager.unsubscribe(this)
         stopSynchronizeData()
+        stopLocationService()
         super.onDestroy()
     }
 
@@ -217,6 +243,9 @@ class Activity : AbstractAct() , LocationListener {
     }
 
 
+    override fun onLocationChanged(p0: android.location.Location) {
+
+    }
 
     override fun onLocationUpdated(p0: Location) {
 //        log.debug("latitude=${p0.position.latitude},latitude=${p0.position.longitude}")
@@ -263,5 +292,12 @@ class Activity : AbstractAct() , LocationListener {
         }
         return result
     }
+
+    @SuppressLint("MissingPermission")
+    fun getLastKnowLocation(): android.location.Location? {
+        val imHere = mLocationManagerSystem?.getLastKnownLocation(android.location.LocationManager.GPS_PROVIDER)
+        return imHere
+    }
+
 
 }

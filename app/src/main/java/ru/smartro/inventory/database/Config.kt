@@ -30,7 +30,7 @@ enum class TaskStatus(val displayName: String) {
     InProgress("In Progress"),
     Complete("Complete"),
 }
-open class ConfigEntityRealm(
+open class Config(
     @PrimaryKey var name: String = "task",
     var value: String = "rNull"
 ) : RealmObject() {

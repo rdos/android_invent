@@ -31,6 +31,7 @@
             android:layout_weight="1"
             android:text="Только GPS"
             android:button="@null"
+            android:textColor="@color/purple_700"
             android:drawableRight="?android:attr/listChoiceIndicatorMultiple"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/fab_map_fragment__goto_my_location"

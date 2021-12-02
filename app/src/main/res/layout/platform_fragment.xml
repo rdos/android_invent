@@ -74,7 +74,7 @@
                     <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Тип TК"/>
+                        android:text="Тип КП"/>
 
                     <androidx.appcompat.widget.AppCompatSpinner
                         android:id="@+id/acs_platform_fragment__type"

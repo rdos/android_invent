@@ -57,7 +57,7 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
         try {
             val lastPoint = getLastPoint()
             log.info("gotoMyLocation", lastPoint.toString())
-            val cameraPosition = CameraPosition(lastPoint, 24.0f, 0.0f, 0.0f)
+            val cameraPosition = CameraPosition(lastPoint, 17.7f, 0.0f, 0.0f)
             val cameraAnimation = Animation(Animation.Type.SMOOTH, 1F)
             mMapView.map.move(cameraPosition, cameraAnimation, this)
         } catch (e: Exception) {

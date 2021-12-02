@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/margin_min">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/margin_min"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_platform_fragment__coordinate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Координаты">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/tiet_platform_fragment__coordinate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/acb_platform_fragment__save"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_16"
+                android:text="@string/platform_fragment__save"
+                android:textColor="@color/purple_white_full"
+                android:backgroundTint="@color/purple_200"
+                android:backgroundTintMode="multiply"/>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Вид КП"/>
+
+                    <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/acs_platform_fragment__vid"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Тип TК"/>
+
+                    <androidx.appcompat.widget.AppCompatSpinner
+                        android:id="@+id/acs_platform_fragment__type"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+            <!--    TODO /-->
+            <!--    <androidx.appcompat.widget.LinearLayoutCompat-->
+            <!--        android:layout_width="match_parent"-->
+            <!--        android:layout_height="wrap_content"-->
+            <!--        android:orientation="horizontal">-->
+            <!--        <androidx.appcompat.widget.LinearLayoutCompat-->
+            <!--            android:layout_width="0dp"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            android:layout_weight="1"-->
+            <!--            android:orientation="vertical">-->
+
+            <!--            <com.google.android.material.textfield.TextInputLayout-->
+            <!--                android:id="@+id/til_platform_fragment__count"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content">-->
+
+            <!--                <com.google.android.material.textfield.TextInputEditText-->
+            <!--                    android:id="@+id/tiet_platform_fragment__count"-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:hint="Количество контейнеров"-->
+            <!--                    android:inputType="numberDecimal"/>-->
+            <!--            </com.google.android.material.textfield.TextInputLayout>-->
+            <!--        </androidx.appcompat.widget.LinearLayoutCompat>-->
+
+            <!--    </androidx.appcompat.widget.LinearLayoutCompat>-->
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/accb_platform_fragment__has_base"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Основание"
+                    />
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/accb_platform_fragment__has_fence"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ограждение"
+                    />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_platform_fragment__length"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/tiet_platform_fragment__length"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Длина площадки, м"
+                            android:inputType="number" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/til_platform_fragment__width"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/tiet_platform_fragment__width"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Ширина площадки, м"
+                            android:inputType="number" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiet_platform_fragment__comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Комментарий"
+                android:inputType="textCapSentences|textMultiLine"
+                android:maxLength="2502" />
+            <!--    <androidx.core.widget.NestedScrollView-->
+            <!--        android:layout_width=""-->
+            <!--        android:layout_height=""-->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/acb_platform_fragment__add_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_16"
+                android:text="@string/platform_fragment__add_containers"
+                android:textColor="@color/purple_white_full"
+                android:backgroundTint="@color/purple_200"
+                android:backgroundTintMode="multiply"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/fl_platform_fragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </FrameLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

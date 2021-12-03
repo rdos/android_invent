@@ -98,7 +98,7 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
                 platformEntity.has_fence = if (accbHasFence.isChecked) 1 else 0
 
                 try {
-                    val splitCoodiate = tietCoordinate.text.toString().trim().split(" ")
+                    val splitCoodiate = tietCoordinate.text.toString().replace(",", ".").trim().split(" ")
                     platformEntity.coordinateLat = splitCoodiate[0].toDouble()
                     platformEntity.coordinateLng = splitCoodiate[1].toDouble()
                 } catch (e: Exception) {

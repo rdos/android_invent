@@ -1,4 +1,23 @@
 <configuration>
+  <timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"/>
+
+<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>logFile.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- daily rollover -->
+      <fileNamePattern>logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+      <!-- keep 30 days' worth of history capped at 3GB total size -->
+      <maxHistory>30</maxHistory>
+      <totalSizeCap>3GB</totalSizeCap>
+
+    </rollingPolicy>
+
+    <encoder>
+      <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+    </encoder>
+  </appender> 
+
   <appender name="logcat" class="ch.qos.logback.classic.android.LogcatAppender">
     <tagEncoder>
       <pattern>%logger{12}</pattern>
@@ -10,6 +29,7 @@
 
   <root level="DEBUG">
     <appender-ref ref="logcat" />
+     <appender-ref ref="FILE" />     
   </root>
 </configuration>
 <!-- %d{HH:mm:ss.SSS} %logger{36} -->

@@ -59,7 +59,7 @@ class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
             tilCoordinate.error = "Координаты неактульны"
         }
         val tietCoordinate = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment__coordinate)
-        tietCoordinate.setText(String.format("%.6f", lastPoint.longitude) + " "+ String.format("%.6f", lastPoint.latitude))
+        tietCoordinate.setText(String.format("%.6f", lastPoint.latitude) + " "+ String.format("%.6f", lastPoint.longitude))
 
         val acsVid = view.findViewById<AppCompatSpinner>(R.id.acs_platform_fragment__vid)
         val vidAdapter: ArrayAdapter<*> = ArrayAdapter.createFromResource(

@@ -8,7 +8,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
+//Xiaomi.huawei
 //ToD LiveEntity
 abstract class AbstractEntity  {
 //    protected val log: Logger = LoggerFactory.getLogger("${this::class.simpleName}")

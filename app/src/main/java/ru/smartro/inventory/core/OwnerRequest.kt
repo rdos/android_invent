@@ -10,6 +10,7 @@ import ru.smartro.inventory.database.OwnerResponse
 import ru.smartro.inventory.getAUTHurl
 import java.io.IOException
 
+
 class OwnerRequest(val p_RestClient: RestClient): AbstractO(), Callback {
     private val result = MutableLiveData<OwnerResponse>()
     fun callAsyncOwner(): MutableLiveData<OwnerResponse> {

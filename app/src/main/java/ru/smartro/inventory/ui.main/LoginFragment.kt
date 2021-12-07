@@ -86,13 +86,15 @@ class LoginFragment : AbstractFragment(){
                 acbLogin.isEnabled = true
             }
         }
-        acbLogin.setOnLongClickListener {
-            log.debug("acbLogin.setOnLongClickListener")
-            tietLogin.setText("admin@smartro.ru")
-            tietPassword.setText("xot1ieG5ro~hoa,ng4Sh")
-            //        tietPassword.setText("")
-            //        tietLogin.setText("")
-            true
+        if (BuildConfig.BUILD_TYPE != "PROD") {
+            acbLogin.setOnLongClickListener {
+                log.debug("acbLogin.setOnLongClickListener")
+                tietLogin.setText("admin@smartro.ru")
+                tietPassword.setText("xot1ieG5ro~hoa,ng4Sh")
+                //        tietPassword.setText("")
+                //        tietLogin.setText("")
+                true
+            }
         }
     }
 

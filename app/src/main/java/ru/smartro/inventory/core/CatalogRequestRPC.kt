@@ -11,6 +11,7 @@ import ru.smartro.inventory.Inull
 import ru.smartro.inventory.base.AbstractEntity
 import ru.smartro.inventory.base.AbstractO
 import ru.smartro.inventory.base.RestClient
+import ru.smartro.inventory.getRpcUrl
 import java.io.IOException
 
 
@@ -24,9 +25,8 @@ class CatalogRequestRPC(): AbstractO(), Callback {
         rpcGetCatalogs.payload.organisation_id = ownerId
 
         val requestBody = rpcGetCatalogs.toRequestBody()
-        val url = "https://worknote-back.stage.smartro.ru/api/rpc"
         val restClient = RestClient()
-        val request = restClient.newRequest(url).post(requestBody).build()
+        val request = restClient.newRequest(getRpcUrl()).post(requestBody).build()
         restClient.newCall(request, this)
         return result
     }

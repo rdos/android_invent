@@ -7,13 +7,15 @@ import okhttp3.Response
 import ru.smartro.inventory.base.AbstractO
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.database.OwnerResponse
+import ru.smartro.inventory.getAUTHurl
 import java.io.IOException
+
 
 class OwnerRequest(val p_RestClient: RestClient): AbstractO(), Callback {
     private val result = MutableLiveData<OwnerResponse>()
     fun callAsyncOwner(): MutableLiveData<OwnerResponse> {
         log.info("callAsyncOwner", "before")
-        val url = "https://auth.stage.smartro.ru/api/owner"
+        val url = getAUTHurl("owner")
         val request = p_RestClient.newRequest(url).get().build()
         p_RestClient.newCall(request, this)
         return result

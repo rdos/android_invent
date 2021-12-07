@@ -24,6 +24,10 @@ import ru.smartro.inventory.ui.main.MapFragment
 
 import java.io.File
 import java.util.concurrent.TimeUnit
+import androidx.annotation.NonNull
+
+
+
 
 class Activity : AbstractAct() , LocationListener, android.location.LocationListener {
     private var mLocationManagerSystem: android.location.LocationManager? = null
@@ -246,6 +250,12 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
     override fun onLocationChanged(p0: android.location.Location) {
 
     }
+
+    override fun onProviderEnabled(provider: String) {}
+
+    override fun onProviderDisabled(provider: String) {}
+
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
 
     override fun onLocationUpdated(p0: Location) {
 //        log.debug("latitude=${p0.position.latitude},latitude=${p0.position.longitude}")

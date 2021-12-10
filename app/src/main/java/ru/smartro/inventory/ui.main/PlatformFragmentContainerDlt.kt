@@ -22,18 +22,22 @@ import ru.smartro.inventory.showErrorToast
 import java.lang.Exception
 
 
-class PlatformFragmentContainerDlt(val p_container_uuid: String) : AbstractFragment() {
+class PlatformFragmentContainerDlt : AbstractFragment() {
     private lateinit var mTietNumber: TextInputEditText
     private lateinit var mTilNumber: TextInputLayout
 
     companion object {
-        fun newInstance(containerUuid: String) = PlatformFragmentContainerDlt(containerUuid)
+        fun newInstance(platformUuid: String, containerUuid: String): PlatformFragmentContainerDlt {
+            val fragment = PlatformFragmentContainerDlt()
+            fragment.addArgument(platformUuid, containerUuid)
+            return fragment
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setActionBarTitle("Контейнер")
-        val mContainerEntityRealm = db().loadContainerEntity(p_container_uuid)
+        val mContainerEntityRealm = db().loadContainerEntity(p_container_uuid!!)
 
         mTietNumber = view.findViewById(R.id.tiet_platform_fragment_container_dtl__number)
         mTilNumber = view.findViewById(R.id.til_platform_fragment_container_dtl__number)

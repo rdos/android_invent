@@ -58,7 +58,7 @@ const val ANIMATION_SLOW_MILLIS = 100L
  * - Photo taking
  * - Image analysis
 :()*/
-abstract class AbstractPhotoFragment(private val p_platform_uuid: String, private val p_container_uuid: String?) : AbstractFragment() {
+abstract class AbstractPhotoFragment : AbstractFragment() {
 
     companion object {
 

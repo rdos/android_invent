@@ -24,36 +24,39 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginTop="@dimen/margin_small"
+            android:layout_marginTop="@dimen/margin_min"
+            android:layout_marginStart="@dimen/margin_min"
+            android:padding="@dimen/margin_min"
             android:scaleType="fitCenter"
             android:background="@android:color/transparent"
             app:srcCompat="@drawable/ic_back" />
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/share_button"
-            android:layout_width="@dimen/margin_max"
-            android:layout_height="@dimen/margin_max"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginEnd="@dimen/margin_xlarge"
-            android:layout_marginBottom="@dimen/margin_small"
-            android:scaleType="fitCenter"
-            android:background="@android:color/transparent"
-            app:srcCompat="@drawable/ic_share" />
+<!--        <androidx.appcompat.widget.AppCompatImageButton-->
+<!--            android:id="@+id/share_button"-->
+<!--            android:layout_width="@dimen/margin_max"-->
+<!--            android:layout_height="@dimen/margin_max"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintLeft_toLeftOf="parent"-->
+<!--            app:layout_constraintRight_toRightOf="parent"-->
+<!--            android:layout_marginEnd="92dp"-->
+<!--            android:layout_marginBottom="@dimen/margin_small"-->
+<!--            android:scaleType="fitCenter"-->
+<!--            android:background="@android:color/transparent"-->
+<!--            app:srcCompat="@drawable/ic_share" />-->
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/apib_photo_show_fragment__delete"
-            android:layout_width="@dimen/margin_max"
-            android:layout_height="@dimen/margin_max"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            android:layout_marginStart="@dimen/margin_xlarge"
-            android:layout_marginBottom="@dimen/margin_small"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_min"
+            android:padding="@dimen/margin_min"
             android:scaleType="fitCenter"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/ic_delete" />
+            app:srcCompat="@drawable/ic_delete"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

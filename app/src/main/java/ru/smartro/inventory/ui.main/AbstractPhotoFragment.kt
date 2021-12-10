@@ -342,6 +342,9 @@ abstract class AbstractPhotoFragment(private val p_platform_uuid: String, privat
 
         mAcibShow = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__show_photo)
         mAcibShow?.setOnClickListener {
+            if (getOutputFileCount(p_platform_uuid, p_container_uuid) <= 0) {
+                return@setOnClickListener
+            }
             showNextFragment(PhotoShowFragment.newInstance(p_platform_uuid, p_container_uuid))
         }
 

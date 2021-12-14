@@ -11,7 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ru.smartro.inventory.R
-
+import ru.smartro.inventory.isSpinnerADataO
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -116,17 +116,17 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
         val apbCreatePlatform = view.findViewById<AppCompatButton>(R.id.apb_map_fragment__add_platform)
         apbCreatePlatform.setOnClickListener{
             val containerStatus = db().loadContainerStatus()
-            if (containerStatus.isEmpty()) {
+            if (containerStatus.isSpinnerADataO()) {
                 showErrorToast("containerStatus is Empty")
                 return@setOnClickListener
             }
             val containerType = db().loadContainerType()
-            if (containerType.isEmpty()) {
+            if (containerType.isSpinnerADataO()) {
                 showErrorToast("containerType is Empty")
                 return@setOnClickListener
             }
             val platformType = db().loadPlatformType()
-            if (platformType.isEmpty()) {
+            if (platformType.isSpinnerADataO()) {
                 showErrorToast("platformType is Empty")
                 return@setOnClickListener
             }
@@ -238,3 +238,8 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
     }
 
 }
+
+
+
+
+

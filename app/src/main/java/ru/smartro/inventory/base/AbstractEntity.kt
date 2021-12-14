@@ -10,7 +10,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 //Xiaomi.huawei
 //ToD LiveEntity
-abstract class AbstractEntity  {
+open class AbstractEntity  {
 //    protected val log: Logger = LoggerFactory.getLogger("${this::class.simpleName}")
 
     fun log(): Logger {

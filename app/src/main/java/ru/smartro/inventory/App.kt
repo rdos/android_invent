@@ -1,13 +1,19 @@
 package ru.smartro.inventory
 
 import android.app.Application
+import android.graphics.drawable.Drawable
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatButton
 import com.yandex.mapkit.MapKitFactory
+import io.realm.RealmList
+import io.realm.RealmObject
 import ru.smartro.inventory.base.AbstrActF
 import ru.smartro.inventory.base.AbstractO
 import ru.smartro.worknote.extensions.showImmersive
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**HELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIRE
 РАЗ * //gotoAdd = Add -> create->ПОТОМ->Save->ПОТОМ Show
@@ -84,6 +90,20 @@ fun AbstrActF.showErrorToast(text: String? = "") {
     }
 }
 
+//fun AppCompatButton.setLeftIcon(dr: Drawable) {
+//}
+
+fun Any.getDeviceTime(): String {
+    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    return sdf.format(Date())
+}
+
+fun AppCompatButton.getSubButton(): AppCompatButton? {
+    var result: AppCompatButton? = null
+    result = this.rootView.findViewById(R.id.acb_platform_fragment__add_container)
+    return result
+}
+
 fun AbstrActF.showErrorDialog(text: String? = "") {
     view?.let {
         AlertDialog.Builder(it.context, android.R.style.Theme_Material_Dialog)
@@ -111,4 +131,16 @@ fun AbstrActF.showErrorDialog(text: String? = "") {
         .setNegativeButton(android.R.string.no, null)
         .create().showImmersive()
     }
+
+
+}
+fun List<RealmObject>?.isSpinnerADataO(): Boolean {
+    var result = false
+    if (this?.isEmpty() ?: true) {
+        return true
+    }
+    if (this?.size ?: 1 == 1) {
+        return true
+    }
+    return result
 }

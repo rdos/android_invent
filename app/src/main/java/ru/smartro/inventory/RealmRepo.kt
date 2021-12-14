@@ -9,13 +9,18 @@ import java.lang.Exception
 import java.util.concurrent.Executors
 
 // find! has
-// 4) save load ; get set ; add update;
+// 4) save
+
+// load ; get ; default и
+//add update;
+
 //;new;edit;delete;clear;; Has? extra?
 // TODO: 12.11.2021 "block:() -> Unit "=0
 //5) initialYear, initialDay
 //src;dest
 
 //    LiveRealmData
+//SpinnerDataL
 class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
     private val TAG : String = "RealmRepository--AAA"
 
@@ -65,6 +70,23 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         }
     }
 
+    fun loadConfigL(name: String): Config {
+        return Config(name, loadConfigLong(name))
+    }
+
+    private fun loadConfigLong(name: String): String {
+        val result = loadConfig(name)
+        try {
+            if (result != null) {
+                result.toLong()
+                return result
+            }
+        } catch (e: Exception) {
+            return "0"
+        }
+        return "0"
+    }
+
     fun loadConfigInt(name: String): Int {
         val result = loadConfig(name)
         if (result == null) return Inull
@@ -107,19 +129,19 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
     }
 
     fun loadPlatformType(): List<PlatformTypeRealm> {
-        val realmResults = mRealm.where(PlatformTypeRealm::class.java).findAll()
+        val realmResults = mRealm.where(PlatformTypeRealm::class.java).findAll().sort("id")
         val result = mRealm.copyFromRealm(realmResults)
         return result
     }
 
     fun loadContainerType(): List<ContainerTypeRealm> {
-        val realmResults = mRealm.where(ContainerTypeRealm::class.java).findAll()
+        val realmResults = mRealm.where(ContainerTypeRealm::class.java).findAll().sort("id")
         val result = mRealm.copyFromRealm(realmResults)
         return result
     }
 
     fun loadContainerStatus(): List<ContainerStatusRealm> {
-        val realmResults = mRealm.where(ContainerStatusRealm::class.java).findAll()
+        val realmResults = mRealm.where(ContainerStatusRealm::class.java).findAll().sort("id")
         val result = mRealm.copyFromRealm(realmResults)
         return result
     }
@@ -197,8 +219,9 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
             p_realm.insertOrUpdate(entityRealm)
         }
     }
+
     /**? //entityRealmS vs entitySRealm **/
-    fun saveRealmEntityList(entityRealmS: RealmList<out RealmObject>) {
+    fun saveFromRealmEntityList(entityRealmS: RealmList<out RealmObject>) {
         execInTransaction{ p_realm ->
             p_realm.insertOrUpdate(entityRealmS)
         }

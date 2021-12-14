@@ -20,7 +20,6 @@ import ru.smartro.inventory.core.*
 import ru.smartro.inventory.database.ContainerEntityRealm
 import ru.smartro.inventory.database.PlatformTypeRealm
 import ru.smartro.inventory.showErrorToast
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -37,10 +36,6 @@ class PlatformFragment : AbstrActF() {
     private lateinit var mIn: LayoutInflater
     private lateinit var viewModel: PlatformViewModel
 
-    fun currentTime(): String {
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        return sdf.format(Date())
-    }
 
     override fun onBackPressed() {
         super.onBackPressed()
@@ -50,7 +45,7 @@ class PlatformFragment : AbstrActF() {
         super.onViewCreated(view, savedInstanceState)
 
 //        setActionBarTitle(R.string.platform_fragment__welcome_to_system)
-        setActionBarTitle("КП " + currentTime())
+        setActionBarTitle("КП " + getCurrdateTime())
         val platformEntity = db().loadPlatformEntity(p_platform_uuid)
 
         val lastPoint = getLastPoint()
@@ -74,10 +69,10 @@ class PlatformFragment : AbstrActF() {
 
 
         val platformType = db().loadPlatformType()
-        val acsType = view.findViewById<AppCompatSpinner>(R.id.acs_platform_fragment__type)
-        val typeAdapter = TypeAdapter(requireContext(), platformType)
-        acsType.setAdapter(typeAdapter)
-
+        val spAdataViewER = view.findViewById<AppCompatSpinner>(R.id.acs_platform_fragment__type)
+        val typeAdapter = PlatformTypeAdapter__AData_Spinner(requireContext(), platformType)
+        spAdataViewER.setAdapter(typeAdapter)
+        spAdataViewER.setSelection(0)
         val tietComment = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment__comment)
 
         val tietLength = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment__length)
@@ -90,14 +85,16 @@ class PlatformFragment : AbstrActF() {
             log.debug("save_-acbSaveOnClick.before")
             acbSave.isEnabled = false
             try {
+
                 if (isNotCheckedData(tietLength)) return@setOnClickListener
                 if (isNotCheckedData(tietWidth)) return@setOnClickListener
-                if (isNotCheckedData(acbSave)) return@setOnClickListener
+                //                if (platformEntity.isEnableSave(acbSave) return@setOnClickListener
+                if (isNotEnableSave(acbSave, platformEntity)) return@setOnClickListener
                 platformEntity.status_name = "Новая"
                 platformEntity.status_id = 1
                 log.debug("save_-acbSaveOnClick.after isCheckedData")
                 hideKeyboard()
-                platformEntity.datetime = currentTime()
+                platformEntity.datetime = getCurrdateTime()
                 platformEntity.is_open =
                     if (acsVid.selectedItem.toString() == "Открытая") 1 else 0
                 platformEntity.has_base = if (accbHasBase.isChecked) 1 else 0
@@ -113,14 +110,21 @@ class PlatformFragment : AbstrActF() {
                     return@setOnClickListener
                 }
 
-                platformEntity.type = acsType.selectedItem as PlatformTypeRealm
+                platformEntity.type = spAdataViewER.selectedItem as PlatformTypeRealm
 
                 platformEntity.length = tietLength.text.toString().toInt()
                 platformEntity.width = tietWidth.text.toString().toInt()
                 platformEntity.comment = tietComment.text.toString()
 
-                platformEntity.setSynchroEnable()
+                platformEntity.before_sendToServData__()
                 db().saveRealmEntity(platformEntity)
+
+
+                //cnt=statistics
+                val cntCreatedConfig = db().loadConfigL("cnt_platform__created")
+                cntCreatedConfig.cntPlusOne()
+                db().saveConfig(cntCreatedConfig)
+
                 log.debug("save_-acbSaveOnClick.saveRealmEntity")
                 deleteOutputDirectory(p_platform_uuid, null)
                 log.debug("save_-acbSaveOnClick.deleteOutputDirectory p_platform_uuid=${p_platform_uuid}")
@@ -173,8 +177,8 @@ class PlatformFragment : AbstrActF() {
 
 
 
-    class TypeAdapter(context: Context,
-                      platformType: List<PlatformTypeRealm>)
+    class PlatformTypeAdapter__AData_Spinner(context: Context,
+                                             platformType: List<PlatformTypeRealm>)
         : ArrayAdapter<PlatformTypeRealm>(context, 0, platformType) {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {

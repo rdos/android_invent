@@ -46,7 +46,7 @@ class PlatformFragmentContainerDlt : AbstrActF() {
         val acsContainerStatus = view.findViewById<AppCompatSpinner>(R.id.acs_platform_fragment_container_dtl__status)
         val containerStatusAdapter = StatusContainerAdapter(requireContext(), containerStatus)
         acsContainerStatus.setAdapter(containerStatusAdapter)
-
+        acsContainerStatus.setSelection(0)
         val containerType = db().loadContainerType()
         val acsContainerType = view.findViewById<AppCompatSpinner>(R.id.acs_platform_fragment_container_dtl__type)
         val containerTypeAdapter = TypeContainerAdapter(requireContext(), containerType)

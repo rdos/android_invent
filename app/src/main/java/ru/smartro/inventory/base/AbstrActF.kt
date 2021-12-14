@@ -2,6 +2,7 @@ package ru.smartro.inventory.base
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.AppCompatButton
@@ -15,6 +16,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import ru.smartro.inventory.*
 import ru.smartro.inventory.RealmRepo
+import ru.smartro.inventory.database.PlatformEntityRealm
 import ru.smartro.inventory.ui.main.LoginFragment
 import java.io.File
 
@@ -30,25 +32,38 @@ abstract class AbstrActF : Fragment() {
     protected val p_container_uuid: String? by lazy {
         getArgumentContainerUUID()
     }
+
+
+    fun getCurrdateTime(): String {
+       return this.getDeviceTime()
+    }
+
     //    private lateinit var mLocation: android.location.Location
-    private val TARGET_LOCATION = Point(-80.243123, 25.107800)
+    private val TARGET_LOCATION = Point(55.756025, 37.617664)
 
     var lastFragmentClazz: String? = null
     private val mActivity: Activity by lazy {
         activity as Activity
     }
 
-    protected fun isNotCheckedData(tiet: AppCompatButton, entity: AbstractEntity): Boolean {
-        return !isCheckedData(tiet, til)
+    //reСОЗДАТЕЛЬ_реШИ_лТАК sUPER uSER
+    //isEnableSave((1par,2para)
+
+    protected fun isNotEnableSave(saveButt: AppCompatButton, entity: PlatformEntityRealm): Boolean {
+        return !isEnableSave(saveButt, entity)
+    }
+
+    private fun isEnableSave(saveButt: AppCompatButton, entity: PlatformEntityRealm): Boolean {
+        val resu = entity.isEnableSave(saveButt)
+        Log.e("acbSave.setOnClickListener", "да будет так. r")
+      return resu
     }
 
     protected fun isNotCheckedData(tiet: TextInputEditText, til: TextInputLayout? = null): Boolean {
         return !isCheckedData(tiet, til)
     }
 
-    private fun isCheckedData(tiet: AppCompatButton, til: TextInputLayout?): Boolean {
 
-    }
 
     private fun isCheckedData(tiet: TextInputEditText, til: TextInputLayout?): Boolean {
         val errorText = "Поле обязательно для заполнения"

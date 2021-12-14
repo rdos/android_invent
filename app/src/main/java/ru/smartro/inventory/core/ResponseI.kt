@@ -2,10 +2,8 @@ package ru.smartro.inventory.core
 
 import com.google.gson.annotations.SerializedName
 import io.realm.RealmList
-import io.realm.RealmObject
 import ru.smartro.inventory.Snull
 import ru.smartro.inventory.database.*
-import java.io.Serializable
 
 //data class Responsel(
 data class ResponseI(
@@ -27,6 +25,24 @@ data class ResponseI(
 //        }
 }
 
+
+
+class SpinnerADataRealmL: RealmList<ContainerStatusRealm>() {
+
+        fun containerStatusRealm_ADataO(): ContainerStatusRealm {
+                //                                                      mapTOCardStatus_AData
+                return ContainerStatusRealm(0, "Выберите Тип")
+        }
+
+        //getDEF_AbstractO GetIDatASpinneRrrrr
+        fun GETiDatASpinner(): SpinnerADataRealmL {
+                val sp = SpinnerADataRealmL()
+                //containerStatus_to_AdataSPINNER
+                sp.add(this.containerStatusRealm_ADataO())
+                return sp
+        }
+}
+
 open class PayloadCatalog(
         @SerializedName("container_type")
         var container_type: RealmList<ContainerTypeRealm> = RealmList(),
@@ -35,5 +51,26 @@ open class PayloadCatalog(
         @SerializedName("card_status")
         var card_status : RealmList<CardStatusTypeRealm> = RealmList(),
         @SerializedName("container_status")
-        var container_status : RealmList<ContainerStatusRealm> = RealmList(),
-)
+        var container_status : SpinnerADataRealmL = SpinnerADataRealmL().GETiDatASpinner()
+
+) {
+
+        //fun mapAData(): ContainerTypeRealm {
+        fun mapTOPlatform_TypeO(): ContainerTypeRealm {
+                // //mApTO_SpinnerAData
+                // TODO: 14.12.2021 from O to I
+                return ContainerTypeRealm(0, "Выберите Тип")
+        }
+
+        fun __TO_SpinnerAData(): PlatformTypeRealm {
+                //TODO: 01.10.2220 __TO_SpinnerAData
+                return PlatformTypeRealm(0, "Выберите Тип")
+        }
+
+        fun mapTOCardStatus_AData(): CardStatusTypeRealm {
+                return CardStatusTypeRealm(0, "Выберите Тип")
+        }
+
+
+
+}

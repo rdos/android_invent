@@ -57,7 +57,7 @@ const val ANIMATION_SLOW_MILLIS = 100L
  * - Photo taking
  * - Image analysis
 :()*/
-abstract class AbstrActF : AbstrActF() {
+abstract class AbstractPhotoFraG : AbstrActF() {
 
     companion object {
 
@@ -81,7 +81,7 @@ abstract class AbstrActF : AbstrActF() {
     private lateinit var broadcastManager: LocalBroadcastManager
 
     private var displayId: Int = -1
-//    private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
+    //    private var lensFacing: Int = CameraSelector.LENS_FACING_BACK
     private var imageCapture: ImageCapture? = null
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
@@ -91,7 +91,7 @@ abstract class AbstrActF : AbstrActF() {
 //        requireContext().getSystemService(Context.DISPLAY_SERVICE) as DisplayManager
 //    }
 
-//    /** Blocking camera operations are performed using this executor */
+    //    /** Blocking camera operations are performed using this executor */
     private lateinit var cameraExecutor: ExecutorService
 
     /**
@@ -254,29 +254,29 @@ abstract class AbstrActF : AbstrActF() {
 
         // CameraProvider
         val cameraProvider = cameraProvider
-                ?: throw IllegalStateException("Camera initialization failed.")
+            ?: throw IllegalStateException("Camera initialization failed.")
 
         // CameraSelector
         val cameraSelector = CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build()
 
         // Preview
         val preview = Preview.Builder()
-                // We request aspect ratio but no resolution
-                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
-                // Set initial target rotation
-                .setTargetRotation(rotation)
-                .build()
+            // We request aspect ratio but no resolution
+            .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+            // Set initial target rotation
+            .setTargetRotation(rotation)
+            .build()
 
         // ImageCapture
         imageCapture = ImageCapture.Builder()
-                .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-                // We request aspect ratio but no resolution to match preview config, but letting
-                // CameraX optimize for whatever specific resolution best fits our use cases
-                .setTargetAspectRatio(AspectRatio.RATIO_16_9)
-                // Set initial target rotation, we will have to call this again if rotation changes
-                // during the lifecycle of this use case
-                .setTargetRotation(rotation)
-                .build()
+            .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+            // We request aspect ratio but no resolution to match preview config, but letting
+            // CameraX optimize for whatever specific resolution best fits our use cases
+            .setTargetAspectRatio(AspectRatio.RATIO_16_9)
+            // Set initial target rotation, we will have to call this again if rotation changes
+            // during the lifecycle of this use case
+            .setTargetRotation(rotation)
+            .build()
 
         val imageAnalyzer = ImageAnalysis.Builder()
             .setTargetAspectRatio(AspectRatio.RATIO_16_9)
@@ -290,7 +290,7 @@ abstract class AbstrActF : AbstrActF() {
             // A variable number of use-cases can be passed here -
             // camera provides access to CameraControl & CameraInfo
             camera = cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageCapture, imageAnalyzer)
+                this, cameraSelector, preview, imageCapture, imageAnalyzer)
 
             // Attach the viewfinder's surface provider to preview use case
             preview?.setSurfaceProvider(mPreviewView.surfaceProvider)
@@ -379,50 +379,50 @@ abstract class AbstrActF : AbstrActF() {
                 // Create output options object which contains file + metadata
                 val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
 //                        .setMetadata(metadata)
-                        .build()
+                    .build()
 
                 // Setup image capture listener which is triggered after photo has been taken
                 imageCapture.takePicture(
-                        outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
-                    override fun onError(exc: ImageCaptureException) {
-                        Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
-                    }
+                    outputOptions, cameraExecutor, object : ImageCapture.OnImageSavedCallback {
+                        override fun onError(exc: ImageCaptureException) {
+                            Log.e(TAG, "Photo capture failed: ${exc.message}", exc)
+                        }
 
-                    override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                        val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
-                        Log.d(TAG, "Photo capture succeeded: $savedUri")
+                        override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                            val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
+                            Log.d(TAG, "Photo capture succeeded: $savedUri")
 
-                        // We can only change the foreground Drawable using API level 23+ API
-                        // Update the gallery thumbnail with latest picture taken
-                        setGalleryThumbnail(savedUri)
+                            // We can only change the foreground Drawable using API level 23+ API
+                            // Update the gallery thumbnail with latest picture taken
+                            setGalleryThumbnail(savedUri)
 
-                        // If the folder selected is an external media directory, this is
-                        // unnecessary but otherwise other apps will not be able to access our
-                        // images unless we scan them using [MediaScannerConnection]
-                        val mimeType = MimeTypeMap.getSingleton()
+                            // If the folder selected is an external media directory, this is
+                            // unnecessary but otherwise other apps will not be able to access our
+                            // images unless we scan them using [MediaScannerConnection]
+                            val mimeType = MimeTypeMap.getSingleton()
                                 .getMimeTypeFromExtension(savedUri.toFile().extension)
-                        MediaScannerConnection.scanFile(
+                            MediaScannerConnection.scanFile(
                                 context,
                                 arrayOf(savedUri.toFile().absolutePath),
                                 arrayOf(mimeType)
-                        ) { _, uri ->
-                            Log.d(TAG, "Image capture scanned into media store: $uri")
-                        }
+                            ) { _, uri ->
+                                Log.d(TAG, "Image capture scanned into media store: $uri")
+                            }
 
-                        val handler = Handler(Looper.getMainLooper())
-                        handler.post{
-                            acibNext?.isEnabled = true
-                            mAcibShow?.isEnabled = true
-                            actvCount?.text = getOutputFileCount(p_platform_uuid, p_container_uuid).toString()
+                            val handler = Handler(Looper.getMainLooper())
+                            handler.post{
+                                acibNext?.isEnabled = true
+                                mAcibShow?.isEnabled = true
+                                actvCount?.text = getOutputFileCount(p_platform_uuid, p_container_uuid).toString()
+                            }
                         }
-                    }
-                })
+                    })
 
                 // Display flash animation to indicate that photo was captured
                 (view as ViewGroup).postDelayed({
                     (view as ViewGroup).foreground = ColorDrawable(Color.WHITE)
                     (view as ViewGroup).postDelayed(
-                            { (view as ViewGroup).foreground = null }, ANIMATION_FAST_MILLIS)
+                        { (view as ViewGroup).foreground = null }, ANIMATION_FAST_MILLIS)
                 }, ANIMATION_SLOW_MILLIS)
             }
         }

@@ -30,10 +30,20 @@ enum class TaskStatus(val displayName: String) {
     InProgress("In Progress"),
     Complete("Complete"),
 }
+
 open class Config(
     @PrimaryKey var name: String = "task",
     var value: String = "rNull"
 ) : RealmObject() {
+
+    private fun toLong(): Long {
+        return this.value.toLong()
+    }
+
+    fun cntPlusOne() {
+        this.value = (this.toLong() + 1).toString()
+    }
+
     @Required
     var status: String = TaskStatus.Open.name
     var statusEnum: TaskStatus

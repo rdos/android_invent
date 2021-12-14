@@ -1,13 +1,14 @@
 package ru.smartro.inventory.core
 
-import android.content.Context
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
+import io.realm.RealmList
+import io.realm.RealmObject
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import ru.smartro.inventory.Inull
+import ru.smartro.inventory.RealmRepo
 import ru.smartro.inventory.base.AbstractEntity
 import ru.smartro.inventory.base.AbstractO
 import ru.smartro.inventory.base.RestClient
@@ -51,10 +52,21 @@ class CatalogRequestRPC(): AbstractO(), Callback {
             responseI = Gson().fromJson(bodyString, ResponseI::class.java)
             log.info("onResponse responseO=${responseI}")
 //            db.clearData()
-            db.saveRealmEntityList(responseI.payload.container_platform_type)
-            db.saveRealmEntityList(responseI.payload.container_type)
-            db.saveRealmEntityList(responseI.payload.card_status)
-            db.saveRealmEntityList(responseI.payload.container_status)
+
+
+            val payLoad_IdEA = responseI.payload
+            mapFromServData_TO_SpinnerAData(payLoad_IdEA.container_platform_type, db)
+            db.saveRealmEntity(payLoad_IdEA.__TO_SpinnerAData())
+            mapFromServData_TO_SpinnerAData(payLoad_IdEA.container_type, db)
+            db.saveRealmEntity(payLoad_IdEA.mapTOCardStatus_AData())
+            // TODO: 14.12.2021 вариантЫ
+            fromTOservSPINNER_AData(payLoad_IdEA.container_status, db)
+            // TODO: 14.12.2021 поиск
+            db.saveFromRealmEntityList(payLoad_IdEA.card_status)
+            db.saveRealmEntity(payLoad_IdEA.mapTOCardStatus_AData())
+
+
+
         } catch (e: Exception) {
             bodyString?.let {
                 result.postValue(it)
@@ -63,12 +75,24 @@ class CatalogRequestRPC(): AbstractO(), Callback {
         }
 
 
+
 //        db.save {
 //            for(container_platform_type in responseI.payload.container_platform_type) {
 //                db.insert(container_platform_type)
 //            }
 //        }
 //
+    }
+
+    /**? //entityRealmS vs entitySRealm **/
+    //map ПОРА УЖЕ!!! convert TO convert FROM
+    fun mapFromServData_TO_SpinnerAData(entityRealmS: RealmList<out RealmObject>, dbRea: RealmRepo) {
+        dbRea.saveFromRealmEntityList(entityRealmS)
+    }
+
+    private fun fromTOservSPINNER_AData(payload: SpinnerADataRealmL, dbRea: RealmRepo) { /**, dbRea: RealmRepo===; **/
+        val entityRealmSpinner= payload.containerStatusRealm_ADataO()
+        dbRea.saveRealmEntity(entityRealmSpinner)
     }
 
     data class CatalogsRequestEntity(

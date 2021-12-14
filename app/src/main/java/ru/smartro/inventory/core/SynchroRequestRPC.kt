@@ -1,9 +1,6 @@
 package ru.smartro.inventory.core
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.google.gson.Gson
-import io.realm.RealmList
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -55,7 +52,7 @@ class SynchroRequestRPC(): AbstractO(), Callback {
             platformEntity.setStatusAfterSync()
             log.debug("save_-onResponse. saveRealmEntity status_id=${platformEntity.status_name}")
             log.debug("save_-onResponse. saveRealmEntity status_name=${platformEntity.status_id}")
-            platformEntity.setSynchroDisable()
+            platformEntity.afterSyncData(db())
             db().saveRealmEntity(platformEntity)
             log.debug("save_-onResponse. saveRealmEntity.after")
             result.postValue(true)

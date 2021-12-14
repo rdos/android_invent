@@ -3,14 +3,18 @@ package ru.smartro.inventory.database
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
+import androidx.appcompat.widget.AppCompatButton
 import com.google.gson.annotations.SerializedName
 import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
-import ru.smartro.inventory.Dnull
-import ru.smartro.inventory.Inull
-import ru.smartro.inventory.R
-import ru.smartro.inventory.Snull
+import ru.smartro.inventory.*
+
+import android.graphics.drawable.Drawable
+import android.util.Log
+import androidx.core.content.res.ResourcesCompat
+import ru.smartro.worknote.extensions.simulateClick
+
 
 open class PlatformEntityRealm(
     @PrimaryKey
@@ -50,15 +54,48 @@ open class PlatformEntityRealm(
     @SerializedName("containers")
     var containers: RealmList<ContainerEntityRealm> = RealmList(),
     var imageList: RealmList<ImageRealmEntity> = RealmList(),
+    @SerializedName("update_at")
+    var ins_upda_dt__device_todo: String = Snull,
+    @SerializedName("synchro_at")
+    var synchro_dt__device_todo: String = Snull
+,
     var is_synchro_start: Boolean = false,
 ) : RealmObject() {
 
-    fun setSynchroEnable() {
-        is_synchro_start = true
+
+    fun beforeSend() {
+    //beforeSave
+        this.coordinates?.let {
+           Log.e("ТОДО", "this.coordinates?")
+        }
+        this.coordinates = CoordinatesRealmEntity(this.coordinateLat, this.coordinateLng)
     }
 
-    fun setSynchroDisable() {
-        is_synchro_start = false
+    fun afterSyncData(db: RealmRepo) {
+        //beforeSave
+        this.is_synchro_start = false
+        //            1. сколько всего сделанных карточек
+        val cntSendedConfig = db.loadConfigL("cnt_platform__sended")
+        cntSendedConfig.cntPlusOne()
+        db.saveConfig(cntSendedConfig)
+    }
+
+    fun before_sendToServData__() {
+        //convert to datEtime
+        //ToServData_ обязательно!!!!!!!!!!!!
+        this.is_synchro_start = true
+    }
+
+
+    fun formatToServData__before() {
+        //convert
+        this.coordinateLat = this.coordinates?.lat!!
+        this.coordinateLng = this.coordinates?.lng!!
+        this.coordinates = null
+    }
+
+    fun afterSave() {
+        formatToServData__before()
     }
 
 //    companion object {
@@ -69,15 +106,13 @@ open class PlatformEntityRealm(
 //        }
     fun getIconDrawableResId(): Int {
     val result = when (this.status_id) {
-        1 ->  R.drawable.ic_map_fragment__bunker_green
+        1 ->  R.drawable.ic_map_fragment__bunker_blue
         2 ->  R.drawable.ic_map_fragment__bunker_blue
         3 -> R.drawable.ic_map_fragment__bunker_red
-        else -> {R.drawable.ic_map_fragment__bunker_orange}
+        else -> {R.drawable.ic_map_fragment__bunker_green}
     }
         return result
     }
-
-
 
     fun base64ToImage(encodedImage: String?): Bitmap {
         val decodedString: ByteArray =
@@ -89,7 +124,32 @@ open class PlatformEntityRealm(
         this.status_id = 1
         this.status_name = "Просто статус_RtextS"
     }
+
+
+    //Xiaomi.huawei
+    //ToD LiveEntity
+    private var tmp__cnt_enabled: Int = Inull
+    fun isEnableSave(apcDep__GUI: AppCompatButton): Boolean {
+    //    abstract class AbstractEntity  {
+        if (tmp__cnt_enabled >= 0) {
+            return true
+        }
+
+        if (this.containers.size <= 0) {
+            val image: Drawable? = ResourcesCompat.getDrawable(apcDep__GUI.resources, R.drawable.ic_exclamation_mark, null)
+//            apcDep__GUI.setLeftIcon(image)
+            this.tmp__cnt_enabled = 0
+            val dependenceButton = apcDep__GUI.getSubButton()
+            dependenceButton?.setCompoundDrawablesWithIntrinsicBounds(null, null,image,null)
+            dependenceButton?.simulateClick(500)
+//            dependenceButton?.simulateClick()
+            return false
+        }
+        // TODO: 14.12.2021 wt f?!;
+        return true
+    }
 }
+
 
 open class CoordinatesRealmEntity(
     var lat: Double = Dnull,
@@ -106,7 +166,9 @@ open class PlatformTypeRealm(
     var name: String = Snull,
     @SerializedName("organisation_id")
     var organisation_id: Int = Inull
-) : RealmObject()
+) : RealmObject() {
+
+}
 
 open class CardStatusTypeRealm(
     @SerializedName("id")
@@ -116,4 +178,6 @@ open class CardStatusTypeRealm(
     var name: String = Snull,
     @SerializedName("organisation_id")
     var organisation_id: Int = Inull
-) : RealmObject()
+) : RealmObject() {
+
+}

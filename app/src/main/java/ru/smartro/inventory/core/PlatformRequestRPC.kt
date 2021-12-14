@@ -47,9 +47,8 @@ class PlatformRequestRPC(val p_RestClient: RestClient, val p_context: Context?):
 //        val platformEntityRealms = Gson().fromJson<List<PlatformEntityRealm>>(json, typeToken)
             db.save {
                 for(payload in responseO.payload) {
-                    payload.coordinateLat = payload.coordinates?.lat!!
-                    payload.coordinateLng = payload.coordinates?.lng!!
-                    payload.coordinates = null
+                    payload.afterSave()
+
                     log.debug("save_-PlatformRequestRPC.uuid=${payload.uuid}")
                     db.insert(payload)
                 }

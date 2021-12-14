@@ -57,7 +57,7 @@ class PlatformFragmentContainerDlt(val p_container_uuid: String) : AbstractFragm
             log.debug("save_-acbSaveContainer.before")
             acbSaveContainer.isEnabled = false
             try {
-                if (isNotCheckedData(mTietNumber)) return@setOnClickListener
+//                if (isNotCheckedData(mTietNumber)) return@setOnClickListener
                 log.debug("save_-acbSaveContainer.after isCheckedData")
                 hideKeyboard()
                 mContainerEntityRealm.type = acsContainerType.selectedItem as ContainerTypeRealm?

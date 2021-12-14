@@ -25,6 +25,7 @@ import androidx.fragment.app.FragmentManager
 import java.io.File
 import android.media.MediaScannerConnection
 import android.os.Build
+import android.provider.AlarmClock
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.AppCompatTextView
@@ -34,17 +35,24 @@ import ru.smartro.inventory.R
 import ru.smartro.inventory.base.AbstractFragment
 import ru.smartro.worknote.extensions.showImmersive
 import java.util.Locale
+import android.provider.AlarmClock.EXTRA_MESSAGE
+import ru.smartro.inventory.base.ARGUMENT_NAME__CONTAINER_UUID
+import ru.smartro.inventory.base.ARGUMENT_NAME__PLATFORM_UUID
+
 
 val EXTENSION_WHITELIST = arrayOf("JPG")
 //class GalleryFragment(p_id: Int) internal constructor()
-class PhotoShowFragment(val p_platform_uuid: String, val p_container_uuid: String?) : AbstractFragment() {
+class PhotoShowFragment: AbstractFragment() {
 
     companion object {
-        fun newInstance(platformUuid: String, containerUuid: String?) = PhotoShowFragment(platformUuid, containerUuid)
+        fun newInstance(platformUuid: String, containerUuid: String?): PhotoShowFragment {
+            val fragment = PhotoShowFragment()
+            fragment.addArgument(platformUuid, containerUuid)
+            return fragment
+        }
     }
 
     private lateinit var mediaList: MutableList<File>
-
     /** Adapter class used to present a fragment containing one photo or video as a page */
     inner class MediaAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
         override fun getCount(): Int = mediaList.size

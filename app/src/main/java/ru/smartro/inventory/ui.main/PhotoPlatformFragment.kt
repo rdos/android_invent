@@ -1,16 +1,18 @@
 package ru.smartro.inventory.ui.main
 
-import android.R.attr
-import android.R.attr.path
 import android.net.Uri
 import ru.smartro.inventory.database.ImageRealmEntity
 import java.io.File
 
 
-class PhotoPlatformFragment(val p_platform_uuid: String) : AbstractPhotoFragment(p_platform_uuid, null) {
+class PhotoPlatformFragment : AbstractPhotoFragment() {
 
     companion object {
-        fun newInstance(platformUuid: String) = PhotoPlatformFragment(platformUuid)
+        fun newInstance(platformUuid: String): PhotoPlatformFragment {
+            val fragment = PhotoPlatformFragment()
+            fragment.addArgument(platformUuid, null)
+            return fragment
+        }
     }
 
     override fun onNextClick() {

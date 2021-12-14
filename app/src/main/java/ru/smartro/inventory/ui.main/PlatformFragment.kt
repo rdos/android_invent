@@ -25,10 +25,14 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class PlatformFragment(val p_platform_uuid: String) : AbstractFragment() {
+class PlatformFragment : AbstractFragment() {
 
     companion object {
-        fun newInstance(platformUuid: String) = PlatformFragment(platformUuid)
+        fun newInstance(platformUuid: String): PlatformFragment {
+            val fragment = PlatformFragment()
+            fragment.addArgument(platformUuid, null)
+            return fragment
+        }
     }
 
     private lateinit var mIn: LayoutInflater

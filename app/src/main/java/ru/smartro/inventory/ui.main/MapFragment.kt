@@ -181,8 +181,8 @@ class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCa
                 val point = Point(platform.coordinateLat, platform.coordinateLng)
                 mMapObjectCollection.addPlacemark(point, getIconViewProvider(platform.getIconDrawableResId()))
             } catch (e: Exception) {
-                log.error("addPlatformToMap", e)
-                log.error("addPlatformToMap plaform.id= ${platform.id}")
+                log.error("updateData", e)
+                log.error("updateData plaform.id= ${platform.id}")
             }
         }
     }

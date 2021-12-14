@@ -17,9 +17,18 @@ import ru.smartro.inventory.RealmRepo
 import ru.smartro.inventory.ui.main.LoginFragment
 import java.io.File
 
+const val ARGUMENT_NAME__PLATFORM_UUID = "ARGUMENT_NAME__PLATFORM_UUID"
+const val ARGUMENT_NAME__CONTAINER_UUID = "ARGUMENT_NAME__CONTAINER_UUID"
+
 abstract class AbstractFragment : Fragment() {
     private var mLastLocationGPS: android.location.Location? = null
     private var mLastLocationYandex: Location? = null
+    protected val p_platform_uuid: String by lazy {
+        getArgumentPlatformUUID()
+    }
+    protected val p_container_uuid: String? by lazy {
+        getArgumentContainerUUID()
+    }
     //    private lateinit var mLocation: android.location.Location
     private val TARGET_LOCATION = Point(-80.243123, 25.107800)
 
@@ -243,6 +252,26 @@ abstract class AbstractFragment : Fragment() {
 
     fun setLocationService() {
         mActivity.setLocationService()
+    }
+
+    fun addArgument(platformUuid: String, containerUuid: String?) {
+        val bundle = Bundle(2)
+        bundle.putString(ARGUMENT_NAME__PLATFORM_UUID, platformUuid)
+        // TODO: 10.12.2021 let на всякий П???
+        containerUuid?.let {
+            bundle.putString(ARGUMENT_NAME__CONTAINER_UUID, containerUuid)
+        }
+        this.arguments = bundle
+    }
+
+    private fun getArgumentPlatformUUID(): String {
+        val result = requireArguments().getString(ARGUMENT_NAME__PLATFORM_UUID, Snull)
+        return result
+    }
+
+    private fun getArgumentContainerUUID(): String? {
+        val result = requireArguments().getString(ARGUMENT_NAME__CONTAINER_UUID)
+        return result
     }
 
 //    override fun onLocationChanged(location: android.location.Location) {

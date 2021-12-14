@@ -17,7 +17,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.MimeTypeMap
-import android.widget.ImageButton
 import androidx.annotation.Px
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.appcompat.widget.AppCompatTextView
@@ -34,7 +33,7 @@ import com.bumptech.glide.request.RequestOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.smartro.inventory.R
-import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.inventory.base.AbstrActF
 import ru.smartro.inventory.showErrorToast
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -58,7 +57,7 @@ const val ANIMATION_SLOW_MILLIS = 100L
  * - Photo taking
  * - Image analysis
 :()*/
-abstract class AbstractPhotoFragment : AbstractFragment() {
+abstract class AbstrActF : AbstrActF() {
 
     companion object {
 

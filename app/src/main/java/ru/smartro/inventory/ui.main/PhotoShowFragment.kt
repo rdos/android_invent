@@ -25,24 +25,20 @@ import androidx.fragment.app.FragmentManager
 import java.io.File
 import android.media.MediaScannerConnection
 import android.os.Build
-import android.provider.AlarmClock
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatImageButton
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import ru.smartro.inventory.R
-import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.inventory.base.AbstrActF
 import ru.smartro.worknote.extensions.showImmersive
 import java.util.Locale
-import android.provider.AlarmClock.EXTRA_MESSAGE
-import ru.smartro.inventory.base.ARGUMENT_NAME__CONTAINER_UUID
 import ru.smartro.inventory.base.ARGUMENT_NAME__PLATFORM_UUID
 
 
 val EXTENSION_WHITELIST = arrayOf("JPG")
 //class GalleryFragment(p_id: Int) internal constructor()
-class PhotoShowFragment: AbstractFragment() {
+class PhotoShowFragment: AbstrActF() {
 
     companion object {
         fun newInstance(platformUuid: String, containerUuid: String?): PhotoShowFragment {

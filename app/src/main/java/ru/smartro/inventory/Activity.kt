@@ -17,7 +17,7 @@ import com.yandex.mapkit.location.*
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import ru.smartro.inventory.base.AbstractAct
-import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.inventory.base.AbstrActF
 import ru.smartro.inventory.database.Config
 import ru.smartro.inventory.ui.main.LoginFragment
 import ru.smartro.inventory.ui.main.MapFragment
@@ -34,7 +34,7 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
     private var mIsCallonBackPressed: Boolean = true
     private var mLocationManager: LocationManager? = null
     private lateinit var mMapKit: MapKit
-    private var mLastShowFragment: AbstractFragment? = null
+    private var mLastShowFragment: AbstrActF? = null
 
     val db: RealmRepo by lazy {
         //Remember to call close() on all Realm instances.
@@ -184,12 +184,12 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
         return realmConfigBuilder.build()
     }
 
-    fun showFragment(fragment: AbstractFragment) {
+    fun showFragment(fragment: AbstrActF) {
         log.debug("showFragment.before")
          showFragment(R.id.fl_activity, fragment)
     }
 
-    fun showFragment(container: Int, fragment: AbstractFragment) {
+    fun showFragment(container: Int, fragment: AbstrActF) {
         log.info("showFragment.before")
         mLastShowFragment?.onCloseFragment()
         fragment.lastFragmentClazz = mLastShowFragment?.javaClass?.simpleName
@@ -199,7 +199,7 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
             .commitNow()
 //TOdo            .commitNow()
     }
-    fun showNextFragment(fragment: AbstractFragment) {
+    fun showNextFragment(fragment: AbstrActF) {
         fragment.lastFragmentClazz = mLastShowFragment?.javaClass?.simpleName
         mLastShowFragment = fragment
         supportFragmentManager.beginTransaction()
@@ -225,7 +225,7 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
                 if (fragment == null) {
                     mLastShowFragment = null
                 } else {
-                    mLastShowFragment = fragment as AbstractFragment
+                    mLastShowFragment = fragment as AbstrActF
                 }
             }
 

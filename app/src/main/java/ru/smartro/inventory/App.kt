@@ -5,7 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.yandex.mapkit.MapKitFactory
-import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.inventory.base.AbstrActF
 import ru.smartro.inventory.base.AbstractO
 import ru.smartro.worknote.extensions.showImmersive
 
@@ -76,7 +76,7 @@ private const val URL_RPC_STAGE = "https://worknote-back.stage.smartro.ru/api/rp
 private const val URL_RPC_RC = "https://worknote-back.rc.smartro.ru/api/rpc"
 private const val URL_RPC_PROD = "https://wn-api.smartro.ru/api/rpc"
 
-fun AbstractFragment.showErrorToast(text: String? = "") {
+fun AbstrActF.showErrorToast(text: String? = "") {
     try {
         Toast.makeText(this.context, text, Toast.LENGTH_SHORT).show()
     } catch (e: Exception) {
@@ -84,7 +84,7 @@ fun AbstractFragment.showErrorToast(text: String? = "") {
     }
 }
 
-fun AbstractFragment.showErrorDialog(text: String? = "") {
+fun AbstrActF.showErrorDialog(text: String? = "") {
     view?.let {
         AlertDialog.Builder(it.context, android.R.style.Theme_Material_Dialog)
         .setTitle(getString(R.string.delete_title))

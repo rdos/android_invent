@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.smartro.inventory.R
-import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.inventory.base.AbstrActF
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.CatalogRequestRPC
 import ru.smartro.inventory.core.OwnerRequest
@@ -18,7 +18,7 @@ import ru.smartro.inventory.database.Config
 import ru.smartro.inventory.database.OwnerResponse
 
 //     android:background="?android:attr/selectableItemBackground">
-class OwnerFragment : AbstractFragment(){
+class OwnerFragment : AbstrActF(){
     private lateinit var viewModel: OwnerViewModel
 //
 

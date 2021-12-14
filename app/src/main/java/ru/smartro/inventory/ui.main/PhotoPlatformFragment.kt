@@ -5,7 +5,7 @@ import ru.smartro.inventory.database.ImageRealmEntity
 import java.io.File
 
 
-class PhotoPlatformFragment : AbstractPhotoFragment() {
+class PhotoPlatformFragment : AbstrActF() {
 
     companion object {
         fun newInstance(platformUuid: String): PhotoPlatformFragment {

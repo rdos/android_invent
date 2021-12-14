@@ -5,7 +5,7 @@ import ru.smartro.inventory.database.ImageRealmEntity
 import java.io.File
 import java.lang.Exception
 
-class PhotoContainerFragment : AbstractPhotoFragment() {
+class PhotoContainerFragment : AbstrActF() {
 
     companion object {
         fun newInstance(platformUuid: String, containerUuid: String): PhotoContainerFragment {

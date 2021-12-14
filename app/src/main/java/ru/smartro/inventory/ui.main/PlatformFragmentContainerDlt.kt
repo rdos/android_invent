@@ -13,16 +13,15 @@ import androidx.appcompat.widget.AppCompatSpinner
 import androidx.lifecycle.ViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import okhttp3.internal.filterList
 import ru.smartro.inventory.R
-import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.inventory.base.AbstrActF
 import ru.smartro.inventory.database.ContainerStatusRealm
 import ru.smartro.inventory.database.ContainerTypeRealm
 import ru.smartro.inventory.showErrorToast
 import java.lang.Exception
 
 
-class PlatformFragmentContainerDlt : AbstractFragment() {
+class PlatformFragmentContainerDlt : AbstrActF() {
     private lateinit var mTietNumber: TextInputEditText
     private lateinit var mTilNumber: TextInputLayout
 

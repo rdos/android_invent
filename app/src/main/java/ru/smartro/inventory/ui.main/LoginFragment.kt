@@ -2,7 +2,6 @@ package ru.smartro.inventory.ui.main
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,13 +14,13 @@ import androidx.lifecycle.ViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import ru.smartro.inventory.BuildConfig
-import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.inventory.base.AbstrActF
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.LoginRequest
 import ru.smartro.inventory.showErrorToast
 
 
-class LoginFragment : AbstractFragment(){
+class LoginFragment : AbstrActF(){
 
     companion object {
         fun newInstance() = LoginFragment()

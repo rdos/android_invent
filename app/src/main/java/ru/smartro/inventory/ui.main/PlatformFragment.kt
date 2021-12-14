@@ -8,13 +8,12 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.lifecycle.ViewModel
 import ru.smartro.inventory.R
-import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.inventory.base.AbstrActF
 
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatCheckBox
-import androidx.appcompat.widget.AppCompatTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import ru.smartro.inventory.core.*
@@ -25,7 +24,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class PlatformFragment : AbstractFragment() {
+class PlatformFragment : AbstrActF() {
 
     companion object {
         fun newInstance(platformUuid: String): PlatformFragment {
@@ -93,6 +92,9 @@ class PlatformFragment : AbstractFragment() {
             try {
                 if (isNotCheckedData(tietLength)) return@setOnClickListener
                 if (isNotCheckedData(tietWidth)) return@setOnClickListener
+                if (isNotCheckedData(acbSave)) return@setOnClickListener
+                platformEntity.status_name = "Новая"
+                platformEntity.status_id = 1
                 log.debug("save_-acbSaveOnClick.after isCheckedData")
                 hideKeyboard()
                 platformEntity.datetime = currentTime()

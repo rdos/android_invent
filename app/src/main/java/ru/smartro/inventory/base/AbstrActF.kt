@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -20,7 +21,7 @@ import java.io.File
 const val ARGUMENT_NAME__PLATFORM_UUID = "ARGUMENT_NAME__PLATFORM_UUID"
 const val ARGUMENT_NAME__CONTAINER_UUID = "ARGUMENT_NAME__CONTAINER_UUID"
 
-abstract class AbstractFragment : Fragment() {
+abstract class AbstrActF : Fragment() {
     private var mLastLocationGPS: android.location.Location? = null
     private var mLastLocationYandex: Location? = null
     protected val p_platform_uuid: String by lazy {
@@ -37,8 +38,16 @@ abstract class AbstractFragment : Fragment() {
         activity as Activity
     }
 
+    protected fun isNotCheckedData(tiet: AppCompatButton, entity: AbstractEntity): Boolean {
+        return !isCheckedData(tiet, til)
+    }
+
     protected fun isNotCheckedData(tiet: TextInputEditText, til: TextInputLayout? = null): Boolean {
         return !isCheckedData(tiet, til)
+    }
+
+    private fun isCheckedData(tiet: AppCompatButton, til: TextInputLayout?): Boolean {
+
     }
 
     private fun isCheckedData(tiet: TextInputEditText, til: TextInputLayout?): Boolean {
@@ -156,17 +165,17 @@ abstract class AbstractFragment : Fragment() {
         return postion
     }
 
-    protected fun showFragment(container: Int, fragment: AbstractFragment) {
+    protected fun showFragment(container: Int, fragment: AbstrActF) {
         //help
         mActivity.showFragment(container, fragment)
     }
 
-    protected fun showFragment(fragment: AbstractFragment) {
+    protected fun showFragment(fragment: AbstrActF) {
         //hel
         mActivity.showFragment(fragment)
     }
 
-    protected fun showNextFragment(fragment: AbstractFragment) {
+    protected fun showNextFragment(fragment: AbstrActF) {
         //he
         mActivity.showNextFragment(fragment)
     }

@@ -12,11 +12,11 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.inventory.base.AbstrActF
 import ru.smartro.inventory.database.ContainerEntityRealm
 
 
-class PlatformFragmentContainerS : AbstractFragment(){
+class PlatformFragmentContainerS : AbstrActF(){
 
     companion object {
         fun newInstance(platformUuid: String): PlatformFragmentContainerS {

@@ -22,7 +22,7 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.ui_view.ViewProvider
-import ru.smartro.inventory.base.AbstractFragment
+import ru.smartro.inventory.base.AbstrActF
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.*
 import ru.smartro.inventory.database.Config
@@ -32,7 +32,7 @@ import ru.smartro.worknote.extensions.simulateClick
 import java.util.*
 
 
-class MapFragment : AbstractFragment(), UserLocationObjectListener, Map.CameraCallback,
+class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
     MapObjectTapListener {
 
     companion object {

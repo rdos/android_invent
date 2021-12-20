@@ -58,8 +58,9 @@ class CatalogRequestRPC(): AbstractO(), Callback {
             mapFromServData_TO_SpinnerAData(payLoad_IdEA.container_platform_type, db)
             db.saveRealmEntity(payLoad_IdEA.__TO_SpinnerAData())
             mapFromServData_TO_SpinnerAData(payLoad_IdEA.container_type, db)
-            db.saveRealmEntity(payLoad_IdEA.mapTOCardStatus_AData())
+            db.saveRealmEntity(payLoad_IdEA.mapTOPlatform_TypeO())
             // TODO: 14.12.2021 вариантЫ
+            db.saveRealmEntity(payLoad_IdEA.mapTOCardStatus_AData())
             fromTOservSPINNER_AData(payLoad_IdEA.container_status, db)
             // TODO: 14.12.2021 поиск
             db.saveFromRealmEntityList(payLoad_IdEA.card_status)
@@ -91,8 +92,8 @@ class CatalogRequestRPC(): AbstractO(), Callback {
     }
 
     private fun fromTOservSPINNER_AData(payload: SpinnerADataRealmL, dbRea: RealmRepo) { /**, dbRea: RealmRepo===; **/
-        val entityRealmSpinner= payload.containerStatusRealm_ADataO()
-        dbRea.saveRealmEntity(entityRealmSpinner)
+        val entityRealmSpinner= payload.GETiDatASpinner()
+        dbRea.saveFromRealmEntityList(entityRealmSpinner)
     }
 
     data class CatalogsRequestEntity(

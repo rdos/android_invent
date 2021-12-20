@@ -16,6 +16,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatCheckBox
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import ru.smartro.inventory.Inull
 import ru.smartro.inventory.core.*
 import ru.smartro.inventory.database.ContainerEntityRealm
 import ru.smartro.inventory.database.PlatformTypeRealm
@@ -66,13 +67,14 @@ class PlatformFragment : AbstrActF() {
         )
         vidAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         acsVid.setAdapter(vidAdapter)
+        acsVid.setSelection(0)
 
 
         val platformType = db().loadPlatformType()
         val spAdataViewER = view.findViewById<AppCompatSpinner>(R.id.acs_platform_fragment__type)
         val typeAdapter = PlatformTypeAdapter__AData_Spinner(requireContext(), platformType)
         spAdataViewER.setAdapter(typeAdapter)
-        spAdataViewER.setSelection(0)
+        spAdataViewER.setSelection(Inull)
         val tietComment = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment__comment)
 
         val tietLength = view.findViewById<TextInputEditText>(R.id.tiet_platform_fragment__length)
@@ -88,8 +90,19 @@ class PlatformFragment : AbstrActF() {
 
                 if (isNotCheckedData(tietLength)) return@setOnClickListener
                 if (isNotCheckedData(tietWidth)) return@setOnClickListener
+
+
                 //                if (platformEntity.isEnableSave(acbSave) return@setOnClickListener
                 if (isNotEnableSave(acbSave, platformEntity)) return@setOnClickListener
+                if (acsVid.selectedItem.toString() == "Выберите вид") {
+                    showErrorToast("Выберите вид КП")
+                    return@setOnClickListener
+                }
+                val selectedplatformType = (spAdataViewER.selectedItem as PlatformTypeRealm)
+                if (selectedplatformType.id == Inull) {
+                    showErrorToast("${selectedplatformType.name} КП")
+                    return@setOnClickListener
+                }
                 platformEntity.status_name = "Новая"
                 platformEntity.status_id = 1
                 log.debug("save_-acbSaveOnClick.after isCheckedData")

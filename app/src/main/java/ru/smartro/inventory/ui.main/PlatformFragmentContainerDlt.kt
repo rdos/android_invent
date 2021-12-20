@@ -13,6 +13,7 @@ import androidx.appcompat.widget.AppCompatSpinner
 import androidx.lifecycle.ViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import ru.smartro.inventory.Inull
 import ru.smartro.inventory.R
 import ru.smartro.inventory.base.AbstrActF
 import ru.smartro.inventory.database.ContainerStatusRealm
@@ -59,13 +60,25 @@ class PlatformFragmentContainerDlt : AbstrActF() {
         acbSaveContainer.setOnClickListener {
             log.debug("save_-acbSaveContainer.before")
             acbSaveContainer.isEnabled = false
+
+
             try {
 //                if (isNotCheckedData(mTietNumber)) return@setOnClickListener
+                val selectedContainerStatus = (acsContainerStatus.selectedItem as ContainerStatusRealm)
+                if (selectedContainerStatus.id == Inull) {
+                    showErrorToast("Выберите состояние")
+                    return@setOnClickListener
+                }
+                val selectedContainerType = acsContainerType.selectedItem as ContainerTypeRealm
+                if (selectedContainerType.id == Inull) {
+                    showErrorToast("Выберите тип контейнера")
+                    return@setOnClickListener
+                }
                 log.debug("save_-acbSaveContainer.after isCheckedData")
                 hideKeyboard()
-                mContainerEntityRealm.type = acsContainerType.selectedItem as ContainerTypeRealm?
-                mContainerEntityRealm.container_status_id = (acsContainerStatus.selectedItem as ContainerStatusRealm).id
-                mContainerEntityRealm.container_status_name = (acsContainerStatus.selectedItem as ContainerStatusRealm).name
+                mContainerEntityRealm.type = selectedContainerType
+                mContainerEntityRealm.container_status_id = selectedContainerStatus.id
+                mContainerEntityRealm.container_status_name = selectedContainerStatus.name
                 mContainerEntityRealm.has_pedal = if(accbPedal.isChecked) 1 else 0
                 mContainerEntityRealm.number = mTietNumber.text.toString()
                 mContainerEntityRealm.comment = tietComment.text.toString()

@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatSpinner
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -17,8 +18,10 @@ import org.slf4j.LoggerFactory
 import ru.smartro.inventory.*
 import ru.smartro.inventory.RealmRepo
 import ru.smartro.inventory.database.PlatformEntityRealm
+import ru.smartro.inventory.database.PlatformTypeRealm
 import ru.smartro.inventory.ui.main.LoginFragment
 import java.io.File
+import kotlin.reflect.KProperty1
 
 const val ARGUMENT_NAME__PLATFORM_UUID = "ARGUMENT_NAME__PLATFORM_UUID"
 const val ARGUMENT_NAME__CONTAINER_UUID = "ARGUMENT_NAME__CONTAINER_UUID"
@@ -62,8 +65,6 @@ abstract class AbstrActF : Fragment() {
     protected fun isNotCheckedData(tiet: TextInputEditText, til: TextInputLayout? = null): Boolean {
         return !isCheckedData(tiet, til)
     }
-
-
 
     private fun isCheckedData(tiet: TextInputEditText, til: TextInputLayout?): Boolean {
         val errorText = "Поле обязательно для заполнения"

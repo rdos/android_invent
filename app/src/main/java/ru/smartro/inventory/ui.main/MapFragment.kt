@@ -120,6 +120,7 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
                 showErrorToast("containerStatus is Empty")
                 return@setOnClickListener
             }
+
             val containerType = db().loadContainerType()
             if (containerType.isSpinnerADataO()) {
                 showErrorToast("containerType is Empty")

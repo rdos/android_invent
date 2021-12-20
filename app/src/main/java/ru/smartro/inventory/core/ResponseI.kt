@@ -2,6 +2,7 @@ package ru.smartro.inventory.core
 
 import com.google.gson.annotations.SerializedName
 import io.realm.RealmList
+import ru.smartro.inventory.Inull
 import ru.smartro.inventory.Snull
 import ru.smartro.inventory.database.*
 
@@ -31,12 +32,12 @@ class SpinnerADataRealmL: RealmList<ContainerStatusRealm>() {
 
         fun containerStatusRealm_ADataO(): ContainerStatusRealm {
                 //                                                      mapTOCardStatus_AData
-                return ContainerStatusRealm(0, "Выберите Тип")
+                return ContainerStatusRealm(Inull, "Выберите состояние")
         }
 
         //getDEF_AbstractO GetIDatASpinneRrrrr
         fun GETiDatASpinner(): SpinnerADataRealmL {
-                val sp = SpinnerADataRealmL()
+                val sp = this
                 //containerStatus_to_AdataSPINNER
                 sp.add(this.containerStatusRealm_ADataO())
                 return sp
@@ -59,16 +60,16 @@ open class PayloadCatalog(
         fun mapTOPlatform_TypeO(): ContainerTypeRealm {
                 // //mApTO_SpinnerAData
                 // TODO: 14.12.2021 from O to I
-                return ContainerTypeRealm(0, "Выберите Тип")
+                return ContainerTypeRealm(Inull, "Выберите тип")
         }
 
         fun __TO_SpinnerAData(): PlatformTypeRealm {
                 //TODO: 01.10.2220 __TO_SpinnerAData
-                return PlatformTypeRealm(0, "Выберите Тип")
+                return PlatformTypeRealm(Inull, "Выберите тип")
         }
 
         fun mapTOCardStatus_AData(): CardStatusTypeRealm {
-                return CardStatusTypeRealm(0, "Выберите Тип")
+                return CardStatusTypeRealm(Inull, "Выберите тип")
         }
 
 

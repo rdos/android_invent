@@ -40,8 +40,7 @@
                 android:layout_margin="@dimen/margin_16"
                 android:text="@string/platform_fragment__save"
                 android:textColor="@color/purple_white_full"
-                android:backgroundTint="@color/purple_200"
-                android:backgroundTintMode="multiply"/>
+                android:backgroundTint="@color/purple_200"/>
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"

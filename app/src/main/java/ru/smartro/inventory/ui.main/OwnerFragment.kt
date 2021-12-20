@@ -98,7 +98,11 @@ class OwnerFragment : AbstrActF(){
 //            setAnimation(holder.itemView, position)
         }
 
+        override fun getItemViewType(position: Int): Int {
+            return super.getItemViewType(position)
         }
+
+    }
 
     private fun showNextFra(ownerId: Int) {
         val config = Config(name="Owner", value=ownerId.toString())

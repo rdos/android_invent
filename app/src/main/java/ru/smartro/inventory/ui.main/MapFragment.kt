@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatCheckBox
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -39,6 +40,9 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
         fun newInstance() = MapFragment()
     }
 
+    private lateinit var mActvInfoCreatedCnt: AppCompatTextView
+    private lateinit var mActvInfoSynchroCnt: AppCompatTextView
+    private lateinit var mActvInfoDiffCnt: AppCompatTextView
     private lateinit var mMapObjectCollection: MapObjectCollection
     private lateinit var mViewModel: MapViewModel
     private lateinit var mMapView: MapView
@@ -51,6 +55,19 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
         return view
     }
 
+
+    override fun onSynchroWork() {
+        setInfoData()
+    }
+
+    private fun setInfoData() {
+        val cntCreateConfig = db().loadConfigL("cnt_platform__create")
+        val cntSyncConfig = db().loadConfigL("cnt_platform__sync")
+        val cntDiff = cntCreateConfig.toLong() - cntSyncConfig.toLong()
+        mActvInfoCreatedCnt.text = "Создано : ${cntCreateConfig.value}"
+        mActvInfoSynchroCnt.text = "Отправлено : ${cntSyncConfig.value}"
+        mActvInfoDiffCnt.text = "Ожидают отправки : ${cntDiff}"
+    }
 
     private fun gotoMyLocation() {
         log.debug("gotoMyLocation.before")
@@ -67,16 +84,10 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
     }
 
     private fun gotoCreatePlatform() {
-//        val nextId = Realm.getDefaultInstance().where(PlatformEntityRealm::class.java).max("id")?.toInt()?.plus(1)?: Inull
-        val platformEntity: PlatformEntityRealm = db().createPlatformEntity(UUID.randomUUID().toString())
-//        if (platformEntity.isOnull()) {
+        val platformEntity = PlatformEntityRealm(UUID.randomUUID().toString())
+        platformEntity.beforeCreate()
+        db().saveRealmEntity(platformEntity)
         showNextFragment(PhotoPlatformFragment.newInstance(platformEntity.uuid))
-//        }
-//        val platformEntity = PlatformEntityRealm((0..2002).random())
-//        db().save {
-//            db().insert(platformEntity)
-//        }
-//        showNextFragment(PlatformPhotoFragment.newInstance(platformEntity.id))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -89,6 +100,11 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
 
         mMapView = view.findViewById<View>(R.id.mapview) as MapView
         mMapObjectCollection = mMapView.map.mapObjects
+
+        mActvInfoCreatedCnt = view.findViewById(R.id.actv_map_fragment__info_created_cnt)
+        mActvInfoSynchroCnt = view.findViewById(R.id.actv_map_fragment__info_synchro_cnt)
+        mActvInfoDiffCnt = view.findViewById(R.id.actv_map_fragment__info_diff_cnt)
+        setInfoData()
 
         showHideActionBar(true)
 

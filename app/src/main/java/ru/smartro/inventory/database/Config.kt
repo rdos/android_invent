@@ -36,7 +36,7 @@ open class Config(
     var value: String = "rNull"
 ) : RealmObject() {
 
-    private fun toLong(): Long {
+    fun toLong(): Long {
         return this.value.toLong()
     }
 

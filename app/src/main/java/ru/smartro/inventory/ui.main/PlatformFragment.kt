@@ -91,7 +91,6 @@ class PlatformFragment : AbstrActF() {
                 if (isNotCheckedData(tietLength)) return@setOnClickListener
                 if (isNotCheckedData(tietWidth)) return@setOnClickListener
 
-
                 //                if (platformEntity.isEnableSave(acbSave) return@setOnClickListener
                 if (isNotEnableSave(acbSave, platformEntity)) return@setOnClickListener
                 if (acsVid.selectedItem.toString() == "Выберите вид") {
@@ -103,8 +102,8 @@ class PlatformFragment : AbstrActF() {
                     showErrorToast("${selectedplatformType.name} КП")
                     return@setOnClickListener
                 }
-                platformEntity.status_name = "Новая"
-                platformEntity.status_id = 1
+//                platformEntity.status_name = "Новая"
+//                platformEntity.status_id = 1
                 log.debug("save_-acbSaveOnClick.after isCheckedData")
                 hideKeyboard()
                 platformEntity.datetime = getCurrdateTime()
@@ -129,14 +128,8 @@ class PlatformFragment : AbstrActF() {
                 platformEntity.width = tietWidth.text.toString().toInt()
                 platformEntity.comment = tietComment.text.toString()
 
-                platformEntity.before_sendToServData__()
+                platformEntity.afterCreate(db())
                 db().saveRealmEntity(platformEntity)
-
-
-                //cnt=statistics
-                val cntCreatedConfig = db().loadConfigL("cnt_platform__created")
-                cntCreatedConfig.cntPlusOne()
-                db().saveConfig(cntCreatedConfig)
 
                 log.debug("save_-acbSaveOnClick.saveRealmEntity")
                 deleteOutputDirectory(p_platform_uuid, null)

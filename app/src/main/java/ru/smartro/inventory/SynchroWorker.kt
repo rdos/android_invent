@@ -12,6 +12,8 @@ import android.provider.Settings.Secure
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.work.*
 import com.google.gson.Gson
@@ -20,12 +22,16 @@ import io.realm.Realm
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import ru.smartro.inventory.core.SynchroRequestRPC
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+
+
+
 
 //https://code.luasoftware.com/tutorials/android/coroutineworker-use-kotlin-coroutines-in-work-manager/
 class SynchroWorker(
-    private val context: Context,
+    private val p_context: Context,
     params: WorkerParameters
-) : CoroutineWorker(context, params) {
+) : CoroutineWorker(p_context, params) {
 
     companion object {
         fun run() : LiveData<WorkInfo> {
@@ -37,7 +43,7 @@ class SynchroWorker(
     }
 
     private val TAG = "SynchroWorker--AaA"
-    private val mDeviceId = Secure.getString(context.contentResolver, Secure.ANDROID_ID)
+    private val mDeviceId = Secure.getString(p_context.contentResolver, Secure.ANDROID_ID)
     private val mMinutesInSec = 30 * 60
 
     override suspend fun doWork(): Result = coroutineScope {
@@ -51,6 +57,7 @@ class SynchroWorker(
         while (true) {
             synchronizeData(db)
             delayS(16000)
+            sendMessage()
         }
         Result.success()
     }
@@ -60,11 +67,19 @@ class SynchroWorker(
         delay(timeMillis)
         Log.d(TAG, "save_-delayS.after stop")
     }
+
+    private suspend fun sendMessage() {
+        Log.d("sender", "Broadcasting message")
+        val intent = Intent("custom-event-name")
+        // You can also include some extra data.
+        intent.putExtra("message", "This is my message!")
+        LocalBroadcastManager.getInstance(p_context).sendBroadcast(intent)
+    }
+
     private suspend fun synchronizeData(db: RealmRepo) {
         Log.w(TAG, "save_-synchronizeData.before thread_id=${Thread.currentThread().id}")
         val platformEntityS = db.loadPlatformEntitySSynchro()
         for(platformEntity in platformEntityS) {
-
             Log.i(TAG, "save_-synchronizeData. platformEntity=${platformEntity.uuid}")
             SynchroRequestRPC().callAsyncRPC(platformEntity)
         }
@@ -118,9 +133,10 @@ class SynchroWorker(
 
     private fun dismissNotification() {
         Log.d(TAG, "dismissNotification.before")
-        val notificationManager = NotificationManagerCompat.from(context)
+        val notificationManager = NotificationManagerCompat.from(p_context)
         notificationManager.cancel(1)
     }
+
 
 }
 

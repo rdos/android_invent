@@ -78,7 +78,7 @@
                     <androidx.appcompat.widget.AppCompatSpinner
                         android:id="@+id/acs_platform_fragment__type"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="61dp"
                         />
                 </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -55,58 +55,61 @@ open class PlatformEntityRealm(
     var containers: RealmList<ContainerEntityRealm> = RealmList(),
     var imageList: RealmList<ImageRealmEntity> = RealmList(),
     @SerializedName("update_at")
-    var ins_upda_dt__device_todo: String = Snull,
+    var update_at: String = Snull,
     @SerializedName("synchro_at")
-    var synchro_dt__device_todo: String = Snull
-,
-    var is_synchro_start: Boolean = false,
+    var synchro_at: String = Snull,
+    var is_allow_synchro: Boolean = false,
 ) : RealmObject() {
 
-
-    fun beforeSend() {
-    //beforeSave
-        this.coordinates?.let {
-           Log.e("ТОДО", "this.coordinates?")
-        }
-        this.coordinates = CoordinatesRealmEntity(this.coordinateLat, this.coordinateLng)
+    fun beforeSync() {
+        // TODO: 20.12.2021 ?
+        this.is_allow_synchro = false
     }
 
-    fun afterSyncData(db: RealmRepo) {
-        //beforeSave
-        this.is_synchro_start = false
+    fun afterFailSync() {
+        this.is_allow_synchro = true
+    }
+
+    fun afterSync(db: RealmRepo) {
+        this.is_allow_synchro = false
+        this.status_id = 1
+        this.status_name = "Просто статус_RtextS"
+        this.synchro_at = getDeviceTime()
         //            1. сколько всего сделанных карточек
-        val cntSendedConfig = db.loadConfigL("cnt_platform__sended")
-        cntSendedConfig.cntPlusOne()
-        db.saveConfig(cntSendedConfig)
+        val cntSyncConfig = db.loadConfigL("cnt_platform__sync")
+        cntSyncConfig.cntPlusOne()
+        db.saveConfig(cntSyncConfig)
     }
 
-    fun before_sendToServData__() {
-        //convert to datEtime
-        //ToServData_ обязательно!!!!!!!!!!!!
-        this.is_synchro_start = true
+    fun afterCreate(db: RealmRepo) {
+        this.is_allow_synchro = true
+        this.update_at = getDeviceTime()
+        val cnt = db.loadConfigL("cnt_platform__create")
+        cnt.cntPlusOne()
+        db.saveConfig(cnt)
+    }
+
+    fun beforeCreate() {
+        this.is_allow_synchro = false
     }
 
 
-    fun formatToServData__before() {
-        //convert
+    fun convertFromServData() {
         this.coordinateLat = this.coordinates?.lat!!
         this.coordinateLng = this.coordinates?.lng!!
         this.coordinates = null
     }
 
-    fun afterSave() {
-        formatToServData__before()
+    fun convertToServData() {
+        this.coordinates?.let {
+            Log.e("ТОДО", "this.coordinates?")
+        }
+        this.coordinates = CoordinatesRealmEntity(this.coordinateLat, this.coordinateLng)
     }
 
-//    companion object {
-//        fun from(responseBody: Array<Any>?, java: Class<PlatformEntityRealm>): PlatformEntityRealm {
-//            val body = responseBody?: Snull
-//            Log.i("ResponseO.from body", "=${body}")
-//            return Gson().fromJson(body, java)
-//        }
     fun getIconDrawableResId(): Int {
     val result = when (this.status_id) {
-        1 ->  R.drawable.ic_map_fragment__bunker_blue
+        1 ->  R.drawable.ic_map_fragment__bunker_green
         2 ->  R.drawable.ic_map_fragment__bunker_blue
         3 -> R.drawable.ic_map_fragment__bunker_red
         else -> {R.drawable.ic_map_fragment__bunker_green}
@@ -119,12 +122,6 @@ open class PlatformEntityRealm(
             Base64.decode(encodedImage?.replace("data:image/png;base64,", ""), Base64.DEFAULT)
         return BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
     }
-
-    fun setStatusAfterSync() {
-        this.status_id = 1
-        this.status_name = "Просто статус_RtextS"
-    }
-
 
     //Xiaomi.huawei
     //ToD LiveEntity

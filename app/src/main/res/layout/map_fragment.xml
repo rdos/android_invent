@@ -23,6 +23,35 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:orientation="vertical"
+            android:layout_marginEnd="@dimen/margin_32"
+            >
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/actv_map_fragment__info_created_cnt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dark_red"
+                android:text="Создано : "/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/actv_map_fragment__info_synchro_cnt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dark_red"
+                android:text="Отправлено : "/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/actv_map_fragment__info_diff_cnt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/dark_red"
+                android:text="Ожидают отправки : "
+                />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
 
         <androidx.appcompat.widget.AppCompatCheckBox
             android:id="@+id/accb_map_fragment__is_gps_mode"

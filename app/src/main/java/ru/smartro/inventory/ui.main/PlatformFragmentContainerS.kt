@@ -28,7 +28,7 @@ class PlatformFragmentContainerS : AbstrActF(){
     //
     inner class PlatformContainerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
-        val tv = itemView.findViewById<AppCompatTextView>(R.id.aptv_platform_fragment_container__rv__item)
+        val aptvIndex = itemView.findViewById<AppCompatTextView>(R.id.aptv_platform_fragment_container__rv__index)
         val llc = itemView.findViewById<LinearLayoutCompat>(R.id.llc_platform_fragment_container__rv__item)
         override fun onClick(p0: View?) {
 //            TODO("Not yet implemented")
@@ -100,7 +100,7 @@ class PlatformFragmentContainerS : AbstrActF(){
 
         override fun onBindViewHolder(holder: PlatformContainerViewHolder, position: Int) {
             val container = platformContainerList.get(position)
-            holder.tv.text = container.number
+            holder.aptvIndex.text = (position + 1).toString()
 
             holder.llc.rootView.setOnClickListener {
                 showNextFragment(PhotoContainerFragment.newInstance(p_platform_uuid, container.uuid))

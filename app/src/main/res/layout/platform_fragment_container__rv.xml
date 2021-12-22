@@ -29,9 +29,9 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_map_fragment__bunker_blue"/>
+            android:src="@drawable/ic_platform_fragment_container__rv__euro_blue"/>
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/aptv_platform_fragment_container__rv__item"
+            android:id="@+id/aptv_platform_fragment_container__rv__index"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/margin_min"

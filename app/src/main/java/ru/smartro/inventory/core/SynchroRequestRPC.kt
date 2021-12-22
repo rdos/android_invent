@@ -12,7 +12,6 @@ import ru.smartro.inventory.getRpcUrl
 import java.io.IOException
 
 class SynchroRequestRPC: AbstractO() {
-    private lateinit var mPlatformUuid: String
 
     fun callExecuteRPC(platformEntity: PlatformEntityRealm) {
         log.debug("callAsyncRPC.before" )
@@ -20,7 +19,6 @@ class SynchroRequestRPC: AbstractO() {
         val ownerId = db.loadConfigInt("Owner")
 
         synchroRequestEntity.payload.organisation_id = ownerId
-        mPlatformUuid = platformEntity.uuid
         platformEntity.convertToServData()
         synchroRequestEntity.payload.data.add(platformEntity)
         val requestBody = synchroRequestEntity.toRequestBody()
@@ -38,7 +36,8 @@ class SynchroRequestRPC: AbstractO() {
 
             val synchroRPCResponse = Gson().fromJson(bodyString, SynchroRPCResponse::class.java)
             if (synchroRPCResponse.error.isEmpty()) {
-                platformEntity.afterSync(db())
+                platformEntity.afterSync(db)
+                platformEntity.convertFromServData()
                 log.debug("save_-onResponse. saveRealmEntity status_id=${platformEntity.status_name}")
                 log.debug("save_-onResponse. saveRealmEntity status_name=${platformEntity.status_id}")
                 db.saveRealmEntity(platformEntity)

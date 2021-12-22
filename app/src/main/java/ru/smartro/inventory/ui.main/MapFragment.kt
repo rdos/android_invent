@@ -1,5 +1,9 @@
 package ru.smartro.inventory.ui.main
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,9 +14,8 @@ import androidx.appcompat.widget.AppCompatCheckBox
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import ru.smartro.inventory.R
-import ru.smartro.inventory.isSpinnerADataO
 import com.yandex.mapkit.Animation
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Point
@@ -23,12 +26,13 @@ import com.yandex.mapkit.mapview.MapView
 import com.yandex.mapkit.user_location.UserLocationObjectListener
 import com.yandex.mapkit.user_location.UserLocationView
 import com.yandex.runtime.ui_view.ViewProvider
+import ru.smartro.inventory.*
 import ru.smartro.inventory.base.AbstrActF
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.*
 import ru.smartro.inventory.database.Config
 import ru.smartro.inventory.database.PlatformEntityRealm
-import ru.smartro.inventory.showErrorToast
+import ru.smartro.inventory.showErrorDialog
 import ru.smartro.worknote.extensions.simulateClick
 import java.util.*
 
@@ -40,12 +44,21 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
         fun newInstance() = MapFragment()
     }
 
-    private lateinit var mActvInfoCreatedCnt: AppCompatTextView
-    private lateinit var mActvInfoSynchroCnt: AppCompatTextView
-    private lateinit var mActvInfoDiffCnt: AppCompatTextView
+    private lateinit var mAcbInfo: AppCompatButton
+//    private lateinit var mActvInfoSynchroCnt: AppCompatTextView
+//    private lateinit var mActvInfoDiffCnt: AppCompatTextView
     private lateinit var mMapObjectCollection: MapObjectCollection
     private lateinit var mViewModel: MapViewModel
     private lateinit var mMapView: MapView
+
+    private val mMessageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            // Get extra data included in the Intent
+            val message = intent.getStringExtra("message")
+            log.info("mMessageReceiver $message")
+            setInfoData()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,17 +69,13 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
     }
 
 
-    override fun onSynchroWork() {
-        setInfoData()
-    }
-
     private fun setInfoData() {
         val cntCreateConfig = db().loadConfigL("cnt_platform__create")
         val cntSyncConfig = db().loadConfigL("cnt_platform__sync")
         val cntDiff = cntCreateConfig.toLong() - cntSyncConfig.toLong()
-        mActvInfoCreatedCnt.text = "Создано : ${cntCreateConfig.value}"
-        mActvInfoSynchroCnt.text = "Отправлено : ${cntSyncConfig.value}"
-        mActvInfoDiffCnt.text = "Ожидают отправки : ${cntDiff}"
+        mAcbInfo.text = "${cntCreateConfig.value} / ${cntSyncConfig.value}"
+//        mActvInfoSynchroCnt.text = "Отправлено : ${cntSyncConfig.value}"
+//        mActvInfoDiffCnt.text = "Ожидают отправки : ${cntDiff}"
     }
 
     private fun gotoMyLocation() {
@@ -101,9 +110,24 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
         mMapView = view.findViewById<View>(R.id.mapview) as MapView
         mMapObjectCollection = mMapView.map.mapObjects
 
-        mActvInfoCreatedCnt = view.findViewById(R.id.actv_map_fragment__info_created_cnt)
-        mActvInfoSynchroCnt = view.findViewById(R.id.actv_map_fragment__info_synchro_cnt)
-        mActvInfoDiffCnt = view.findViewById(R.id.actv_map_fragment__info_diff_cnt)
+        mAcbInfo = view.findViewById(R.id.acb_map_fragment__info)
+        mAcbInfo.setOnClickListener {
+            val cntCreateConfig = db().loadConfigL("cnt_platform__create")
+            val cntSyncConfig = db().loadConfigL("cnt_platform__sync")
+            val cntDiff = cntCreateConfig.toLong() - cntSyncConfig.toLong()
+
+//        mActvInfoSynchroCnt.text = "Отправлено : ${cntSyncConfig.value}"
+//        mActvInfoDiffCnt.text = "Ожидают отправки : ${cntDiff}"
+            var textErrorDialog = "Создано : ${cntCreateConfig.value}"
+            textErrorDialog += "\nОтправлено : ${cntSyncConfig.value}"
+            textErrorDialog += "\nОжидают отправки : ${cntDiff}"
+
+            val lastSynchroDateTime = db().loadConfig("last_synchro_datetime")
+            textErrorDialog += "\n\nПоследняя успешная синхронизация : ${lastSynchroDateTime}"
+            showInfoDialog(textErrorDialog)
+        }
+//        mActvInfoSynchroCnt = view.findViewById(R.id.actv_map_fragment__info_synchro_cnt)
+//        mActvInfoDiffCnt = view.findViewById(R.id.actv_map_fragment__info_diff_cnt)
         setInfoData()
 
         showHideActionBar(true)
@@ -162,7 +186,16 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
         callPlatformRequest()
         mMapObjectCollection.addTapListener(this)
 
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(mMessageReceiver,
+            IntentFilter("custom-event-name")
+        )
+
         apbCreatePlatform.simulateClick()
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(mMessageReceiver)
     }
 
 

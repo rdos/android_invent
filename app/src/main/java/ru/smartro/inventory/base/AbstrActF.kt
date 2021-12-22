@@ -299,9 +299,6 @@ abstract class AbstrActF : Fragment() {
         return result
     }
 
-    open fun onSynchroWork() {
-
-    }
 
 //    override fun onLocationChanged(location: android.location.Location) {
 //        log.warn("onLocationChanged.before")

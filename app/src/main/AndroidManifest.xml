@@ -16,7 +16,7 @@
         android:roundIcon="@drawable/ic_app"
         android:supportsRtl="true"
 
-        android:theme="@style/Theme.InventoryFact">
+        android:theme="@style/Theme.Inventory">
         <activity
             android:name=".Activity"
             android:exported="true"

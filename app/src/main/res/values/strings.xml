@@ -12,4 +12,5 @@
     <string name="owner_fragment__choose_owner">Выберите организацию</string>
     <string name="delete_dialog">Удалить это фото?</string>
     <string name="delete_title">Подтвердить</string>
+    <string name="info_title">Статистика</string>
 </resources>

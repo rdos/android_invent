@@ -70,6 +70,10 @@ open class PlatformEntityRealm(
         val cntSyncConfig = db.loadConfigL("cnt_platform__sync")
         cntSyncConfig.cntPlusOne()
         db.saveConfig(cntSyncConfig)
+
+        val lastSynchroDateTime = Config("last_synchro_datetime", this.synchro_at)
+        db.saveConfig(lastSynchroDateTime)
+
     }
 
     fun afterCreate(db: RealmRepo) {
@@ -116,17 +120,17 @@ open class PlatformEntityRealm(
 
     //Xiaomi.huawei
     //ToD LiveEntity
-    private var tmp__cnt_enabled: Int = Inull
+    private var tmp_cnt_enabled: Int = Inull
     fun isEnableSave(apcDep__GUI: AppCompatButton): Boolean {
     //    abstract class AbstractEntity  {
-        if (tmp__cnt_enabled >= 0) {
+        if (tmp_cnt_enabled >= 0) {
             return true
         }
 
         if (this.containers.size <= 0) {
             val image: Drawable? = ResourcesCompat.getDrawable(apcDep__GUI.resources, R.drawable.ic_exclamation_mark, null)
 //            apcDep__GUI.setLeftIcon(image)
-            this.tmp__cnt_enabled = 0
+            this.tmp_cnt_enabled = 0
             val dependenceButton = apcDep__GUI.getSubButton()
             dependenceButton?.setCompoundDrawablesWithIntrinsicBounds(null, null,image,null)
             dependenceButton?.simulateClick(500)

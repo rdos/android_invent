@@ -37,7 +37,6 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
     private var mLocationManager: LocationManager? = null
     private lateinit var mMapKit: MapKit
     private var mLastShowFragment: AbstrActF? = null
-    private lateinit var mCurrentShowFragment: AbstrActF
     val db: RealmRepo by lazy {
         //Remember to call close() on all Realm instances.
         initRealm()
@@ -62,27 +61,11 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
         }
         checkPermission(PERMISSIONS)
 
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
-            IntentFilter("custom-event-name")
-        )
         setLocationService()
         startSynchronizeData()
     }
 
-    private val mMessageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            // Get extra data included in the Intent
-            val message = intent.getStringExtra("message")
-            Log.d("receiver", "Got message: $message")
-            if (mLastShowFragment == null) {
-                mCurrentShowFragment.onSynchroWork()
-            } else {
-                mLastShowFragment?.onSynchroWork()
-            }
 
-        }
-    }
 
     @SuppressLint("MissingPermission")
     fun setLocationService() {
@@ -213,7 +196,6 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
         mLastShowFragment?.onCloseFragment()
         fragment.lastFragmentClazz = mLastShowFragment?.javaClass?.simpleName
         mLastShowFragment = fragment
-        mCurrentShowFragment = fragment
         supportFragmentManager.beginTransaction()
             .replace(container, fragment)
             .commitNow()
@@ -258,7 +240,6 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
     override fun onDestroy() {
         stopSynchronizeData()
         stopLocationService()
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver)
         super.onDestroy()
     }
 

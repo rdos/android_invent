@@ -56,8 +56,8 @@ class SynchroWorker(
 
         while (true) {
             synchronizeData(db)
-            delayS(16000)
             sendMessage()
+            delayS(16000)
         }
         Result.success()
     }

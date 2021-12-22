@@ -14,6 +14,10 @@ import ru.smartro.inventory.base.AbstractO
 import ru.smartro.worknote.extensions.showImmersive
 import java.text.SimpleDateFormat
 import java.util.*
+import android.view.Gravity
+import android.view.Window
+import android.view.WindowManager
+
 
 /**HELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIREHELP HIRE
 РАЗ * //gotoAdd = Add -> create->ПОТОМ->Save->ПОТОМ Show
@@ -107,9 +111,9 @@ fun AppCompatButton.getSubButton(): AppCompatButton? {
 fun AbstrActF.showErrorDialog(text: String? = "") {
     view?.let {
         AlertDialog.Builder(it.context, android.R.style.Theme_Material_Dialog)
-        .setTitle(getString(R.string.delete_title))
-        .setMessage(getString(R.string.delete_dialog))
-        .setIcon(android.R.drawable.ic_dialog_alert)
+            .setTitle(getString(R.string.delete_title))
+            .setMessage(getString(R.string.delete_dialog))
+            .setIcon(android.R.drawable.ic_dialog_alert)
 //        .setPositiveButton(android.R.string.yes) { _, _ ->
 //
 //            // Delete current photo
@@ -128,12 +132,31 @@ fun AbstrActF.showErrorDialog(text: String? = "") {
 //                this.exitFragment()
 //            }
 //        }
-        .setNegativeButton(android.R.string.no, null)
-        .create().showImmersive()
+            .setNegativeButton(android.R.string.no, null)
+            .create().showImmersive()
     }
-
-
 }
+
+fun AbstrActF.showInfoDialog(text: String? = "") {
+    view?.let {
+        val dlg = AlertDialog.Builder(it.context, R.style.Theme_Inventory_Dialog)
+            .setMessage(text)
+            .create()
+        try {
+            val window: Window? = dlg.window
+            val wlp: WindowManager.LayoutParams = window!!.attributes
+
+            wlp.gravity = Gravity.TOP
+            wlp.flags = wlp.flags and WindowManager.LayoutParams.FLAG_DIM_BEHIND.inv()
+            window.attributes = wlp
+        } catch (ex: Exception) {
+
+        }
+        dlg.show()
+    }
+}
+
+
 fun List<RealmObject>?.isSpinnerADataO(): Boolean {
     var result = false
     if (this?.isEmpty() ?: true) {

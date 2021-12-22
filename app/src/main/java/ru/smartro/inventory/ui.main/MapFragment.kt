@@ -123,7 +123,7 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
             textErrorDialog += "\nОжидают отправки : ${cntDiff}"
 
             val lastSynchroDateTime = db().loadConfigSting("last_synchro_datetime")
-            textErrorDialog += "\n\nПоследняя успешная синхронизация : ${lastSynchroDateTime}"
+            textErrorDialog += "\n\nПоследняя успешная \nсинхронизация :\n${lastSynchroDateTime}"
             showInfoDialog(textErrorDialog)
         }
 //        mActvInfoSynchroCnt = view.findViewById(R.id.actv_map_fragment__info_synchro_cnt)

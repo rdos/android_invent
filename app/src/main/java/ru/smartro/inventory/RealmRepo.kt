@@ -59,14 +59,23 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         return result
     }
 
-    fun loadConfigBool(name: String): Boolean {
-        val result = loadConfig(name)
-        if (result == null) return true
-        if (result == Snull) return true
-        try {
-            return result.toBoolean()
+    fun loadConfigSting(name: String): String {
+        val result = loadConfig(name) ?: return ""
+        if (result == Snull) return ""
+        return try {
+            result
         } catch (e: Exception) {
-            return true
+            ""
+        }
+    }
+
+    fun loadConfigBool(name: String): Boolean {
+        val result = loadConfig(name) ?: return true
+        if (result == Snull) return true
+        return try {
+            result.toBoolean()
+        } catch (e: Exception) {
+            true
         }
     }
 

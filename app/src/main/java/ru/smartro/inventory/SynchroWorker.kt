@@ -81,7 +81,7 @@ class SynchroWorker(
         val platformEntityS = db.loadPlatformEntitySSynchro()
         for(platformEntity in platformEntityS) {
             Log.i(TAG, "save_-synchronizeData. platformEntity=${platformEntity.uuid}")
-            SynchroRequestRPC().callAsyncRPC(platformEntity)
+            SynchroRequestRPC().callExecuteRPC(platformEntity)
         }
 
 

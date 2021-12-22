@@ -11,17 +11,13 @@ import ru.smartro.inventory.database.PlatformEntityRealm
 import ru.smartro.inventory.getRpcUrl
 import java.io.IOException
 
-class SynchroRequestRPC(): AbstractO(), Callback {
+class SynchroRequestRPC: AbstractO() {
     private lateinit var mPlatformUuid: String
-    private val result = MutableLiveData<Boolean>()
 
-    fun callAsyncRPC(platformEntity: PlatformEntityRealm): MutableLiveData<Boolean> {
+    fun callExecuteRPC(platformEntity: PlatformEntityRealm) {
         log.debug("callAsyncRPC.before" )
         val synchroRequestEntity = SynchroRequestEntity()
         val ownerId = db.loadConfigInt("Owner")
-
-        platformEntity.beforeSync()
-        db.saveRealmEntity(platformEntity)
 
         synchroRequestEntity.payload.organisation_id = ownerId
         mPlatformUuid = platformEntity.uuid
@@ -30,34 +26,11 @@ class SynchroRequestRPC(): AbstractO(), Callback {
         val requestBody = synchroRequestEntity.toRequestBody()
         val restClient = RestClient()
         val request = restClient.newRequest(getRpcUrl()).post(requestBody).build()
-        restClient.newCall(request, this)
-        return result
-    }
-
-    override fun onFailure(call: Call, e: IOException) {
-//        throw IOException("Error response ${e}")
-        log.error("onFailure", e)
         try {
-        val platformEntity = db().loadPlatformEntity(mPlatformUuid)
-        platformEntity.afterFailSync()
-        db().saveRealmEntity(platformEntity)
-        } catch (e: Exception) {
-
-        }
-        result.postValue(false)
-    }
-
-    override fun onResponse(call: Call, response: Response) {
-        log.debug("onResponse.before")
-        try {
+            val response = restClient.newExecute(request)
             val bodyString = response.body?.string()
             log.debug("onResponse. bodyString=${bodyString}")
             if (!response.isSuccessful) {
-                result.postValue(false)
-
-                val platformEntity = db().loadPlatformEntity(mPlatformUuid)
-                platformEntity.afterFailSync()
-                db().saveRealmEntity(platformEntity)
 
                 return
 //            throw IOException("Error response $response")
@@ -65,31 +38,21 @@ class SynchroRequestRPC(): AbstractO(), Callback {
 
             val synchroRPCResponse = Gson().fromJson(bodyString, SynchroRPCResponse::class.java)
             if (synchroRPCResponse.error.isEmpty()) {
-                val platformEntity = db().loadPlatformEntity(mPlatformUuid)
                 platformEntity.afterSync(db())
                 log.debug("save_-onResponse. saveRealmEntity status_id=${platformEntity.status_name}")
                 log.debug("save_-onResponse. saveRealmEntity status_name=${platformEntity.status_id}")
-                db().saveRealmEntity(platformEntity)
+                db.saveRealmEntity(platformEntity)
                 log.debug("save_-onResponse. saveRealmEntity.after")
-                result.postValue(true)
             } else {
-
-                val platformEntity = db().loadPlatformEntity(mPlatformUuid)
-                platformEntity.afterFailSync()
-                db().saveRealmEntity(platformEntity)
-
+                log.error("onResponse synchroRPCResponse.error.isEmpty()")
             }
 
         } catch (e: Exception) {
             log.error("onResponse", e)
-
-            val platformEntity = db().loadPlatformEntity(mPlatformUuid)
-            platformEntity.afterFailSync()
-            db().saveRealmEntity(platformEntity)
-
-            result.postValue(false)
         }
-
-//        result.postValue(responseO.payload)
     }
+
+
+
+
 }

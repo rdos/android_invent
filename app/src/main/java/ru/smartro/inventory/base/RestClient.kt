@@ -5,6 +5,7 @@ import android.util.Log
 import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 
@@ -43,5 +44,9 @@ class RestClient() : AbstractO() {
 
     fun newCall(request: Request, callback: Callback) {
         mOkHttpClient.newCall(request).enqueue(callback)
+    }
+
+    fun newExecute(request: Request): Response {
+        return mOkHttpClient.newCall(request).execute()
     }
 }

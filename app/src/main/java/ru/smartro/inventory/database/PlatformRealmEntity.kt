@@ -61,15 +61,6 @@ open class PlatformEntityRealm(
     var is_allow_synchro: Boolean = false,
 ) : RealmObject() {
 
-    fun beforeSync() {
-        // TODO: 20.12.2021 ?
-        this.is_allow_synchro = false
-    }
-
-    fun afterFailSync() {
-        this.is_allow_synchro = true
-    }
-
     fun afterSync(db: RealmRepo) {
         this.is_allow_synchro = false
         this.status_id = 1

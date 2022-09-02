@@ -156,9 +156,9 @@ abstract class AbstrActF : Fragment() {
     }
 
 
-    fun getCurrentTimeStamp(): Long {
+    fun getCurrentTimeSEC(): Long {
 //        return System.currentTimeMillis() / 1000L
-        return System.currentTimeMillis()
+        return System.currentTimeMillis() /1000L
     }
 
 

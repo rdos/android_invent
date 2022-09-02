@@ -48,12 +48,18 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
 // TODO: 18.11.2021 Initializing in the Application.onCreate method may lead to extra calls and increased battery use.
         MapKitFactory.initialize(this)
         mMapKit = MapKitFactory.getInstance()
-
+        System.currentTimeMillis()
         // TODO: 12.11.2021 место!))
         if (savedInstanceState == null) {
+            val ownerDataInSec = db.loadConfigL("OwnerDate")
+            val currentSec: Long = System.currentTimeMillis() / 1000L
+            val timeInSEC = currentSec - ownerDataInSec.toLong()
+            val timeInMIN = timeInSEC / 60
+            val timeInHOUR = timeInMIN / 120
+
             val configEntityRealm = Config("is_allowed_inventory_get_platforms", true.toString())
             db.saveConfig(configEntityRealm)
-            if (Snull == db.loadConfig("Owner")) {
+            if (Snull == db.loadConfig("Owner") || timeInMIN >= 5) {
                 showFragment(LoginFragment.newInstance())
             } else {
                 showFragment(MapFragment.newInstance())

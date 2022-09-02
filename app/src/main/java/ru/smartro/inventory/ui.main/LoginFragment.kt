@@ -17,6 +17,7 @@ import ru.smartro.inventory.BuildConfig
 import ru.smartro.inventory.base.AbstrActF
 import ru.smartro.inventory.base.RestClient
 import ru.smartro.inventory.core.LoginRequest
+import ru.smartro.inventory.database.Config
 import ru.smartro.inventory.showErrorToast
 
 
@@ -75,6 +76,8 @@ class LoginFragment : AbstrActF(){
                     viewLifecycleOwner,
                     { resultBoolean ->
                         if (resultBoolean) {
+                            val configOwnerDate = Config("OwnerDate",  getCurrentTimeSEC().toString())
+                            db().saveConfig(configOwnerDate)
                             showFragment(OwnerFragment.newInstance())
                         } else {
                             showErrorToast("Ошибка авторизации")

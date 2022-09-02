@@ -271,7 +271,7 @@ abstract class AbstrActF : Fragment() {
 
     protected fun logOUT() {
         log.info("logOUT")
-        db().deleteData()
+//        db().deleteData()
         showFragment(LoginFragment.newInstance())
     }
 

@@ -59,7 +59,7 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
 
             val configEntityRealm = Config("is_allowed_inventory_get_platforms", true.toString())
             db.saveConfig(configEntityRealm)
-            if (Snull == db.loadConfig("Owner") || timeInMIN >= 5) {
+            if (Snull == db.loadConfig("Owner") || timeInHOUR >= 15) {
                 showFragment(LoginFragment.newInstance())
             } else {
                 showFragment(MapFragment.newInstance())

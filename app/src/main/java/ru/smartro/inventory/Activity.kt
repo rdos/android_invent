@@ -48,6 +48,25 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
 // TODO: 18.11.2021 Initializing in the Application.onCreate method may lead to extra calls and increased battery use.
         MapKitFactory.initialize(this)
         mMapKit = MapKitFactory.getInstance()
+
+        val fineLocationStatus = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        val isFineLocationGranted = fineLocationStatus == PackageManager.PERMISSION_GRANTED
+
+        val coarseLocationStatus = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+        val isCoarseLocationGranted = coarseLocationStatus == PackageManager.PERMISSION_GRANTED
+
+        when {
+            isFineLocationGranted && isCoarseLocationGranted -> {
+                Log.d("PERM1 :::", "GRANTED")
+                setLocationService()
+            }
+
+            else -> {
+                // You can directly ask for the permission.
+                requestPermissions(PERMISSIONS, 1)
+            }
+        }
+
         System.currentTimeMillis()
         // TODO: 12.11.2021 место!))
         if (savedInstanceState == null) {
@@ -65,15 +84,37 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
                 showFragment(MapFragment.newInstance())
             }
         }
-        checkPermission(PERMISSIONS)
 
-        setLocationService()
         startSynchronizeData()
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        Log.d("TESSTTT::", "ON REQUEST PERMISSION RESULT: RCODE: ${requestCode}, PERMS: ${permissions}, grantREs: ${grantResults}")
+        when (requestCode) {
+            1 -> {
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    Log.d("PERM2 :::", "GRANTED")
+                    setLocationService()
+                } else {
+                    requestPermissions(PERMISSIONS, 1)
+                }
+                return
+            }
 
+            // Add other 'when' lines to check for other
+            // permissions this app might request.
+            else -> {
+                // Ignore all other requests.
+            }
+        }
+    }
 
-    @SuppressLint("MissingPermission")
     fun setLocationService() {
         stopLocationService()
         val isYandexLocationService = db.loadConfigBool("is_yandex_location_service")
@@ -83,6 +124,25 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
         } else {
             mLocationManagerSystem =
                 this.getSystemService(Context.LOCATION_SERVICE) as android.location.LocationManager
+
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return
+            }
+
             mLocationManagerSystem?.requestLocationUpdates(
                 android.location.LocationManager.GPS_PROVIDER,
                 5000,
@@ -118,6 +178,7 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
 
     val PERMISSIONS = arrayOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION,
         Manifest.permission.LOCATION_HARDWARE,
         Manifest.permission.ACCESS_NETWORK_STATE,
         Manifest.permission.WRITE_EXTERNAL_STORAGE,

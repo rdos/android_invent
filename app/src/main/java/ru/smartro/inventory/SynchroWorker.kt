@@ -104,8 +104,14 @@ class SynchroWorker(
         val channelId = "M_CH_ID"
         val fullScreenIntent = Intent(context, Activity::class.java)
         fullScreenIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
         val fullScreenPendingIntent =
-            PendingIntent.getActivity(context, 0, fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                PendingIntent.getActivity(context, 0, fullScreenIntent, PendingIntent.FLAG_MUTABLE)
+            } else {
+                PendingIntent.getActivity(context, 0, fullScreenIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+            }
+
         val builder: NotificationCompat.Builder = NotificationCompat.Builder(context, channelId)
             .run {
                 setSmallIcon(R.drawable.ic_back)

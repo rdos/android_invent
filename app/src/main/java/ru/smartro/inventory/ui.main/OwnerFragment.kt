@@ -105,6 +105,12 @@ class OwnerFragment : AbstrActF(){
     }
 
     private fun showNextFra(ownerId: Int) {
+        val oldOwnerId = db().loadConfigInt("Owner")
+        if (oldOwnerId == ownerId) {
+            showFragment(MapFragment.newInstance())
+            return
+        }
+        db().deleteData()
         val config = Config(name="Owner", value=ownerId.toString())
         db().saveConfig(config)
         CatalogRequestRPC().callAsyncRPC(ownerId)

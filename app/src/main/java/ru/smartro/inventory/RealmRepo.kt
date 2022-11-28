@@ -2,11 +2,12 @@ package ru.smartro.inventory
 
 import android.util.Log
 import io.realm.Realm
+import io.realm.RealmConfiguration
 import io.realm.RealmList
 import io.realm.RealmObject
 import ru.smartro.inventory.database.*
-import java.lang.Exception
 import java.util.concurrent.Executors
+
 
 // find! has
 // 4) save
@@ -232,13 +233,17 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
 
     fun deleteContainerEntity(containerUuid: String) {
         execInTransaction { p_realm ->
-            val realmResults = mRealm.where(ContainerEntityRealm::class.java).equalTo("uuid", containerUuid).isNull("number", ).findAll()
+            val realmResults = mRealm.where(ContainerEntityRealm::class.java).equalTo("uuid", containerUuid).isNull(
+                "number"
+            ).findAll()
             realmResults.deleteAllFromRealm()
         }
     }
     fun deletePlatformEntity(platformUuid: String) {
         execInTransaction { p_realm ->
-            val realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("uuid", platformUuid).isNull("type", ).findAll()
+            val realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("uuid", platformUuid).isNull(
+                "type"
+            ).findAll()
             realmResults.deleteAllFromRealm()
         }
     }
@@ -258,12 +263,31 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         return resMList
     }
 
+    /**
+     ***Охраняемая Зона R_)OS
+     */
     fun deleteData() {
+        val realmConfiguration: RealmConfiguration = mRealm.getConfiguration()
         execInTransaction { p_realm ->
-            mRealm.deleteAll()
+            for (clazz in realmConfiguration.realmObjectClasses) {
+                if (clazz != Config::class.java) {
+                    p_realm.delete(clazz)
+                }
+            }
         }
-    }
 
+        val cntPlatformCreate = this.loadConfigL("cnt_platform__create")
+        cntPlatformCreate.value = "0"
+        this.saveConfig(cntPlatformCreate)
+        val cntPlatformSync = this.loadConfigL("CNT_PLATFORM__SYNC")
+        cntPlatformSync.value = "0"
+        this.saveConfig(cntPlatformSync)
+
+    }
+    /**Охраняемая Зона R_)OS
+    Охраняемая Зона R_)OS
+    Охраняемая Зона R_)OS
+     */
 
 //fun findWayTask(): WayTaskEntity {
 //    realm.refresh()

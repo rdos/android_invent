@@ -113,15 +113,15 @@ abstract class AbstractPhotoFraG : AbstrActF() {
 
     protected fun imageToBase64(imageUri: Uri, rotationDegrees: Float): String {
         val imageStream: InputStream? = requireContext().contentResolver.openInputStream(imageUri)
-        val selectedImage = BitmapFactory.decodeStream(imageStream)
-        val matrix = Matrix()
-        matrix.preRotate(rotationDegrees)
-        val rotatedBitmap = Bitmap.createBitmap(selectedImage, 0, 0, selectedImage.width, selectedImage.height, matrix, true)
-        val compressedBitmap = Bitmap.createScaledBitmap(rotatedBitmap, 320, 620, false)
         val baos = ByteArrayOutputStream()
-        compressedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        imageStream.use {
+            val resource = BitmapFactory.decodeStream(imageStream)
+            resource.compress(Bitmap.CompressFormat.WEBP, 90, baos)
+        }
         val b: ByteArray = baos.toByteArray()
-        return "data:image/png;base64,${Base64.encodeToString(b, Base64.DEFAULT)}"
+        val imageBase64 = "data:image/png;base64,${Base64.encodeToString(b, Base64.DEFAULT)}"
+
+        return imageBase64
     }
 
 

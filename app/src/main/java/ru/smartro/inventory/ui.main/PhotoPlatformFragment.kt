@@ -19,26 +19,23 @@ class PhotoPlatformFragment : AbstractPhotoFraG() {
         // TODO: 22.11.2021 copy-past !
         val file = getOutputDirectory(p_platform_uuid, null)
         val files: Array<File> = file.listFiles()
-        val platformEntity = db().loadPlatformEntity(p_platform_uuid)
-        platformEntity.imageList.clear()
         for (inFile in files) {
             log.debug("onNextClick ${inFile.name}")
             if (inFile.isDirectory()) {
                 log.debug("onNextClick.isDirectory")
                 continue
             }
+
+            val imageRealmEntity = ImageRealmEntity(p_platform_uuid)
             try {
                 val uri = Uri.fromFile(inFile)
-                val imageInBase64 = imageToBase64(uri, 0f)
-                val imageRealmEntity = ImageRealmEntity()
+                val imageInBase64 = imageToBase64(uri)
                 imageRealmEntity.imageBase64 = imageInBase64
-                platformEntity.imageList.add(imageRealmEntity)
             } catch (e: Exception) {
                 log.error("onNextClick", e)
             }
-
+            db().saveRealmEntity(imageRealmEntity)
         }
-        db().saveRealmEntity(platformEntity)
         showNextFragment(PlatformFragment.newInstance(p_platform_uuid))
     }
 
@@ -50,6 +47,5 @@ class PhotoPlatformFragment : AbstractPhotoFraG() {
 
         }
         deleteOutputDirectory(p_platform_uuid, null)
-        db().deletePlatformEntity(p_platform_uuid)
     }
 }

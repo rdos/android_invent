@@ -20,6 +20,12 @@ class SynchroRequestRPC: AbstractO() {
 
         synchroRequestEntity.payload.organisation_id = ownerId
         platformEntity.convertToServData()
+        val platformImageS = db.getImages(platformEntity.uuid)
+        platformEntity.imageList.addAll(platformImageS)
+        platformEntity.containers.forEach { container ->
+            val containerImageS = db.getImages(container.uuid)
+            container.imageList.addAll(containerImageS)
+        }
         synchroRequestEntity.payload.data.add(platformEntity)
         val requestBody = synchroRequestEntity.toRequestBody()
         val restClient = RestClient()

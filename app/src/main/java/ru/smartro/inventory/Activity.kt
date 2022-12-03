@@ -45,6 +45,9 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity)
+
+        db.clearUnusedEntities()
+
 // TODO: 18.11.2021 Initializing in the Application.onCreate method may lead to extra calls and increased battery use.
         MapKitFactory.initialize(this)
         mMapKit = MapKitFactory.getInstance()
@@ -285,21 +288,22 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
     override fun onBackPressed() {
         if (mIsCallonBackPressed) {
             mLastShowFragment?.onBackPressed()
-        }
-        mIsCallonBackPressed = true
-        if (supportFragmentManager.backStackEntryCount > 1) {
-            supportFragmentManager.popBackStack()
-            mLastShowFragment?.lastFragmentClazz?.let{
-                val fragment = supportFragmentManager.findFragmentByTag(mLastShowFragment?.lastFragmentClazz)
-                if (fragment == null) {
-                    mLastShowFragment = null
-                } else {
-                    mLastShowFragment = fragment as AbstrActF
-                }
-            }
-
         } else {
-            super.onBackPressed()
+            mIsCallonBackPressed = true
+            if (supportFragmentManager.backStackEntryCount > 1) {
+                supportFragmentManager.popBackStack()
+                mLastShowFragment?.lastFragmentClazz?.let{
+                    val fragment = supportFragmentManager.findFragmentByTag(mLastShowFragment?.lastFragmentClazz)
+                    if (fragment == null) {
+                        mLastShowFragment = null
+                    } else {
+                        mLastShowFragment = fragment as AbstrActF
+                    }
+                }
+
+            } else {
+                super.onBackPressed()
+            }
         }
     }
 

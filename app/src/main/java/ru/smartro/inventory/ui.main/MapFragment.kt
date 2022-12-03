@@ -93,10 +93,8 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
     }
 
     private fun gotoCreatePlatform() {
-        val platformEntity = PlatformEntityRealm(UUID.randomUUID().toString())
-        platformEntity.beforeCreate()
-        db().saveRealmEntity(platformEntity)
-        showNextFragment(PhotoPlatformFragment.newInstance(platformEntity.uuid))
+        val newPlatformUuid = UUID.randomUUID().toString()
+        showNextFragment(PhotoPlatformFragment.newInstance(newPlatformUuid))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

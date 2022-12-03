@@ -41,6 +41,7 @@ private val MAPKIT_API_KEY = "948e55bc-da44-452d-9629-00898d438ca9"
 class App : Application(){
     override fun onCreate() {
         super.onCreate()
+
         MapKitFactory.setApiKey(MAPKIT_API_KEY)
         Log.e(ErrorsE, "classs = Classs()")
     }

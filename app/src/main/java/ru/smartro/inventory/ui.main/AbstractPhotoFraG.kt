@@ -64,8 +64,6 @@ abstract class AbstractPhotoFraG : AbstrActF() {
         private const val TAG = "CameraXBasic"
         private const val FILENAME = "yyyy-MM-dd-HH-mm-ss-SSS"
         private const val PHOTO_EXTENSION = ".jpg"
-        private const val RATIO_4_3_VALUE = 4.0 / 3.0
-        private const val RATIO_16_9_VALUE = 16.0 / 9.0
 
         /** Helper function used to create a timestamped file */
         private fun createFile(baseFolder: File, format: String, extension: String) =
@@ -110,8 +108,7 @@ abstract class AbstractPhotoFraG : AbstrActF() {
 //        } ?: Unit
 //    }
 
-
-    protected fun imageToBase64(imageUri: Uri, rotationDegrees: Float): String {
+    protected fun imageToBase64(imageUri: Uri): String {
         val imageStream: InputStream? = requireContext().contentResolver.openInputStream(imageUri)
         val baos = ByteArrayOutputStream()
         imageStream.use {

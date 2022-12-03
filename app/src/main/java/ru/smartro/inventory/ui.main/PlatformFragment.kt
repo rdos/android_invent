@@ -1,26 +1,33 @@
 package ru.smartro.inventory.ui.main
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatSpinner
 import androidx.lifecycle.ViewModel
 import ru.smartro.inventory.R
 import ru.smartro.inventory.base.AbstrActF
 
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatCheckBox
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.*
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import ru.smartro.inventory.Inull
 import ru.smartro.inventory.core.*
 import ru.smartro.inventory.database.ContainerEntityRealm
+import ru.smartro.inventory.database.PlatformEntityRealm
 import ru.smartro.inventory.database.PlatformTypeRealm
 import ru.smartro.inventory.showErrorToast
+import ru.smartro.inventory.ui.main.util.showActionDialog
 import java.util.*
 
 
@@ -34,20 +41,64 @@ class PlatformFragment : AbstrActF() {
         }
     }
 
+    private var isBackPressEnabled = true
+
+    private var rv: RecyclerView? = null
+
     private lateinit var mIn: LayoutInflater
     private lateinit var viewModel: PlatformViewModel
 
-
     override fun onBackPressed() {
-        super.onBackPressed()
-
+        Log.d("TEST", "handleOnBackPressed")
+        if (platformEntity?.wasSaved == false) {
+            showActionDialog(
+                requireContext(),
+                "Вы уверены, что хотите отменить создание платформы?",
+                positiveAction = {
+                    db().deletePlatformEntity(p_platform_uuid)
+                    isBackPressEnabled = false
+                    callOnBackPressed(false)
+                    callOnBackPressed(false)
+                },
+                negativeAction = {
+                    isBackPressEnabled = true
+                }
+            )
+        } else {
+            showActionDialog(
+                requireContext(),
+                "Вы уверены, что хотите отменить редактирование платформы?",
+                positiveAction = {
+                    isBackPressEnabled = false
+                    callOnBackPressed(false)
+                    callOnBackPressed(false)
+                },
+                negativeAction = {
+                    isBackPressEnabled = true
+                }
+            )
+        }
     }
+    
+    private var platformEntity: PlatformEntityRealm? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 //        setActionBarTitle(R.string.platform_fragment__welcome_to_system)
-        setActionBarTitle("КП " + getCurrdateTime())
-        val platformEntity = db().loadPlatformEntity(p_platform_uuid)
+        showHideActionBar(true)
+
+        val title = view.findViewById<AppCompatTextView>(R.id.actv__platform_fragment__title)
+        title.text = "КП ${getCurrdateTime()}"
+
+
+        view.findViewById<AppCompatImageView>(R.id.aciv__platform_fragment__go_back).setOnClickListener {
+            callOnBackPressed(true)
+        }
+
+        rv = view.findViewById(R.id.rv__platform_fragment__containers)
+        rv?.layoutManager = LinearLayoutManager(requireContext())
+
+        updateAdapter()
 
         val lastPoint = getLastPoint()
 //        val actvCoordinateLat = view.findViewById<AppCompatTextView>(R.id.actv_platform_fragment__coordinate_lat)
@@ -90,9 +141,8 @@ class PlatformFragment : AbstrActF() {
 
                 if (isNotCheckedData(tietLength)) return@setOnClickListener
                 if (isNotCheckedData(tietWidth)) return@setOnClickListener
+                if (isNotEnableSave(acbSave, platformEntity!!)) return@setOnClickListener
 
-                //                if (platformEntity.isEnableSave(acbSave) return@setOnClickListener
-                if (isNotEnableSave(acbSave, platformEntity)) return@setOnClickListener
                 if (acsVid.selectedItem.toString() == "Выберите вид") {
                     showErrorToast("Выберите вид КП")
                     return@setOnClickListener
@@ -102,34 +152,35 @@ class PlatformFragment : AbstrActF() {
                     showErrorToast("${selectedplatformType.name} КП")
                     return@setOnClickListener
                 }
-//                platformEntity.status_name = "Новая"
-//                platformEntity.status_id = 1
+
                 log.debug("save_-acbSaveOnClick.after isCheckedData")
+
                 hideKeyboard()
-                platformEntity.datetime = getCurrdateTime()
-                platformEntity.is_open =
+                platformEntity?.datetime = getCurrdateTime()
+                platformEntity?.is_open =
                     if (acsVid.selectedItem.toString() == "Открытая") 1 else 0
-                platformEntity.has_base = if (accbHasBase.isChecked) 1 else 0
-                platformEntity.has_fence = if (accbHasFence.isChecked) 1 else 0
+                platformEntity?.has_base = if (accbHasBase.isChecked) 1 else 0
+                platformEntity?.has_fence = if (accbHasFence.isChecked) 1 else 0
 
                 try {
                     val splitCoodiate = tietCoordinate.text.toString().replace(",", ".").trim().split(" ")
-                    platformEntity.coordinateLat = splitCoodiate[0].toDouble()
-                    platformEntity.coordinateLng = splitCoodiate[1].toDouble()
+                    platformEntity?.coordinateLat = splitCoodiate[0].toDouble()
+                    platformEntity?.coordinateLng = splitCoodiate[1].toDouble()
                 } catch (e: Exception) {
                     log.error("TODOSTODO", e)
                     showErrorToast("Неверный формат координат")
                     return@setOnClickListener
                 }
 
-                platformEntity.type = spAdataViewER.selectedItem as PlatformTypeRealm
+                platformEntity?.type = spAdataViewER.selectedItem as PlatformTypeRealm
 
-                platformEntity.length = tietLength.text.toString().toInt()
-                platformEntity.width = tietWidth.text.toString().toInt()
-                platformEntity.comment = tietComment.text.toString()
+                platformEntity?.length = tietLength.text.toString().toInt()
+                platformEntity?.width = tietWidth.text.toString().toInt()
+                platformEntity?.comment = tietComment.text.toString()
 
-                platformEntity.afterCreate(db())
-                db().saveRealmEntity(platformEntity)
+                platformEntity?.wasSaved = true
+                platformEntity?.afterCreate(db())
+                db().saveRealmEntity(platformEntity!!)
 
                 log.debug("save_-acbSaveOnClick.saveRealmEntity")
                 deleteOutputDirectory(p_platform_uuid, null)
@@ -145,42 +196,20 @@ class PlatformFragment : AbstrActF() {
                 acbSave.isEnabled = true
             }
             log.debug("save_-acbSaveOnClick.after")
-//            val con = SynchroRequestRPC().callAsyncRPC(platformEntity)
-//            con.observe(
-//                viewLifecycleOwner,
-//                { bool ->
-//
-//                    if (bool){
-//                        // TODO: 22.11.2021 !!!
-//
-//                    } else
-//                    {
-//
-//                    }
-//                }
-//            )
-//            showFragment(PlatformFragmentContainerDlt.newInstance())
         }
 
 
         val acbAddContainer = view.findViewById<AppCompatButton>(R.id.acb_platform_fragment__add_container)
         acbAddContainer.setOnClickListener {
-//            val nextId = Realm.getDefaultInstance().where(ContainerEntityRealm::class.java).max("id")?.toInt()?.plus(1)?: Inull
             val uuid = UUID.randomUUID().toString()
-            platformEntity.containers.add(ContainerEntityRealm(uuid))
-            db().saveRealmEntity(platformEntity)
             showNextFragment(PhotoContainerFragment.newInstance(p_platform_uuid, uuid))
-//            childFragmentManager.beginTransaction()
-//                .replace(R.id.fl_platform_fragment, PlatformFragmentContainerDlt.newInstance(nextId))
-//                .commitNow()
         }
-
-        childFragmentManager.beginTransaction()
-            .replace(R.id.fl_platform_fragment, PlatformFragmentContainerS.newInstance(p_platform_uuid))
-            .commitNow()
     }
 
-
+    private fun updateAdapter() {
+        platformEntity = db().loadPlatformEntity(p_platform_uuid)
+        rv?.adapter = ContainerInPlatfornAdapter(platformEntity!!.containers)
+    }
 
 
     class PlatformTypeAdapter__AData_Spinner(context: Context,
@@ -211,42 +240,75 @@ class PlatformFragment : AbstrActF() {
         }
     }
 
-//    inner class MyAdapter(val platformType: List<PlatformTypeRealm>) : BaseAdapter() {
-//        override fun getCount(): Int {
-//            return platformType.size
-//        }
-//
-//        override fun getItem(p0: Int): Any {
-//            return platformType.get(p0)
-//        }
-//
-//        override fun getItemId(p0: Int): Long {
-//            return 11
-//        }
-//
-//        override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
-//           val view = LayoutInflater.from(context).inflate(android.R.layout.simple_spinner_dropdown_item, p2)
-//            view.find
-//            return p1!!
-//        }
-//
-//    }
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         mIn = inflater
         val view = inflater.inflate(R.layout.platform_fragment, container, false)
-//        view.findViewById<AppCompatButton>(R.id.acb_login_fragment).setOnClickListener {
-//            exitFragment()
-//        }
-//        Toast.makeText(getApplicationContext(), selected, Toast.LENGTH_SHORT).show();
+
         return view
     }
 
     class PlatformViewModel : ViewModel() {
         // TODO: Implement the ViewModel
     }
+
+    inner class ContainerInPlatfornAdapter(private val platformContainerList: List<ContainerEntityRealm>) :
+        RecyclerView.Adapter<PlatformContainerViewHolder>() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlatformContainerViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.platform_fragment_container__rv,
+                parent, false)
+            return PlatformContainerViewHolder(view)
+
+        }
+
+        override fun getItemCount(): Int {
+            return platformContainerList.size
+        }
+
+        override fun onBindViewHolder(holder: PlatformContainerViewHolder, position: Int) {
+            val container = platformContainerList.get(position)
+            holder.aptvIndex.text = (position + 1).toString()
+
+            holder.editContainer.setOnClickListener {
+                showNextFragment(PhotoContainerFragment.newInstance(p_platform_uuid, container.uuid))
+            }
+
+            holder.removeContainer.setOnClickListener {
+                val dialogClickListener =
+                    DialogInterface.OnClickListener { dialog, which ->
+                        when (which) {
+                            DialogInterface.BUTTON_POSITIVE -> {
+                                db().deleteContainerEntity(p_platform_uuid, container.uuid)
+                                updateAdapter()
+                            }
+
+                            DialogInterface.BUTTON_NEGATIVE -> {
+                                dialog.dismiss()
+                            }
+                        }
+                    }
+
+                val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+
+                builder.setMessage("Вы уверены, что хотите удалить данный контейнер?")
+                    .setPositiveButton("Да, удалить", dialogClickListener)
+                    .setNegativeButton("Отмена", dialogClickListener)
+                    .show()
+            }
+        }
+
+    }
+
+    inner class PlatformContainerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+        View.OnClickListener {
+        val aptvIndex = itemView.findViewById<AppCompatTextView>(R.id.aptv_platform_fragment_container__rv__index)
+        val editContainer = itemView.findViewById<AppCompatImageView>(R.id.aciv__platform_fragment_container_item__edit)
+        val removeContainer = itemView.findViewById<AppCompatImageView>(R.id.aciv__platform_fragment_container_item__remove)
+        override fun onClick(p0: View?) {
+        }
+    }
+
 }

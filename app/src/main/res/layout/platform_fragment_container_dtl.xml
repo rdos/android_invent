@@ -4,13 +4,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="@dimen/margin_min">
+    android:orientation="vertical">
+
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:gravity="center|start"
+
+        android:background="@color/purple_500">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/aciv__container_fragment__go_back"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_arrow"
+            android:foreground="?attr/selectableItemBackground"
+            />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/actv__platform_fragment_container__title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Создание контейнера"
+            android:textColor="#FFF"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginStart="16dp"
+            />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/margin_min"
         >
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="0dp"
@@ -37,7 +68,8 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="@dimen/margin_min">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="match_parent"
@@ -56,6 +88,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/margin_min"
+        android:padding="@dimen/margin_min"
         android:orientation="horizontal">
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -74,6 +107,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 />
+
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.AppCompatCheckBox
@@ -82,6 +116,7 @@
             android:layout_height="wrap_content"
             android:text="С педалью"
             />
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <com.google.android.material.textfield.TextInputEditText
@@ -89,6 +124,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Комментарий"
+        android:padding="@dimen/margin_min"
         android:inputType="textCapSentences|textMultiLine"
         android:maxLength="2502" />
 

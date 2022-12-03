@@ -19,16 +19,13 @@ class PhotoContainerFragment : AbstractPhotoFraG() {
         // TODO: 22.11.2021 copy-past !
         val file = getOutputDirectory(p_platform_uuid, p_container_uuid)
         val files: Array<File> = file.listFiles()
-        val containerEntity = db().loadContainerEntity(p_container_uuid!!)
-        containerEntity.imageList.clear()
         for (inFile in files) {
+            val imageRealmEntity = ImageRealmEntity(p_container_uuid!!)
             try {
                 val uri = Uri.fromFile(inFile)
 
-                val imageInBase64 = imageToBase64(uri, 0f)
-                val imageRealmEntity = ImageRealmEntity()
+                val imageInBase64 = imageToBase64(uri)
                 imageRealmEntity.imageBase64 = imageInBase64
-                containerEntity.imageList.add(imageRealmEntity)
                 log.info("onNextClick ${inFile.name}")
                 if (inFile.isDirectory()) {
                    log.info("onNextClick.isDirectory")
@@ -36,8 +33,8 @@ class PhotoContainerFragment : AbstractPhotoFraG() {
             } catch (e: Exception) {
                 log.error("onNextClick", e)
             }
+            db().saveRealmEntity(imageRealmEntity)
         }
-        db().saveRealmEntity(containerEntity)
         showNextFragment(PlatformFragmentContainerDlt.newInstance(p_platform_uuid, p_container_uuid!!))
     }
 
@@ -48,6 +45,6 @@ class PhotoContainerFragment : AbstractPhotoFraG() {
         } catch (e: Exception) {
 
         }
-        db().deleteContainerEntity(p_container_uuid!!)
+        db().deleteContainerEntity(p_platform_uuid, p_container_uuid!!)
     }
 }

@@ -3,53 +3,44 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/llc_platform_fragment_container__rv__item"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/margin_min"
+    android:padding="8dp"
     android:orientation="horizontal"
->
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="@dimen/margin_min"
-        android:orientation="horizontal"
-        >
+    android:gravity="center"
+    >
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:src="@drawable/ic_platform_fragment_container__rv__euro_blue"/>
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="wrap_content"
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/aptv_platform_fragment_container__rv__index"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:padding="@dimen/margin_min"
-        android:backgroundTint="@color/purple_200"
-        android:backgroundTintMode="multiply"
-        android:gravity="center"
-        android:background="?android:attr/selectableItemBackground"
-        >
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_platform_fragment_container__rv__euro_blue"/>
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/aptv_platform_fragment_container__rv__index"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="@dimen/margin_min"
-            android:paddingEnd="@dimen/margin_min"
-            android:textSize="@dimen/size"
-            tools:text="Союз 317"
-            />
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_min"
-            android:layout_marginEnd="0dp"
-            android:src="@drawable/ic_baseline_edit_24"/>
-    </androidx.appcompat.widget.LinearLayoutCompat>
-    <View
-        android:layout_width="@dimen/margin_2"
-        android:layout_height="match_parent"
-        android:background="@color/purple_99"/>
-    </androidx.appcompat.widget.LinearLayoutCompat>
+        android:layout_marginHorizontal="8dp"
+        android:textSize="@dimen/size"
+        tools:text="Союз 317"
+        />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/aciv__platform_fragment_container_item__edit"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="@dimen/margin_min"
+        android:layout_marginEnd="0dp"
+        android:foreground="?attr/selectableItemBackground"
+        android:src="@drawable/ic_baseline_edit_24"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/aciv__platform_fragment_container_item__remove"
+        android:layout_width="38dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="@dimen/margin_min"
+        android:foreground="?attr/selectableItemBackground"
+        android:src="@drawable/ic_delete_red"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

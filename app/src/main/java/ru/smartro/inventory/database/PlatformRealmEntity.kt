@@ -53,12 +53,14 @@ open class PlatformEntityRealm(
     var status_name: String = Snull,
     @SerializedName("containers")
     var containers: RealmList<ContainerEntityRealm> = RealmList(),
-    var imageList: RealmList<ImageRealmEntity> = RealmList(),
     @SerializedName("update_at")
     var update_at: String = Snull,
     @SerializedName("synchro_at")
     var synchro_at: String = Snull,
     var is_allow_synchro: Boolean = false,
+
+    var imageList: RealmList<ImageRealmEntity> = RealmList(),
+    var wasSaved: Boolean = false
 ) : RealmObject() {
 
     fun afterSync(db: RealmRepo) {
@@ -93,6 +95,8 @@ open class PlatformEntityRealm(
         this.coordinateLat = this.coordinates?.lat!!
         this.coordinateLng = this.coordinates?.lng!!
         this.coordinates = null
+        this.containers.forEach { it.imageList.clear() }
+        this.imageList.clear()
     }
 
     fun convertToServData() {

@@ -108,6 +108,33 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         }
     }
 
+    fun getImages(uuid: String): List<ImageRealmEntity> {
+        var images: List<ImageRealmEntity>? = null
+        mRealm.executeTransaction { p_realm ->
+            val results = p_realm.where(ImageRealmEntity::class.java).equalTo("uuid", uuid).findAll()
+            images = p_realm.copyFromRealm(results)
+        }
+        return images!!
+    }
+
+    fun clearUnusedEntities() {
+        mRealm.executeTransaction { p_realm ->
+            val emptyPlatformS = p_realm.where(PlatformEntityRealm::class.java).equalTo("wasSaved", false).findAll()
+            emptyPlatformS.forEach { platform ->
+                platform.containers.forEach { container ->
+                    val images = p_realm.where(ImageRealmEntity::class.java).equalTo("uuid", container.uuid).findAll()
+                    images.deleteAllFromRealm()
+                }
+
+                platform.containers.deleteAllFromRealm()
+
+                val images = p_realm.where(ImageRealmEntity::class.java).equalTo("uuid", platform.uuid).findAll()
+                images.deleteAllFromRealm()
+                platform.deleteFromRealm()
+            }
+        }
+    }
+
     fun save(block: () -> Unit) {
         mRealm.executeTransaction { realm ->
             block()
@@ -173,9 +200,20 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         } catch (e: Exception) {
             print(e)
         }
-        val realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("uuid", platformUuid).findFirst()
-        val result = mRealm.copyFromRealm(realmResults!!)
-        return result
+        var result: PlatformEntityRealm? = null
+        mRealm.executeTransaction { p_realm ->
+            var realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("uuid", platformUuid).findFirst()
+            if(realmResults == null) {
+                realmResults = PlatformEntityRealm(platformUuid)
+                realmResults.beforeCreate()
+                p_realm.insertOrUpdate(realmResults)
+                result = realmResults
+            } else {
+                result = mRealm.copyFromRealm(realmResults)
+            }
+        }
+
+        return result!!
     }
 
     fun loadPlatformEntitySSynchro(): List<PlatformEntityRealm> {
@@ -194,28 +232,27 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         return result
     }
 
-    fun loadContainerEntity(containerUuid: String): ContainerEntityRealm {
+    fun loadContainerEntity(platformUuid: String, containerUuid: String): ContainerEntityRealm {
         try {
             mRealm.refresh()
         } catch (e: Exception) {
             print(e)
         }
-        val realmResults = mRealm.where(ContainerEntityRealm::class.java).equalTo("uuid", containerUuid).findFirst()
-        val result = mRealm.copyFromRealm(realmResults!!)
-        return result
-    }
-
-    fun loadPlatformContainers(platformUuid: String): List<ContainerEntityRealm> {
-        try {
-            mRealm.refresh()
-        } catch (e: Exception) {
-            print(e)
+        var result: ContainerEntityRealm? = null
+        mRealm.executeTransaction { p_realm ->
+            var realmResults = mRealm.where(ContainerEntityRealm::class.java).equalTo("uuid", containerUuid).findFirst()
+            if(realmResults == null) {
+                realmResults = ContainerEntityRealm(containerUuid)
+                p_realm.insertOrUpdate(realmResults)
+                result = realmResults
+            } else {
+                result = mRealm.copyFromRealm(realmResults)
+            }
+            var platform = mRealm.where(PlatformEntityRealm::class.java).equalTo("uuid", platformUuid).findFirst()
+            platform?.containers?.add(realmResults)
         }
-        val realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("uuid", platformUuid).findFirst()
-        val result = mRealm.copyFromRealm(realmResults!!.containers)
-        return result
+        return result!!
     }
-
 
     /** entityRealm entityRealmS**/
     fun saveRealmEntity(entityRealm: RealmObject) {
@@ -231,20 +268,33 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
         }
     }
 
-    fun deleteContainerEntity(containerUuid: String) {
+    fun deleteContainerEntity(platformUuid: String, containerUuid: String) {
         execInTransaction { p_realm ->
-            val realmResults = mRealm.where(ContainerEntityRealm::class.java).equalTo("uuid", containerUuid).isNull(
-                "number"
-            ).findAll()
-            realmResults.deleteAllFromRealm()
+            val platform = mRealm.where(PlatformEntityRealm::class.java).equalTo("uuid", platformUuid).findFirst()
+            if(platform != null) {
+                val container = platform.containers.find { el -> el.uuid == containerUuid }
+                if(container != null) {
+                    val imagesOfContainer = mRealm.where(ImageRealmEntity::class.java).equalTo("uuid", container.uuid).findAll()
+                    imagesOfContainer.deleteAllFromRealm()
+                    container.deleteFromRealm()
+                }
+            }
         }
     }
+
     fun deletePlatformEntity(platformUuid: String) {
         execInTransaction { p_realm ->
-            val realmResults = mRealm.where(PlatformEntityRealm::class.java).equalTo("uuid", platformUuid).isNull(
-                "type"
-            ).findAll()
-            realmResults.deleteAllFromRealm()
+            val platform = mRealm.where(PlatformEntityRealm::class.java).equalTo("uuid", platformUuid).findFirst()
+            if(platform != null) {
+                platform.containers.forEach { container ->
+                    val imagesOfContainer = mRealm.where(ImageRealmEntity::class.java).equalTo("uuid", container.uuid).findAll()
+                    imagesOfContainer.deleteAllFromRealm()
+                    container.deleteFromRealm()
+                }
+                val imagesOfPlatform = mRealm.where(ImageRealmEntity::class.java).equalTo("uuid", platform.uuid).findAll()
+                imagesOfPlatform.deleteAllFromRealm()
+                platform.deleteFromRealm()
+            }
         }
     }
 

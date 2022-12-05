@@ -54,7 +54,7 @@ class PhotoContainerFragment : AbstractPhotoFraG() {
         } catch (e: Exception) {
 
         }
-        db().deleteContainerEntity(p_platform_uuid, p_container_uuid!!)
+        db().safeDeleteContainerEntity(p_platform_uuid, p_container_uuid!!)
         callOnBackPressed(false)
     }
 }

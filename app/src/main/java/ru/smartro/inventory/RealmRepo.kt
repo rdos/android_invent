@@ -337,6 +337,21 @@ class RealmRepo(private val mRealm: Realm) /*: Realm.Transaction*/ {
 
     }
 
+    fun safeDeleteContainerEntity(platformUuid: String, containerUuid: String) {
+        execInTransaction { p_realm ->
+            val platformCandidate = p_realm.where(PlatformEntityRealm::class.java).equalTo("uuid", platformUuid).findFirst()
+            if(platformCandidate != null) {
+                val containerCandidate = platformCandidate.containers.find { el -> el.uuid == containerUuid }
+                if(containerCandidate?.wasSaved == false) {
+                    platformCandidate.containers.remove(containerCandidate)
+                    val imageS = p_realm.where(ImageRealmEntity::class.java).equalTo("uuid", containerUuid).findAll()
+                    imageS.deleteAllFromRealm()
+                    containerCandidate.deleteFromRealm()
+                }
+            }
+        }
+    }
+
     /**Охраняемая Зона R_)OS
     Охраняемая Зона R_)OS
     Охраняемая Зона R_)OS

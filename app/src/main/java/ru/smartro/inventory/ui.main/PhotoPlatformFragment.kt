@@ -41,7 +41,6 @@ class PhotoPlatformFragment : AbstractPhotoFraG() {
     }
 
     override fun onBackPressed() {
-        Log.d("TEST::: ", "OBBBBBNNNBACKCKKKC")
         try {
 
         } catch (e: java.lang.Exception) {

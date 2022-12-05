@@ -49,7 +49,6 @@ class PlatformFragment : AbstrActF() {
     private lateinit var viewModel: PlatformViewModel
 
     override fun onBackPressed() {
-        Log.d("TEST", "handleOnBackPressed")
         if (platformEntity?.wasSaved == false) {
             showActionDialog(
                 requireContext(),

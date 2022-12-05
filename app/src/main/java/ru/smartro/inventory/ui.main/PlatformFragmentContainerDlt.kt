@@ -47,7 +47,6 @@ class PlatformFragmentContainerDlt : AbstrActF() {
     }
 
     override fun onBackPressed() {
-        Log.d("TEST", "handleOnBackPressed")
         if(mContainerEntityRealm?.wasSaved == false) {
             showActionDialog(
                 requireContext(),

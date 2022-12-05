@@ -263,6 +263,7 @@ abstract class AbstrActF : Fragment() {
 
     open fun onBackPressed() {
         log.info("onBackPressed.before")
+        callOnBackPressed()
     }
 
     open fun onCloseFragment(){

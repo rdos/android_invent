@@ -343,7 +343,7 @@ abstract class AbstractPhotoFraG : AbstrActF() {
             }
         }
 
-        mAcibShow = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__show_photo)
+        mAcibShow = mCameraUiFragment?.findViewById(R.id.acib_camera_fragment_ui__show_photo)
         mAcibShow?.setOnClickListener {
             if (getOutputFileCount(p_platform_uuid, p_container_uuid) <= 0) {
                 return@setOnClickListener

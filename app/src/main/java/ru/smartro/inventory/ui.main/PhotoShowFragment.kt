@@ -92,7 +92,7 @@ class PhotoShowFragment: AbstrActF() {
 
         val apibBack = view.findViewById<AppCompatImageButton>(R.id.apib_photo_show_fragment__back)
         apibBack.setOnClickListener {
-            callOnBackPressed()
+            callOnBackPressed(false)
         }
 
         //Checking media files list
@@ -165,7 +165,7 @@ class PhotoShowFragment: AbstrActF() {
 
                         // If all photos have been deleted, return to camera
                         if (mediaList.isEmpty()) {
-                            this.callOnBackPressed()
+                            this.callOnBackPressed(false)
                         }
                     }
                     .setNegativeButton(android.R.string.no, null)

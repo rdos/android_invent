@@ -1,5 +1,7 @@
 package ru.smartro.inventory.ui.main
 
+import android.R.attr.scaleHeight
+import android.R.attr.scaleWidth
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -42,6 +44,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+
 
 /** Helper type alias used for analysis use case callbacks */
 typealias LumaListener = (luma: Double) -> Unit
@@ -113,7 +116,10 @@ abstract class AbstractPhotoFraG : AbstrActF() {
         val baos = ByteArrayOutputStream()
         imageStream.use {
             val resource = BitmapFactory.decodeStream(imageStream)
-            resource.compress(Bitmap.CompressFormat.WEBP, 90, baos)
+            val scaledBitmap = Bitmap.createScaledBitmap(resource, 1024, 576, true)
+            scaledBitmap.compress(Bitmap.CompressFormat.WEBP, 90, baos)
+            resource.recycle()
+            scaledBitmap.recycle()
         }
         val b: ByteArray = baos.toByteArray()
         val imageBase64 = "data:image/png;base64,${Base64.encodeToString(b, Base64.DEFAULT)}"
@@ -272,6 +278,7 @@ abstract class AbstractPhotoFraG : AbstrActF() {
             .setTargetAspectRatio(AspectRatio.RATIO_16_9)
             // Set initial target rotation, we will have to call this again if rotation changes
             // during the lifecycle of this use case
+
             .setTargetRotation(rotation)
             .build()
 

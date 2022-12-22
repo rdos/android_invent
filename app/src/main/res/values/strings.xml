@@ -13,4 +13,6 @@
     <string name="delete_dialog">Удалить это фото?</string>
     <string name="delete_title">Подтвердить</string>
     <string name="info_title">Статистика</string>
+
+    <string name="user_is_blocked">Пользователь заблокирован\nОбратитесь к Диспетчеру</string>
 </resources>

@@ -60,6 +60,7 @@ fun getAUTHurl(dirPath: String): String {
         "STAGE" -> URL_AUTH_STAGE + "/${dirPath}"
         "RC" -> URL_AUTH_RC + "/${dirPath}"
         "PROD" -> URL_AUTH_PROD + "/${dirPath}"
+        "release" -> URL_AUTH_PROD + "/${dirPath}"
         else -> {
             Log.e("aA1", "Используй build type !!!")
              URL_AUTH_STAGE

@@ -60,6 +60,7 @@ fun getAUTHurl(dirPath: String): String {
     return when (BuildConfig.BUILD_TYPE) {
         "STAGE" -> URL_AUTH_STAGE + "/${dirPath}"
         "RC" -> URL_AUTH_RC + "/${dirPath}"
+        "SOFT" -> URL_AUTH_SOFT + "/${dirPath}"
         "PROD" -> URL_AUTH_PROD + "/${dirPath}"
         "release" -> URL_AUTH_PROD + "/${dirPath}"
         else -> {
@@ -73,6 +74,7 @@ fun AbstractO.getRpcUrl(): String {
     return when (BuildConfig.BUILD_TYPE) {
         "STAGE" -> URL_RPC_STAGE
         "RC" -> URL_RPC_RC
+        "SOFT" -> URL_RPC_SOFT
         "PROD" -> URL_RPC_PROD
         else -> {
             Log.e("Aa1", "Используй build type !!!")
@@ -83,9 +85,12 @@ fun AbstractO.getRpcUrl(): String {
 
 private const val URL_AUTH_STAGE = "https://auth.stage.smartro.ru/api"
 private const val URL_AUTH_RC = "https://auth.rc.smartro.ru/api"
+private const val URL_AUTH_SOFT = "https://auth.soft.smartro.ru/api"
+
 private const val URL_AUTH_PROD = "https://auth.smartro.ru/api"
 private const val URL_RPC_STAGE = "https://worknote-back.stage.smartro.ru/api/rpc"
 private const val URL_RPC_RC = "https://worknote-back.rc.smartro.ru/api/rpc"
+private const val URL_RPC_SOFT = "https://worknote-back.soft.smartro.ru/api/rpc"
 private const val URL_RPC_PROD = "https://wn-api.smartro.ru/api/rpc"
 
 fun AbstrActF.showErrorToast(text: String? = "") {

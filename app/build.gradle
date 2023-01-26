@@ -81,6 +81,11 @@ android {
             signingConfig signingConfigs.release
             debuggable true
         }
+        SOFT {
+            signingConfig signingConfigs.release
+            resValue "string", "app_name", "Inventory.SOFT"
+            debuggable true
+        }
         PROD {
             signingConfig signingConfigs.release
             resValue "string", "app_name", "Inventory"

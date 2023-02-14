@@ -1,15 +1,12 @@
 package ru.smartro.inventory.ui.main
 
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.appcompat.widget.AppCompatCheckBox
@@ -34,8 +31,6 @@ class PlatformFragmentContainerDlt : AbstrActF() {
     private lateinit var mTietNumber: TextInputEditText
     private lateinit var mTilNumber: TextInputLayout
 
-    private var isBackPressEnabled = true
-
     private var mContainerEntityRealm: ContainerEntityRealm? = null
 
     companion object {
@@ -47,31 +42,28 @@ class PlatformFragmentContainerDlt : AbstrActF() {
     }
 
     override fun onBackPressed() {
+        var alertDialog: AlertDialog? = null
         if(mContainerEntityRealm?.wasSaved == false) {
-            showActionDialog(
+            alertDialog = showActionDialog(
                 requireContext(),
                 "Вы уверены, что хотите отменить создание контейнера?",
                 positiveAction = {
                     db().deleteContainerEntity(p_platform_uuid, p_container_uuid!!)
-                    isBackPressEnabled = false
-                    callOnBackPressed(false)
-                    callOnBackPressed(false)
+                    navigateToPlatform()
                 },
                 negativeAction = {
-                    isBackPressEnabled = true
+                    alertDialog?.dismiss()
                 }
             )
         } else {
-            showActionDialog(
+            alertDialog = showActionDialog(
                 requireContext(),
                 "Вы уверены, что хотите отменить редактирование контейнера?",
                 positiveAction = {
-                    isBackPressEnabled = false
-                    callOnBackPressed(false)
-                    callOnBackPressed(false)
+                    navigateToPlatform()
                 },
                 negativeAction = {
-                    isBackPressEnabled = true
+                    alertDialog?.dismiss()
                 }
             )
         }
@@ -82,7 +74,7 @@ class PlatformFragmentContainerDlt : AbstrActF() {
         showHideActionBar(true)
 
         view.findViewById<AppCompatImageView>(R.id.aciv__container_fragment__go_back).setOnClickListener {
-            callOnBackPressed(true)
+            onBackPressed()
         }
 
         mContainerEntityRealm = db().loadContainerEntity(p_platform_uuid, p_container_uuid!!)
@@ -138,10 +130,8 @@ class PlatformFragmentContainerDlt : AbstrActF() {
                 mContainerEntityRealm?.comment = tietComment.text.toString()
                 mContainerEntityRealm?.wasSaved = true
                 db().saveRealmEntity(mContainerEntityRealm!!)
-                // TODO: 22.11.2021 !!!
-                callOnBackPressed(false)
-                callOnBackPressed(false)
 
+                navigateToPlatform()
             } catch (e: Exception) {
                 showErrorToast(e.message)
             } finally {
@@ -165,6 +155,10 @@ class PlatformFragmentContainerDlt : AbstrActF() {
                 }
         }
         accbPedal.isChecked = mContainerEntityRealm?.has_pedal == 1
+    }
+
+    private fun navigateToPlatform() {
+        requireActivity().supportFragmentManager.popBackStack(PlatformFragment::class.java.simpleName, 0)
     }
 
     override fun onCreateView(

@@ -11,7 +11,7 @@ fun showActionDialog(
     negativeButtonText: String? = null,
     positiveAction: () -> Unit,
     negativeAction: (() -> Unit)? = null
-) {
+): AlertDialog {
     val dialogClickListener =
         DialogInterface.OnClickListener { dialog, which ->
             when (which) {
@@ -30,8 +30,10 @@ fun showActionDialog(
 
     val builder: AlertDialog.Builder = AlertDialog.Builder(context)
 
-    builder.setMessage(messageText)
+    val alertDialog = builder.setMessage(messageText)
         .setPositiveButton(positiveButtonText ?: "Да", dialogClickListener)
         .setNegativeButton(negativeButtonText ?: "Нет", dialogClickListener)
         .show()
+
+    return alertDialog
 }

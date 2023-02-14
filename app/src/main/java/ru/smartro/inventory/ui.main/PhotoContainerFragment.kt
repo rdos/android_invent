@@ -45,16 +45,15 @@ class PhotoContainerFragment : AbstractPhotoFraG() {
             }
             db().saveRealmEntity(imageRealmEntity)
         }
-        showNextFragment(PlatformFragmentContainerDlt.newInstance(p_platform_uuid, p_container_uuid!!))
+        showFragment(PlatformFragmentContainerDlt.newInstance(p_platform_uuid, p_container_uuid!!))
     }
 
     override fun onBackPressed() {
         try {
-
+            db().safeDeleteContainerEntity(p_platform_uuid, p_container_uuid!!)
+            requireActivity().supportFragmentManager.popBackStack()
         } catch (e: Exception) {
 
         }
-        db().safeDeleteContainerEntity(p_platform_uuid, p_container_uuid!!)
-        callOnBackPressed(false)
     }
 }

@@ -348,7 +348,7 @@ abstract class AbstractPhotoFraG : AbstrActF() {
             if (getOutputFileCount(p_platform_uuid, p_container_uuid) <= 0) {
                 return@setOnClickListener
             }
-            showNextFragment(PhotoShowFragment.newInstance(p_platform_uuid, p_container_uuid))
+            showFragment(PhotoShowFragment.newInstance(p_platform_uuid, p_container_uuid))
         }
 
         val acibNext = mCameraUiFragment?.findViewById<AppCompatImageButton>(R.id.acib_camera_fragment_ui__next)

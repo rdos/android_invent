@@ -94,7 +94,7 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
 
     private fun gotoCreatePlatform() {
         val newPlatformUuid = UUID.randomUUID().toString()
-        showNextFragment(PhotoPlatformFragment.newInstance(newPlatformUuid))
+        showFragment(PhotoPlatformFragment.newInstance(newPlatformUuid))
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -215,11 +215,15 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
         val restClient = RestClient()
         val conic = PlatformRequestRPC(restClient, requireContext()).callAsyncRPC(rpcEntity)
         conic.observe(
-            viewLifecycleOwner,
-            { platforms ->
-                updateData()
-            }
-        )
+            viewLifecycleOwner
+        ) { platforms ->
+            updateData()
+        }
+    }
+
+
+    override fun onBackPressed() {
+        requireActivity().finish()
     }
 
     private fun updateData() {

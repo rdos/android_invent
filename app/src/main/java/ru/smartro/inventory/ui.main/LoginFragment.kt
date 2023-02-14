@@ -41,6 +41,11 @@ class LoginFragment : AbstrActF(){
         return view
     }
 
+    override fun onBackPressed() {
+        requireActivity().finish()
+    }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(
@@ -144,6 +149,7 @@ class LoginFragment : AbstrActF(){
                 acbLogin.isEnabled = true
             }
         }
+
         if (BuildConfig.BUILD_TYPE != "PROD") {
             acbLogin.setOnLongClickListener {
                 log.debug("acbLogin.setOnLongClickListener")

@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.*
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,49 +42,45 @@ class PlatformFragment : AbstrActF() {
         }
     }
 
-    private var isBackPressEnabled = true
-
     private var rv: RecyclerView? = null
-
     private lateinit var mIn: LayoutInflater
-    private lateinit var viewModel: PlatformViewModel
 
     override fun onBackPressed() {
+        var alertDialog: AlertDialog? = null
         if (platformEntity?.wasSaved == false) {
-            showActionDialog(
+            alertDialog = showActionDialog(
                 requireContext(),
                 "Вы уверены, что хотите отменить создание платформы?",
                 positiveAction = {
                     db().deletePlatformEntity(p_platform_uuid)
-                    isBackPressEnabled = false
-                    callOnBackPressed(false)
-                    callOnBackPressed(false)
+                    navigateToMap()
                 },
                 negativeAction = {
-                    isBackPressEnabled = true
+                    alertDialog?.dismiss()
                 }
             )
         } else {
-            showActionDialog(
+            alertDialog = showActionDialog(
                 requireContext(),
                 "Вы уверены, что хотите отменить редактирование платформы?",
                 positiveAction = {
-                    isBackPressEnabled = false
-                    callOnBackPressed(false)
-                    callOnBackPressed(false)
+                    navigateToMap()
                 },
                 negativeAction = {
-                    isBackPressEnabled = true
+                    alertDialog?.dismiss()
                 }
             )
         }
+    }
+
+    private fun navigateToMap() {
+        requireActivity().supportFragmentManager.popBackStack(MapFragment::class.java.simpleName, 0)
     }
     
     private var platformEntity: PlatformEntityRealm? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        setActionBarTitle(R.string.platform_fragment__welcome_to_system)
         showHideActionBar(true)
 
         val title = view.findViewById<AppCompatTextView>(R.id.actv__platform_fragment__title)
@@ -91,7 +88,7 @@ class PlatformFragment : AbstrActF() {
 
 
         view.findViewById<AppCompatImageView>(R.id.aciv__platform_fragment__go_back).setOnClickListener {
-            callOnBackPressed(true)
+            onBackPressed()
         }
 
         rv = view.findViewById(R.id.rv__platform_fragment__containers)
@@ -100,8 +97,6 @@ class PlatformFragment : AbstrActF() {
         updateAdapter()
 
         val lastPoint = getLastPoint()
-//        val actvCoordinateLat = view.findViewById<AppCompatTextView>(R.id.actv_platform_fragment__coordinate_lat)
-//        actvCoordinateLat.text =
 
         if (isNotActualLocation()) {
             val tilCoordinate = view.findViewById<TextInputLayout>(R.id.til_platform_fragment__coordinate)
@@ -185,9 +180,7 @@ class PlatformFragment : AbstrActF() {
                 deleteOutputDirectory(p_platform_uuid, null)
                 log.debug("save_-acbSaveOnClick.deleteOutputDirectory p_platform_uuid=${p_platform_uuid}")
 
-                callOnBackPressed(false)
-                callOnBackPressed(false)
-
+                navigateToMap()
             } catch (e: Exception) {
                 log.error("TODOTODOTODO")
                 showErrorToast(e.message)
@@ -201,7 +194,7 @@ class PlatformFragment : AbstrActF() {
         val acbAddContainer = view.findViewById<AppCompatButton>(R.id.acb_platform_fragment__add_container)
         acbAddContainer.setOnClickListener {
             val uuid = UUID.randomUUID().toString()
-            showNextFragment(PhotoContainerFragment.newInstance(p_platform_uuid, uuid))
+            showFragment(PhotoContainerFragment.newInstance(p_platform_uuid, uuid))
         }
     }
 
@@ -209,7 +202,6 @@ class PlatformFragment : AbstrActF() {
         platformEntity = db().loadPlatformEntity(p_platform_uuid)
         rv?.adapter = ContainerInPlatfornAdapter(platformEntity!!.containers)
     }
-
 
     class PlatformTypeAdapter__AData_Spinner(context: Context,
                                              platformType: List<PlatformTypeRealm>)
@@ -272,7 +264,7 @@ class PlatformFragment : AbstrActF() {
             holder.aptvIndex.text = (position + 1).toString()
 
             holder.editContainer.setOnClickListener {
-                showNextFragment(PhotoContainerFragment.newInstance(p_platform_uuid, container.uuid))
+                showFragment(PhotoContainerFragment.newInstance(p_platform_uuid, container.uuid))
             }
 
             holder.removeContainer.setOnClickListener {

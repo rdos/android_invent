@@ -36,6 +36,10 @@ abstract class AbstrActF : Fragment() {
         getArgumentContainerUUID()
     }
 
+    override fun onStart() {
+        super.onStart()
+        (requireActivity() as Activity).mLastShowFragment = this
+    }
 
     fun getCurrdateTime(): String {
        return this.getDeviceTime()
@@ -181,19 +185,9 @@ abstract class AbstrActF : Fragment() {
         return postion
     }
 
-    protected fun showFragment(container: Int, fragment: AbstrActF) {
-        //help
-        mActivity.showFragment(container, fragment)
-    }
-
     protected fun showFragment(fragment: AbstrActF) {
         //hel
         mActivity.showFragment(fragment)
-    }
-
-    protected fun showNextFragment(fragment: AbstrActF) {
-        //he
-        mActivity.showNextFragment(fragment)
     }
 
     protected fun deleteOutputDirectory(p_platform_uuid: String, p_container_uuid: String?) {
@@ -226,16 +220,6 @@ abstract class AbstrActF : Fragment() {
         log.debug("setScreenOrientation.after")
     }
 
-
-    protected fun callOnBackPressed() {
-        mActivity.onBackPressed()
-    }
-    //todo: call?_!!!
-    protected fun callOnBackPressed(isCallOnBackPressed: Boolean) {
-        mActivity.onBackPressed(isCallOnBackPressed)
-    }
-
-
     protected fun db(): RealmRepo {
         return mActivity.db
     }
@@ -258,16 +242,6 @@ abstract class AbstrActF : Fragment() {
         super.onDetach()
         log.debug("onDetach.before")
 
-    }
-
-
-    open fun onBackPressed() {
-        log.info("onBackPressed.before")
-        callOnBackPressed()
-    }
-
-    open fun onCloseFragment(){
-        log.info("onCloseFragment.before")
     }
 
     protected fun logOUT() {
@@ -299,6 +273,8 @@ abstract class AbstrActF : Fragment() {
         val result = requireArguments().getString(ARGUMENT_NAME__CONTAINER_UUID)
         return result
     }
+
+    abstract fun onBackPressed()
 
 
 //    override fun onLocationChanged(location: android.location.Location) {

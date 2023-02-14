@@ -32,13 +32,13 @@ import android.content.IntentFilter
 
 
 class Activity : AbstractAct() , LocationListener, android.location.LocationListener {
+
     private var mLocationManagerSystem: android.location.LocationManager? = null
-    private var mIsCallonBackPressed: Boolean = true
     private var mLocationManager: LocationManager? = null
     private lateinit var mMapKit: MapKit
-    private var mLastShowFragment: AbstrActF? = null
+    var mLastShowFragment: AbstrActF? = null
+
     val db: RealmRepo by lazy {
-        //Remember to call close() on all Realm instances.
         initRealm()
     }
 
@@ -263,48 +263,16 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
 
     fun showFragment(container: Int, fragment: AbstrActF) {
         log.info("showFragment.before")
-        mLastShowFragment?.onCloseFragment()
-        fragment.lastFragmentClazz = mLastShowFragment?.javaClass?.simpleName
-        mLastShowFragment = fragment
+        val fragmentName = fragment.javaClass.simpleName
+
         supportFragmentManager.beginTransaction()
-            .replace(container, fragment)
-            .commitNow()
-//TOdo            .commitNow()
-    }
-    fun showNextFragment(fragment: AbstrActF) {
-        fragment.lastFragmentClazz = mLastShowFragment?.javaClass?.simpleName
-        mLastShowFragment = fragment
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fl_activity, fragment, fragment.javaClass.simpleName)
-            .addToBackStack(fragment.javaClass.simpleName)
+            .replace(container, fragment, fragmentName)
+            .addToBackStack(fragmentName)
             .commit()
     }
 
-    open fun onBackPressed(isCallOnBackPressed: Boolean) {
-        mIsCallonBackPressed = isCallOnBackPressed
-        onBackPressed()
-    }
-
     override fun onBackPressed() {
-        if (mIsCallonBackPressed) {
-            mLastShowFragment?.onBackPressed()
-        } else {
-            mIsCallonBackPressed = true
-            if (supportFragmentManager.backStackEntryCount > 1) {
-                supportFragmentManager.popBackStack()
-                mLastShowFragment?.lastFragmentClazz?.let{
-                    val fragment = supportFragmentManager.findFragmentByTag(mLastShowFragment?.lastFragmentClazz)
-                    if (fragment == null) {
-                        mLastShowFragment = null
-                    } else {
-                        mLastShowFragment = fragment as AbstrActF
-                    }
-                }
-
-            } else {
-                super.onBackPressed()
-            }
-        }
+        mLastShowFragment?.onBackPressed()
     }
 
 
@@ -331,15 +299,9 @@ class Activity : AbstractAct() , LocationListener, android.location.LocationList
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
 
     override fun onLocationUpdated(p0: Location) {
-//        log.debug("latitude=${p0.position.latitude},latitude=${p0.position.longitude}")
-//        log.debug("heading=${p0.heading}")
     }
 
     override fun onLocationStatusUpdated(p0: LocationStatus) {
-//        TODO("Not yet implemented")
-//        val log: Logger = LoggerFactory.getLogger(MainActivity::class.java)
-//        log.warn("p0=$p0")
-
     }
 
     fun deleteOutputDirectory(platformUuid: String, containerUuid: String?) {

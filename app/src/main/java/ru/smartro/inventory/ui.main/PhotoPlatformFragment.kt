@@ -2,6 +2,7 @@ package ru.smartro.inventory.ui.main
 
 import android.net.Uri
 import android.util.Log
+import ru.smartro.inventory.App
 import ru.smartro.inventory.database.ImageRealmEntity
 import java.io.File
 
@@ -37,17 +38,16 @@ class PhotoPlatformFragment : AbstractPhotoFraG() {
             }
             db().saveRealmEntity(imageRealmEntity)
         }
-        showNextFragment(PlatformFragment.newInstance(p_platform_uuid))
+        showFragment(PlatformFragment.newInstance(p_platform_uuid))
     }
 
     override fun onBackPressed() {
         try {
-
+            deleteOutputDirectory(p_platform_uuid, null)
+            db().deletePlatformEntity(p_platform_uuid)
+            requireActivity().supportFragmentManager.popBackStack()
         } catch (e: java.lang.Exception) {
 
         }
-        deleteOutputDirectory(p_platform_uuid, null)
-        db().deletePlatformEntity(p_platform_uuid)
-        callOnBackPressed(false)
     }
 }

@@ -48,6 +48,10 @@ class PhotoShowFragment: AbstrActF() {
         }
     }
 
+    override fun onBackPressed() {
+        requireActivity().supportFragmentManager.popBackStack()
+    }
+
     private lateinit var mediaList: MutableList<File>
     /** Adapter class used to present a fragment containing one photo or video as a page */
     inner class MediaAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
@@ -92,7 +96,7 @@ class PhotoShowFragment: AbstrActF() {
 
         val apibBack = view.findViewById<AppCompatImageButton>(R.id.apib_photo_show_fragment__back)
         apibBack.setOnClickListener {
-            callOnBackPressed(false)
+            onBackPressed()
         }
 
         //Checking media files list
@@ -165,7 +169,7 @@ class PhotoShowFragment: AbstrActF() {
 
                         // If all photos have been deleted, return to camera
                         if (mediaList.isEmpty()) {
-                            this.callOnBackPressed(false)
+                            onBackPressed()
                         }
                     }
                     .setNegativeButton(android.R.string.no, null)

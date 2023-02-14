@@ -19,17 +19,15 @@ import ru.smartro.inventory.database.OwnerResponse
 
 //     android:background="?android:attr/selectableItemBackground">
 class OwnerFragment : AbstrActF(){
-    private lateinit var viewModel: OwnerViewModel
-//
 
+    override fun onBackPressed() {
+
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setActionBarTitle(R.string.owner_fragment__choose_owner)
-//        viewModel = ViewModelProvider(
-//            this,
-//            ViewModelProvider.NewInstanceFactory()
-//        ).get(LoginViewModel::class.java)
+
         val recyclerView = view.findViewById<RecyclerView>(R.id.rv_owner_fragment)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
@@ -38,27 +36,17 @@ class OwnerFragment : AbstrActF(){
         val ownerRequest = OwnerRequest(restClient)
         val col = ownerRequest.callAsyncOwner()
         col.observe(
-            viewLifecycleOwner,
-            { ownerResponse ->
-                for (ownerEntity in ownerResponse.data.organisationRealmEntities) {
-                    log.info("AAA ownerEntity.name=${ownerEntity.name}")
-                }
-                recyclerView.adapter = OwnerAdapter(ownerResponse)
-                if (ownerResponse.data.organisationRealmEntities.size == 1) {
-                    showNextFra(ownerResponse.data.organisationRealmEntities[0].id)
-                }
+            viewLifecycleOwner
+        ) { ownerResponse ->
+            for (ownerEntity in ownerResponse.data.organisationRealmEntities) {
+                log.info("AAA ownerEntity.name=${ownerEntity.name}")
             }
-        )
+            recyclerView.adapter = OwnerAdapter(ownerResponse)
+            if (ownerResponse.data.organisationRealmEntities.size == 1) {
+                showNextFra(ownerResponse.data.organisationRealmEntities[0].id)
+            }
+        }
 
-        // TODO: Use the ViewModel
-//        view.findViewById<AppCompatButton>(R.id.).setOnClickListener(this)
-
-//        errorLiveData.observe(
-//            viewLifecycleOwner,
-//            { errorText ->
-//                showErrorToast(errorText)
-//            }
-//        )
     }
 
     override fun onCreateView(

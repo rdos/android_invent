@@ -151,8 +151,11 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
         apbLogout.setOnClickListener {
             logOUT()
         }
+
+        getCatalog()
+
         val apbCreatePlatform = view.findViewById<AppCompatButton>(R.id.apb_map_fragment__add_platform)
-        apbCreatePlatform.setOnClickListener{
+        apbCreatePlatform.setOnClickListener {
             val containerStatus = db().loadContainerStatus()
             val containerType = db().loadContainerType()
             val platformType = db().loadPlatformType()
@@ -174,6 +177,7 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
             db().saveConfig(config)
             setLocationService()
         }
+
         updateData()
         gotoMyLocation()
         callPlatformRequest()
@@ -184,6 +188,17 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
         )
 
         apbCreatePlatform.simulateClick()
+    }
+
+    private fun getCatalog() {
+        val containerStatus = db().loadContainerStatus()
+        val containerType = db().loadContainerType()
+        val platformType = db().loadPlatformType()
+
+        if (containerStatus.isSpinnerADataO() || containerType.isSpinnerADataO() || platformType.isSpinnerADataO()) {
+            val ownerId = db().loadConfigInt("Owner")
+            CatalogRequestRPC().callAsyncRPC(ownerId)
+        }
     }
 
     override fun onDetach() {

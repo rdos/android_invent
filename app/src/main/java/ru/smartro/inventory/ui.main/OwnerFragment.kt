@@ -101,7 +101,6 @@ class OwnerFragment : AbstrActF(){
         db().deleteData()
         val config = Config(name="Owner", value=ownerId.toString())
         db().saveConfig(config)
-        CatalogRequestRPC().callAsyncRPC(ownerId)
         showFragment(MapFragment.newInstance())
     }
 

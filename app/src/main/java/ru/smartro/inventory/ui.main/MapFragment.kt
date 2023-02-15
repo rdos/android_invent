@@ -210,6 +210,7 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
 
     private fun sendPlatformRequest() {
         val ownerId = db().loadConfigInt("Owner")
+        CatalogRequestRPC().callAsyncRPC(ownerId)
         val rpcEntity =
             RPCProvider("inventory_get_platforms", getLastPoint()).getRPCEntity(ownerId)
         val restClient = RestClient()

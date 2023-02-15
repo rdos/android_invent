@@ -16,7 +16,7 @@ import ru.smartro.inventory.getRpcUrl
 import java.io.IOException
 
 
-class CatalogRequestRPC(): AbstractO(), Callback {
+class CatalogRequestRPC: AbstractO(), Callback {
     private val result = MutableLiveData<String>()
 
     fun callAsyncRPC(ownerId: Int): MutableLiveData<String> {
@@ -53,7 +53,6 @@ class CatalogRequestRPC(): AbstractO(), Callback {
             log.info("onResponse responseO=${responseI}")
 //            db.clearData()
 
-
             val payLoad_IdEA = responseI.payload
             mapFromServData_TO_SpinnerAData(payLoad_IdEA.container_platform_type, db)
             db.saveRealmEntity(payLoad_IdEA.__TO_SpinnerAData())
@@ -75,18 +74,8 @@ class CatalogRequestRPC(): AbstractO(), Callback {
             result.postValue(e.message)
         }
 
-
-
-//        db.save {
-//            for(container_platform_type in responseI.payload.container_platform_type) {
-//                db.insert(container_platform_type)
-//            }
-//        }
-//
     }
 
-    /**? //entityRealmS vs entitySRealm **/
-    //map ПОРА УЖЕ!!! convert TO convert FROM
     fun mapFromServData_TO_SpinnerAData(entityRealmS: RealmList<out RealmObject>, dbRea: RealmRepo) {
         dbRea.saveFromRealmEntityList(entityRealmS)
     }
@@ -107,8 +96,5 @@ class CatalogRequestRPC(): AbstractO(), Callback {
         var organisation_id: Int = Inull,
         val catalogs: MutableList<String> = mutableListOf("container_type", "container_platform_type", "card_status", "container_status")
     ) : AbstractEntity()
-
-
-//inline fun <reified T> Gson.fromJson(json: String) = fromJson<T>(json, object: TypeToken<T>() {}.type)
 
 }

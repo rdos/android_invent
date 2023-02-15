@@ -154,21 +154,16 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
         val apbCreatePlatform = view.findViewById<AppCompatButton>(R.id.apb_map_fragment__add_platform)
         apbCreatePlatform.setOnClickListener{
             val containerStatus = db().loadContainerStatus()
-            if (containerStatus.isSpinnerADataO()) {
-                showErrorToast("containerStatus is Empty")
+            val containerType = db().loadContainerType()
+            val platformType = db().loadPlatformType()
+
+            if (containerStatus.isSpinnerADataO() || containerType.isSpinnerADataO() || platformType.isSpinnerADataO()) {
+                showErrorToast("Каталог Типов и Статусов пуст, попробуйте ещё раз")
+                val ownerId = db().loadConfigInt("Owner")
+                CatalogRequestRPC().callAsyncRPC(ownerId)
                 return@setOnClickListener
             }
 
-            val containerType = db().loadContainerType()
-            if (containerType.isSpinnerADataO()) {
-                showErrorToast("containerType is Empty")
-                return@setOnClickListener
-            }
-            val platformType = db().loadPlatformType()
-            if (platformType.isSpinnerADataO()) {
-                showErrorToast("platformType is Empty")
-                return@setOnClickListener
-            }
             gotoCreatePlatform()
         }
 
@@ -210,7 +205,6 @@ class MapFragment : AbstrActF(), UserLocationObjectListener, Map.CameraCallback,
 
     private fun sendPlatformRequest() {
         val ownerId = db().loadConfigInt("Owner")
-        CatalogRequestRPC().callAsyncRPC(ownerId)
         val rpcEntity =
             RPCProvider("inventory_get_platforms", getLastPoint()).getRPCEntity(ownerId)
         val restClient = RestClient()

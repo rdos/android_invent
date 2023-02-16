@@ -29,7 +29,7 @@ build-stage:
     - sed -i 's|__VERSION_CODE__|'"$CI_PIPELINE_ID"'|g' ./VERSION
     - sed -i 's|__VERSION_NAME__|'"$CI_COMMIT_TAG"'|g' ./VERSION
   script:
-    - ./gradlew clean assembleDebug
+    - ./gradlew :app:compileSTAGEKotlin
     - cd "app/build/outputs/apk/debug/"
     - export APK=$(ls | grep apk)
     - *publish-apk
@@ -47,7 +47,7 @@ build-rc:
     - sed -i 's|__VERSION_CODE__|'"$CI_PIPELINE_ID"'|g' ./VERSION
     - sed -i 's|__VERSION_NAME__|'"$CI_COMMIT_TAG"'|g' ./VERSION
   script:
-    - ./gradlew assembleDebugRC
+    - ./gradlew :app:compileRCKotlin
     - cd "app/build/outputs/apk/debugRC/"
     - export APK=$(ls | grep apk)
     - *publish-apk

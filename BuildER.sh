@@ -1,4 +1,4 @@
-# killall terminal root ANDROIDFACT_D="/home/rdos/D/android-fact"
+#/bin/bash
 set -x
 ANDROIDFACTd=$(pwd)
 

@@ -1,0 +1,87 @@
+variables:
+  URL: "https://api.telegram.org/bot$TELEGRAM_API_TOKEN/sendMessage"
+
+.publish-apk: &publish-apk |
+  curl -H "Authorization: token ${DEPLOYGATE_TOKEN}" -F "file=@${APK}" -F "message=$CI_COMMIT_MESSAGE" "https://deploygate.com/api/users/develsoyuz/apps"
+
+stages:
+  - build-stage
+  - build-rc
+  - build-prod
+  - notify
+
+# send telegramm notifications on pipeline status
+.notification_template: &notifi
+  stage: notify
+  image: curlimages/curl
+  tags:
+    - docker
+  script: curl -s --max-time 10 -d "chat_id=$TELEGRAM_CHAT_ID&disable_web_page_preview=1&text=$TEXT" $URL
+
+build-stage:
+  tags:
+    - docker
+  stage: build-stage
+  image: registry.gitlab.smartro.ru:5005/infra/docker:android
+  before_script:
+    - chmod +x ./gradlew
+    - cp VERSION.example VERSION
+    - sed -i 's|__VERSION_CODE__|'"$CI_PIPELINE_ID"'|g' ./VERSION
+    - sed -i 's|__VERSION_NAME__|'"$CI_COMMIT_TAG"'|g' ./VERSION
+  script:
+    - ./gradlew clean assembleDebug
+    - cd "app/build/outputs/apk/debug/"
+    - export APK=$(ls | grep apk)
+    - *publish-apk
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^STAGE-\S+/
+
+build-rc:
+  tags:
+    - docker
+  stage: build-rc
+  image: registry.gitlab.smartro.ru:5005/infra/docker:android
+  before_script:
+    - chmod +x ./gradlew
+    - cp VERSION.example VERSION
+    - sed -i 's|__VERSION_CODE__|'"$CI_PIPELINE_ID"'|g' ./VERSION
+    - sed -i 's|__VERSION_NAME__|'"$CI_COMMIT_TAG"'|g' ./VERSION
+  script:
+    - ./gradlew assembleDebugRC
+    - cd "app/build/outputs/apk/debugRC/"
+    - export APK=$(ls | grep apk)
+    - *publish-apk
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^RC-\S+/
+
+build-prod:
+  stage: build-prod
+  tags:
+    - docker
+  image: registry.gitlab.smartro.ru:5005/infra/docker:android
+  before_script:
+    - chmod +x ./gradlew
+    - chmod +x BuildER.sh
+  script:
+    - ./BuildER.sh
+  artifacts:
+    when: on_success
+    expire_in: "30 days"
+    paths:
+      - app/build/outputs/bundle/release/*.aab
+  only:
+    - prod
+    - SR-6418
+
+notification_on_success:
+  <<: *notifi
+  variables:
+    TEXT: "Deploy status: ✅%0AProject:+$CI_PROJECT_NAME%0ACommit_message:${CI_COMMIT_MESSAGE}%0AURL:+$CI_PROJECT_URL/pipelines/$CI_PIPELINE_ID/%0ABranch:+$CI_COMMIT_REF_SLUG"
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: on_success
+#notification_on_failure:
+#  <<: *notifi
+#  variables:
+#    TEXT: "Deploy status: ❌%0AProject:+$CI_PROJECT_NAME%0AURL:+$CI_PROJECT_URL/pipelines/$CI_PIPELINE_ID/%0ABranch:+$CI_COMMIT_REF_SLUG"
+#  when: on_failure
